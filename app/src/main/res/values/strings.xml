@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">Lite Browser</string>
+
+    <string name="bookmarks">Bookmarks</string>
+    <string name="history">History</string>
+    <string name="settings">Settings</string>
+    <string name="bookmark_saved">Bookmark saved</string>
+    <string name="bookmark_exists">Already bookmarked</string>
+    <string name="bookmarks_empty">No bookmarks yet. Save pages with the ☆ button.</string>
+    <string name="history_empty">No browsing history yet.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
+
+    <string name="onboarding_step">Step %1$d of %2$d</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_title_1">Welcome to Lite Browser</string>
+    <string name="onboarding_message_1">Browse the web on Android TV with your remote, keyboard, mouse, or touchpad. Use the D-pad to move between buttons and into the page.</string>
+    <string name="onboarding_title_2">Mouse and pointer mode</string>
+    <string name="onboarding_message_2">Turn on Mouse mode to move a pointer with the D-pad and click with OK. Plug in a USB or Bluetooth mouse anytime — it works instantly.</string>
+    <string name="onboarding_title_3">Save your favorites</string>
+    <string name="onboarding_message_3">Use the star button to bookmark pages. Open saved bookmarks and history from the toolbar at any time.</string>
+    <string name="onboarding_title_4">You are all set</string>
+    <string name="onboarding_message_4">History is saved automatically. Visit Settings to change your homepage, block website ads, or clear data.</string>
+
+    <string name="rating_title">Enjoying Lite Browser?</string>
+    <string name="rating_message">If you like the app, please consider rating it. It helps us improve!</string>
+    <string name="rating_rate">Rate</string>
+    <string name="rating_remind_later">Remind me later</string>
+    <string name="rating_no_thanks">No, thanks</string>
+
+    <string name="settings_homepage_label">Homepage URL</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">Save Homepage</string>
+    <string name="settings_block_embedded_ads">Block website ads</string>
+    <string name="settings_block_embedded_ads_summary">Automatically hide embedded ads inside web pages. Does not affect the app banner ad.</string>
+    <string name="settings_block_ads_enabled">Website ad blocking enabled</string>
+    <string name="settings_block_ads_disabled">Website ad blocking disabled</string>
+    <string name="settings_homepage_empty">Please enter a homepage URL</string>
+    <string name="settings_homepage_saved">Homepage saved</string>
+    <string name="settings_clear_history">Clear History</string>
+    <string name="settings_clear_bookmarks">Clear Bookmarks</string>
+    <string name="settings_clear_cache">Clear WebView Cache</string>
+    <string name="settings_history_cleared">History cleared</string>
+    <string name="settings_bookmarks_cleared">Bookmarks cleared</string>
+    <string name="settings_cache_cleared">Cache cleared</string>
+    <string name="settings_cache_failed">Could not clear cache</string>
+
+    <string name="mouse_mode_on">Mouse ON</string>
+    <string name="mouse_mode_off">Mouse</string>
+
+    <string name="nav_back">Back</string>
+    <string name="nav_forward">Forward</string>
+    <string name="nav_refresh">Reload</string>
+    <string name="nav_bookmark">Save</string>
+    <string name="url_hint">Search or enter URL</string>
+    <string name="cursor_content_desc">Virtual mouse pointer</string>
+    <string name="input_hint_default">Remote: D-pad to navigate · OK to select</string>
+    <string name="input_hint_virtual_mouse">Mouse mode: D-pad moves pointer · OK clicks · Back exits</string>
+    <string name="input_hint_mouse">Mouse connected · Scroll wheel supported</string>
+    <string name="input_hint_touch">Touch input active</string>
+    <string name="list_hint_open">Press OK to open · Long press to delete</string>
+</resources>

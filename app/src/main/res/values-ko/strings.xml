@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Lite Browser</string>
+
+    <string name="bookmarks">북마크</string>
+    <string name="history">기록</string>
+    <string name="settings">설정</string>
+
+    <string name="onboarding_next">다음</string>
+    <string name="onboarding_get_started">시작하기</string>
+
+    <string name="mouse_mode_on">마우스: 켜짐</string>
+    <string name="mouse_mode_off">마우스</string>
+
+    <string name="nav_back">뒤로</string>
+    <string name="nav_forward">앞으로</string>
+</resources>

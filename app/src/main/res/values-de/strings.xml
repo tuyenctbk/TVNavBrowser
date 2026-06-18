@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Lite Browser</string>
+
+    <string name="bookmarks">Lesezeichen</string>
+    <string name="history">Verlauf</string>
+    <string name="settings">Einstellungen</string>
+    <string name="bookmark_saved">Lesezeichen gespeichert</string>
+    <string name="bookmarks_empty">Noch keine Lesezeichen. Seiten mit ☆ speichern.</string>
+
+    <string name="onboarding_step">Schritt %1$d von %2$d</string>
+    <string name="onboarding_next">Weiter</string>
+    <string name="onboarding_skip">Überspringen</string>
+    <string name="onboarding_get_started">Loslegen</string>
+
+    <string name="settings_block_embedded_ads">Anzeigen blockieren</string>
+    <string name="settings_block_ads_enabled">Werbeblocker aktiviert</string>
+    <string name="settings_block_ads_disabled">Werbeblocker deaktiviert</string>
+
+    <string name="mouse_mode_on">Maus: AN</string>
+    <string name="mouse_mode_off">Maus</string>
+
+    <string name="nav_back">Zurück</string>
+    <string name="nav_forward">Vorwärts</string>
+    <string name="nav_refresh">Neu laden</string>
+</resources>

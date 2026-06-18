@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">OmniSurf: Trình duyệt Web TV</string>
+
+    <string name="bookmarks">Dấu trang</string>
+    <string name="history">Lịch sử</string>
+    <string name="settings">Cài đặt</string>
+    <string name="bookmark_saved">Đã lưu dấu trang</string>
+    <string name="bookmark_exists">Đã có trong dấu trang</string>
+    <string name="bookmarks_empty">Chưa có dấu trang nào. Lưu trang bằng nút ☆.</string>
+    <string name="history_empty">Chưa có lịch sử duyệt web.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
+
+    <string name="onboarding_step">Bước %1$d / %2$d</string>
+    <string name="onboarding_next">Tiếp theo</string>
+    <string name="onboarding_skip">Bỏ qua</string>
+    <string name="onboarding_get_started">Bắt đầu</string>
+    <string name="onboarding_title_1">Chào mừng đến với Lite Browser</string>
+    <string name="onboarding_message_1">Duyệt web trên Android TV bằng điều khiển, bàn phím hoặc chuột. Sử dụng D-pad để di chuyển giữa các nút.</string>
+    <string name="onboarding_title_2">Chế độ chuột và con trỏ</string>
+    <string name="onboarding_message_2">Bật chế độ Chuột để di chuyển con trỏ bằng D-pad. Bạn cũng có thể cắm chuột USB hoặc Bluetooth.</string>
+    <string name="onboarding_title_3">Lưu trang yêu thích</string>
+    <string name="onboarding_message_3">Sử dụng nút dấu sao để lưu trang. Mở dấu trang và lịch sử bất cứ lúc nào từ thanh công cụ.</string>
+    <string name="onboarding_title_4">Tất cả đã sẵn sàng</string>
+    <string name="onboarding_message_4">Lịch sử được lưu tự động. Truy cập Cài đặt để đổi trang chủ, chặn quảng cáo hoặc xóa dữ liệu.</string>
+
+    <string name="rating_title">Bạn thích Lite Browser chứ?</string>
+    <string name="rating_message">Nếu bạn thích ứng dụng này, hãy đánh giá cho chúng tôi nhé. Nó giúp chúng tôi cải thiện hơn!</string>
+    <string name="rating_rate">Đánh giá</string>
+    <string name="rating_remind_later">Nhắc sau</string>
+    <string name="rating_no_thanks">Không, cảm ơn</string>
+
+    <string name="settings_homepage_label">URL Trang chủ</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">Lưu Trang chủ</string>
+    <string name="settings_block_embedded_ads">Chặn quảng cáo trang web</string>
+    <string name="settings_block_embedded_ads_summary">Tự động ẩn quảng cáo bên trong trang web. Không ảnh hưởng đến quảng cáo của ứng dụng.</string>
+    <string name="settings_block_ads_enabled">Đã bật chặn quảng cáo</string>
+    <string name="settings_block_ads_disabled">Đã tắt chặn quảng cáo</string>
+    <string name="settings_homepage_empty">Vui lòng nhập URL trang chủ</string>
+    <string name="settings_homepage_saved">Đã lưu trang chủ</string>
+    <string name="settings_clear_history">Xóa Lịch sử</string>
+    <string name="settings_clear_bookmarks">Xóa Dấu trang</string>
+    <string name="settings_clear_cache">Xóa Bộ nhớ đệm WebView</string>
+    <string name="settings_history_cleared">Đã xóa lịch sử</string>
+    <string name="settings_bookmarks_cleared">Đã xóa dấu trang</string>
+    <string name="settings_cache_cleared">Đã xóa bộ nhớ đệm</string>
+    <string name="settings_cache_failed">Không thể xóa bộ nhớ đệm</string>
+
+    <string name="mouse_mode_on">Chuột: BẬT</string>
+    <string name="mouse_mode_off">Chuột</string>
+
+    <string name="nav_back">Quay lại</string>
+    <string name="nav_forward">Tiếp</string>
+    <string name="nav_refresh">Tải lại</string>
+    <string name="nav_bookmark">Lưu</string>
+    <string name="url_hint">Tìm kiếm hoặc nhập URL</string>
+    <string name="cursor_content_desc">Con trỏ chuột ảo</string>
+    <string name="input_hint_default">Điều khiển: D-pad để di chuyển · OK để chọn</string>
+    <string name="input_hint_virtual_mouse">Chế độ chuột: D-pad di chuyển con trỏ · OK để nhấp · Quay lại để thoát</string>
+</resources>

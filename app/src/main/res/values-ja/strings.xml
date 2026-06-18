@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Lite Browser</string>
+
+    <string name="bookmarks">ブックマーク</string>
+    <string name="history">履歴</string>
+    <string name="settings">設定</string>
+    <string name="bookmark_saved">保存しました</string>
+
+    <string name="onboarding_next">次へ</string>
+    <string name="onboarding_skip">スキップ</string>
+    <string name="onboarding_get_started">使ってみる</string>
+
+    <string name="mouse_mode_on">マウス: ON</string>
+    <string name="mouse_mode_off">マウス</string>
+
+    <string name="nav_back">戻る</string>
+    <string name="nav_forward">進む</string>
+    <string name="nav_refresh">再読み込み</string>
+</resources>

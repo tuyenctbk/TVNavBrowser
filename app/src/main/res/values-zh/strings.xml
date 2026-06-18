@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">OmniSurf: 电视浏览器</string>
+
+    <string name="bookmarks">书签</string>
+    <string name="history">历史记录</string>
+    <string name="settings">设置</string>
+    <string name="bookmark_saved">书签已保存</string>
+    <string name="bookmark_exists">已在书签中</string>
+    <string name="bookmarks_empty">暂无书签。使用 ☆ 按钮保存页面。</string>
+    <string name="history_empty">暂无浏览历史。</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
+
+    <string name="onboarding_step">第 %1$d 步，共 %2$d 步</string>
+    <string name="onboarding_next">下一步</string>
+    <string name="onboarding_skip">跳过</string>
+    <string name="onboarding_get_started">立即开始</string>
+    <string name="onboarding_title_1">欢迎使用 Lite Browser</string>
+    <string name="onboarding_message_1">使用遥控器、键盘或鼠标在 Android TV 上浏览网页。</string>
+    <string name="onboarding_title_2">鼠标和指针模式</string>
+    <string name="onboarding_message_2">开启鼠标模式以使用方向键移动指针。</string>
+    <string name="onboarding_title_3">保存收藏</string>
+    <string name="onboarding_message_3">使用星形按钮保存页面。</string>
+    <string name="onboarding_title_4">全部就绪</string>
+    <string name="onboarding_message_4">历史记录将自动保存。前往设置更改主页或清除数据。</string>
+
+    <string name="rating_title">喜欢 Lite Browser 吗？</string>
+    <string name="rating_message">如果您喜欢这款应用，请考虑为我们评分。这能帮助我们改进！</string>
+    <string name="rating_rate">评分</string>
+    <string name="rating_remind_later">以后再说</string>
+    <string name="rating_no_thanks">不，谢谢</string>
+
+    <string name="settings_homepage_label">主页 URL</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">保存主页</string>
+    <string name="settings_block_embedded_ads">屏蔽网页广告</string>
+    <string name="settings_block_embedded_ads_summary">自动隐藏网页内的广告。</string>
+    <string name="settings_block_ads_enabled">已开启广告屏蔽</string>
+    <string name="settings_block_ads_disabled">已关闭广告屏蔽</string>
+    <string name="settings_homepage_empty">请输入主页 URL</string>
+    <string name="settings_homepage_saved">主页已保存</string>
+    <string name="settings_clear_history">清除历史</string>
+    <string name="settings_clear_bookmarks">清除书签</string>
+    <string name="settings_clear_cache">清除缓存</string>
+    <string name="settings_history_cleared">历史已清除</string>
+    <string name="settings_bookmarks_cleared">书签已清除</string>
+    <string name="settings_cache_cleared">缓存已清除</string>
+    <string name="settings_cache_failed">无法清除缓存</string>
+
+    <string name="mouse_mode_on">鼠标: 开启</string>
+    <string name="mouse_mode_off">鼠标</string>
+
+    <string name="nav_back">返回</string>
+    <string name="nav_forward">前进</string>
+    <string name="nav_refresh">刷新</string>
+    <string name="nav_bookmark">保存</string>
+    <string name="url_hint">搜索或输入网址</string>
+</resources>

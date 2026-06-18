@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Set your AdMob App ID from AdMob console → App settings -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_banner_ad_unit_id" translatable="false">ca-app-pub-5190563950149825/9206126543</string>
+</resources>

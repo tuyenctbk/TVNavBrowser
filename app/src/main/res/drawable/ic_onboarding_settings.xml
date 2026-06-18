@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <!-- Outer Glow -->
+    <path
+        android:fillColor="#1AFFFFC8"
+        android:pathData="M100,10c-49.7,0 -90,40.3 -90,90s40.3,90 90,90s90,-40.3 90,-90S149.7,10 100,10z" />
+    <!-- Background Circle -->
+    <path
+        android:fillColor="@color/bg_card"
+        android:pathData="M100,20c-44.1,0 -80,35.9 -80,80s35.9,80 80,80s80,-35.9 80,-80S144.1,20 100,20z" />
+    <!-- Shield/Safe for adblock -->
+    <path
+        android:fillColor="@color/accent"
+        android:pathData="M100,45c-20,0 -35,10 -40,30c0,30 10,55 40,70c30,-15 40,-40 40,-70C135,55 120,45 100,45z M100,125c-15,-8 -22,-20 -22,-45c3,0 12,-3 22,-10c10,7 19,10 22,10C122,105 115,117 100,125z" />
+    <!-- Settings Gear -->
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M150,110h-10c-1,5 -3,9 -6,13l7,7l-7,7l-7,-7c-4,3 -8,5 -13,6v10h-10v-10c-5,-1 -9,-3 -13,-6l-7,7l-7,-7l7,-7c-3,-4 -5,-8 -6,-13h-10v-10h10c1,-5 3,-9 6,-13l-7,-7l7,-7l7,7c4,-3 8,-5 13,-6V50h10v10c5,1 9,3 13,6l7,-7l7,7l-7,7c3,4 5,8 6,13h10V110z M115,105a15,15 0 1,0 -30,0a15,15 0 1,0 30,0" />
+</vector>

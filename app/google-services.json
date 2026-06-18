@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107023916160",
+    "project_id": "tvnav-browser",
+    "storage_bucket": "tvnav-browser.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107023916160:android:54b7ac770bbcc524499a65",
+        "android_client_info": {
+          "package_name": "com.tdpham.tvnavbrowser"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEPNF2XN0k2ai4BYTcl1c0upN77lFgDuc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

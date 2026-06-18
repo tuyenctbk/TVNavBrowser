@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Deep Navy Background -->
+    <path
+        android:fillColor="@color/bg_dark"
+        android:pathData="M0,0h108v108h-108z" />
+
+    <!-- Subtle Diagonal Gradient Overlay -->
+    <path
+        android:fillType="evenOdd"
+        android:pathData="M108,0L108,108L0,108L108,0Z">
+        <aapt:attr name="android:fillColor" xmlns:aapt="http://schemas.android.com/aapt">
+            <gradient
+                android:endX="108"
+                android:endY="108"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear">
+                <item
+                    android:color="#12FFFFFF"
+                    android:offset="0" />
+                <item
+                    android:color="#00FFFFFF"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Abstract Tech Pattern (Subtle Dots) -->
+    <path
+        android:fillColor="#08FFFFFF"
+        android:pathData="M20,20h2v2h-2z M40,20h2v2h-2z M60,20h2v2h-2z M80,20h2v2h-2z M20,40h2v2h-2z M40,40h2v2h-2z M60,40h2v2h-2z M80,40h2v2h-2z M20,60h2v2h-2z M40,60h2v2h-2z M60,60h2v2h-2z M80,60h2v2h-2z M20,80h2v2h-2z M40,80h2v2h-2z M60,80h2v2h-2z M80,80h2v2h-2z" />
+</vector>
