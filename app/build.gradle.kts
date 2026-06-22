@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.tdpham.tvnavbrowser"
+    namespace = "com.tdpham.navitvbrowser"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.tdpham.tvnavbrowser"
+        applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
@@ -19,9 +19,19 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file("common_release_key.jks")
+            storePassword = "dpadhero123"
+            keyAlias = "dpad_hero_alias"
+            keyPassword = "dpadhero123"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

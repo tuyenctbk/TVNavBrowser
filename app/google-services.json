@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:107023916160:android:54b7ac770bbcc524499a65",
+        "mobilesdk_app_id": "1:107023916160:android:e025772a3003b086499a65",
         "android_client_info": {
-          "package_name": "com.tdpham.tvnavbrowser"
+          "package_name": "com.tdpham.navitvbrowser"
         }
       },
       "oauth_client": [],

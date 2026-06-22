@@ -1,34 +1,63 @@
 <resources>
-    <string name="app_name">Lite Browser</string>
+    <string name="app_name">Navegador NaviTV</string>
 
     <string name="bookmarks">Favoritos</string>
     <string name="history">Histórico</string>
     <string name="settings">Configurações</string>
     <string name="bookmark_saved">Favorito salvo</string>
     <string name="bookmark_exists">Já está nos favoritos</string>
-    <string name="bookmarks_empty">Nenhum favorito ainda. Salve páginas com o botão ☆.</string>
-    <string name="history_empty">Nenhum histórico de navegação.</string>
+    <string name="bookmarks_empty">Sem favoritos. Salve páginas com o botão ☆.</string>
+    <string name="history_empty">Sem histórico de navegação.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
 
     <string name="onboarding_step">Passo %1$d de %2$d</string>
-    <string name="onboarding_next">Próximo</string>
+    <string name="onboarding_next">Avançar</string>
     <string name="onboarding_skip">Pular</string>
     <string name="onboarding_get_started">Começar</string>
-    <string name="onboarding_title_1">Bem-vindo ao Lite Browser</string>
-    <string name="onboarding_message_1">Navegue na web na sua Android TV com controle remoto, teclado ou mouse.</string>
+    <string name="onboarding_title_1">Bem-vindo ao Navegador NaviTV</string>
+    <string name="onboarding_message_1">Navegue na web na Android TV com seu controle remoto, teclado, mouse ou touchpad. Use o D-pad para se mover entre os botões e dentro da página.</string>
     <string name="onboarding_title_2">Modo mouse e ponteiro</string>
-    <string name="onboarding_message_2">Ative o modo Mouse para mover um ponteiro com o D-pad.</string>
+    <string name="onboarding_message_2">Ative o modo mouse para mover um ponteiro com o D-pad e clicar com OK. Conecte um mouse USB ou Bluetooth a qualquer momento; funciona instantaneamente.</string>
+    <string name="onboarding_title_3">Salve seus favoritos</string>
+    <string name="onboarding_message_3">Use o botão de estrela para salvar páginas. Abra seus favoritos e o histórico a partir da barra de ferramentas a qualquer momento.</string>
+    <string name="onboarding_title_4">Tudo pronto</string>
+    <string name="onboarding_message_4">O histórico é salvo automaticamente. Visite as Configurações para alterar sua página inicial, bloquear anúncios ou limpar dados.</string>
 
-    <string name="settings_homepage_label">URL da Página Inicial</string>
-    <string name="settings_save_homepage">Salvar Início</string>
-    <string name="settings_block_embedded_ads">Bloquear anúncios</string>
-    <string name="settings_block_ads_enabled">Bloqueio de anúncios ativado</string>
-    <string name="settings_block_ads_disabled">Bloqueio de anúncios desativado</string>
+    <string name="rating_title">Gostando do Navegador NaviTV?</string>
+    <string name="rating_message">Se você gosta do aplicativo, por favor considere avaliá-lo. Isso nos ajuda a melhorar!</string>
+    <string name="rating_rate">Avaliar</string>
+    <string name="rating_remind_later">Lembrar mais tarde</string>
+    <string name="rating_no_thanks">Não, obrigado</string>
 
-    <string name="mouse_mode_on">Mouse: LIGADO</string>
+    <string name="settings_homepage_label">URL da página inicial</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">Salvar página inicial</string>
+    <string name="settings_block_embedded_ads">Bloquear anúncios web</string>
+    <string name="settings_block_embedded_ads_summary">Oculta automaticamente anúncios em páginas web. Não afeta o anúncio de banner do aplicativo.</string>
+    <string name="settings_block_ads_enabled">Bloqueio de anúncios web ativado</string>
+    <string name="settings_block_ads_disabled">Bloqueio de anúncios web desativado</string>
+    <string name="settings_homepage_empty">Insira uma URL de página inicial</string>
+    <string name="settings_homepage_saved">Página inicial salva</string>
+    <string name="settings_clear_history">Limpar histórico</string>
+    <string name="settings_clear_bookmarks">Limpar favoritos</string>
+    <string name="settings_clear_cache">Limpar cache do WebView</string>
+    <string name="settings_history_cleared">Histórico limpo</string>
+    <string name="settings_bookmarks_cleared">Favoritos limpos</string>
+    <string name="settings_cache_cleared">Cache limpo</string>
+    <string name="settings_cache_failed">Não foi possível limpar o cache</string>
+
+    <string name="mouse_mode_on">Mouse LIG</string>
     <string name="mouse_mode_off">Mouse</string>
 
     <string name="nav_back">Voltar</string>
     <string name="nav_forward">Avançar</string>
     <string name="nav_refresh">Recarregar</string>
     <string name="nav_bookmark">Salvar</string>
+    <string name="url_hint">Pesquise ou digite a URL</string>
+    <string name="cursor_content_desc">Ponteiro do mouse virtual</string>
+    <string name="input_hint_default">Remoto: D-pad para navegar · OK para selecionar</string>
+    <string name="input_hint_virtual_mouse">Modo mouse: D-pad move ponteiro · OK clica · Voltar sai</string>
+    <string name="input_hint_mouse">Mouse conectado · Roda de rolagem suportada</string>
+    <string name="input_hint_touch">Entrada por toque ativa</string>
+    <string name="list_hint_open">Pressione OK para abrir · Pressione e segure para excluir</string>
 </resources>

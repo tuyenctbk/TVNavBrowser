@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OmniSurf: Navigateur Web TV</string>
+    <string name="app_name">Navigateur NaviTV</string>
 
     <string name="bookmarks">Favoris</string>
     <string name="history">Historique</string>
@@ -13,45 +13,51 @@
     <string name="onboarding_step">Étape %1$d sur %2$d</string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_skip">Passer</string>
-    <string name="onboarding_get_started">Commencer</string>
-    <string name="onboarding_title_1">Bienvenue sur Lite Browser</string>
-    <string name="onboarding_message_1">Naviguez sur le Web sur Android TV avec votre télécommande, clavier ou souris.</string>
+    <string name="onboarding_get_started">Démarrer</string>
+    <string name="onboarding_title_1">Bienvenue sur le Navigateur NaviTV</string>
+    <string name="onboarding_message_1">Naviguez sur le Web sur Android TV avec votre télécommande, clavier, souris ou pavé tactile. Utilisez la croix directionnelle pour vous déplacer entre les boutons et dans la page.</string>
     <string name="onboarding_title_2">Mode souris et pointeur</string>
-    <string name="onboarding_message_2">Activez le mode Souris pour déplacer un pointeur avec le D-pad.</string>
+    <string name="onboarding_message_2">Activez le mode souris pour déplacer un pointeur avec la croix directionnelle et cliquez avec OK. Connectez une souris USB ou Bluetooth à tout moment, cela fonctionne instantanément.</string>
     <string name="onboarding_title_3">Enregistrez vos favoris</string>
-    <string name="onboarding_message_3">Utilisez le bouton étoile pour enregistrer des pages.</string>
+    <string name="onboarding_message_3">Utilisez le bouton étoile pour enregistrer des pages. Ouvrez vos favoris enregistrés et l\'historique depuis la barre d\'outils à tout moment.</string>
     <string name="onboarding_title_4">Tout est prêt</string>
-    <string name="onboarding_message_4">L\'historique est enregistré automatiquement. Allez dans Paramètres pour changer la page d\'accueil.</string>
+    <string name="onboarding_message_4">L\'historique est enregistré automatiquement. Visitez les Paramètres pour modifier votre page d\'accueil, bloquer les publicités ou effacer les données.</string>
 
-    <string name="rating_title">Vous aimez Lite Browser ?</string>
-    <string name="rating_message">Si vous aimez l\'application, merci de nous noter. Cela nous aide à nous améliorer !</string>
-    <string name="rating_rate">Noter</string>
+    <string name="rating_title">Vous aimez le Navigateur NaviTV ?</string>
+    <string name="rating_message">Si vous appréciez l\'application, merci de bien vouloir l\'évaluer. Cela nous aide à nous améliorer !</string>
+    <string name="rating_rate">Évaluer</string>
     <string name="rating_remind_later">Plus tard</string>
     <string name="rating_no_thanks">Non, merci</string>
 
     <string name="settings_homepage_label">URL de la page d\'accueil</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
-    <string name="settings_save_homepage">Enregistrer l\'accueil</string>
-    <string name="settings_block_embedded_ads">Bloquer les publicités</string>
-    <string name="settings_block_embedded_ads_summary">Masque automatiquement les publicités sur les pages Web.</string>
-    <string name="settings_block_ads_enabled">Blocage des publicités activé</string>
-    <string name="settings_block_ads_disabled">Blocage des publicités désactivé</string>
-    <string name="settings_homepage_empty">Veuillez entrer une URL de page d\'accueil</string>
+    <string name="settings_save_homepage">Enregistrer la page d\'accueil</string>
+    <string name="settings_block_embedded_ads">Bloquer les pubs web</string>
+    <string name="settings_block_embedded_ads_summary">Masquer automatiquement les publicités intégrées dans les pages web. N\'affecte pas la bannière publicitaire de l\'application.</string>
+    <string name="settings_block_ads_enabled">Blocage des publicités web activé</string>
+    <string name="settings_block_ads_disabled">Blocage des publicités web désactivé</string>
+    <string name="settings_homepage_empty">Veuillez saisir une URL de page d\'accueil</string>
     <string name="settings_homepage_saved">Page d\'accueil enregistrée</string>
     <string name="settings_clear_history">Effacer l\'historique</string>
     <string name="settings_clear_bookmarks">Effacer les favoris</string>
-    <string name="settings_clear_cache">Effacer le cache</string>
+    <string name="settings_clear_cache">Effacer le cache WebView</string>
     <string name="settings_history_cleared">Historique effacé</string>
     <string name="settings_bookmarks_cleared">Favoris effacés</string>
     <string name="settings_cache_cleared">Cache effacé</string>
     <string name="settings_cache_failed">Impossible d\'effacer le cache</string>
 
-    <string name="mouse_mode_on">Souris : ON</string>
+    <string name="mouse_mode_on">Souris ACT</string>
     <string name="mouse_mode_off">Souris</string>
 
     <string name="nav_back">Retour</string>
-    <string name="nav_forward">Suivant</string>
+    <string name="nav_forward">Avant</string>
     <string name="nav_refresh">Actualiser</string>
     <string name="nav_bookmark">Enregistrer</string>
-    <string name="url_hint">Rechercher ou entrer une URL</string>
+    <string name="url_hint">Rechercher ou saisir une URL</string>
+    <string name="cursor_content_desc">Pointeur de souris virtuel</string>
+    <string name="input_hint_default">Télécommande : Croix pour naviguer · OK pour sélectionner</string>
+    <string name="input_hint_virtual_mouse">Mode souris : Croix déplace le pointeur · OK clique · Retour quitte</string>
+    <string name="input_hint_mouse">Souris connectée · Molette de défilement prise en charge</string>
+    <string name="input_hint_touch">Entrée tactile active</string>
+    <string name="list_hint_open">Appuyez sur OK pour ouvrir · Appui long pour supprimer</string>
 </resources>

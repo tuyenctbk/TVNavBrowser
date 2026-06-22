@@ -1,25 +1,63 @@
 <resources>
-    <string name="app_name">Lite Browser</string>
+    <string name="app_name">NaviTV Browser</string>
 
     <string name="bookmarks">Lesezeichen</string>
     <string name="history">Verlauf</string>
     <string name="settings">Einstellungen</string>
     <string name="bookmark_saved">Lesezeichen gespeichert</string>
-    <string name="bookmarks_empty">Noch keine Lesezeichen. Seiten mit ☆ speichern.</string>
+    <string name="bookmark_exists">Bereits als Lesezeichen gespeichert</string>
+    <string name="bookmarks_empty">Keine Lesezeichen. Speichern Sie Seiten mit dem ☆-Symbol.</string>
+    <string name="history_empty">Noch kein Browserverlauf vorhanden.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
 
     <string name="onboarding_step">Schritt %1$d von %2$d</string>
     <string name="onboarding_next">Weiter</string>
     <string name="onboarding_skip">Überspringen</string>
-    <string name="onboarding_get_started">Loslegen</string>
+    <string name="onboarding_get_started">Starten</string>
+    <string name="onboarding_title_1">Willkommen beim NaviTV Browser</string>
+    <string name="onboarding_message_1">Surfen Sie im Web auf Android TV mit Ihrer Fernbedienung, Tastatur, Maus oder dem Touchpad. Nutzen Sie das D-Pad, um zwischen Schaltflächen und innerhalb der Seite zu navigieren.</string>
+    <string name="onboarding_title_2">Maus- und Zeigermodus</string>
+    <string name="onboarding_message_2">Aktivieren Sie den Mausmodus, um einen Zeiger mit dem D-Pad zu bewegen und mit OK zu klicken. Schließen Sie jederzeit eine USB- oder Bluetooth-Maus an — sie funktioniert sofort.</string>
+    <string name="onboarding_title_3">Speichern Sie Ihre Favoriten</string>
+    <string name="onboarding_message_3">Verwenden Sie das Stern-Symbol, um Lesezeichen zu speichern. Öffnen Sie gespeicherte Lesezeichen und den Verlauf jederzeit über die Menüleiste.</string>
+    <string name="onboarding_title_4">Alles bereit</string>
+    <string name="onboarding_message_4">Der Verlauf wird automatisch gespeichert. Gehen Sie zu den Einstellungen, um Ihre Startseite zu ändern, Werbung auf Webseiten zu blockieren oder Daten zu löschen.</string>
 
-    <string name="settings_block_embedded_ads">Anzeigen blockieren</string>
-    <string name="settings_block_ads_enabled">Werbeblocker aktiviert</string>
-    <string name="settings_block_ads_disabled">Werbeblocker deaktiviert</string>
+    <string name="rating_title">Gefällt Ihnen NaviTV Browser?</string>
+    <string name="rating_message">Wenn Ihnen die App gefällt, bewerten Sie uns bitte. Es hilft uns, besser zu werden!</string>
+    <string name="rating_rate">Bewerten</string>
+    <string name="rating_remind_later">Später erinnern</string>
+    <string name="rating_no_thanks">Nein, danke</string>
 
-    <string name="mouse_mode_on">Maus: AN</string>
+    <string name="settings_homepage_label">Startseiten-URL</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">Startseite speichern</string>
+    <string name="settings_block_embedded_ads">Werbung auf Webseiten blockieren</string>
+    <string name="settings_block_embedded_ads_summary">Blendet automatisch Werbung auf Webseiten aus. Beeinflusst nicht die Bannerwerbung der App.</string>
+    <string name="settings_block_ads_enabled">Werbeblocker für Webseiten aktiviert</string>
+    <string name="settings_block_ads_disabled">Werbeblocker für Webseiten deaktiviert</string>
+    <string name="settings_homepage_empty">Bitte geben Sie eine Startseiten-URL ein</string>
+    <string name="settings_homepage_saved">Startseite gespeichert</string>
+    <string name="settings_clear_history">Verlauf löschen</string>
+    <string name="settings_clear_bookmarks">Lesezeichen löschen</string>
+    <string name="settings_clear_cache">WebView-Cache löschen</string>
+    <string name="settings_history_cleared">Verlauf gelöscht</string>
+    <string name="settings_bookmarks_cleared">Lesezeichen gelöscht</string>
+    <string name="settings_cache_cleared">Cache gelöscht</string>
+    <string name="settings_cache_failed">Cache konnte nicht gelöscht werden</string>
+
+    <string name="mouse_mode_on">Maus AN</string>
     <string name="mouse_mode_off">Maus</string>
 
     <string name="nav_back">Zurück</string>
     <string name="nav_forward">Vorwärts</string>
-    <string name="nav_refresh">Neu laden</string>
+    <string name="nav_refresh">Aktualisieren</string>
+    <string name="nav_bookmark">Speichern</string>
+    <string name="url_hint">Suchen oder URL eingeben</string>
+    <string name="cursor_content_desc">Virtueller Mauszeiger</string>
+    <string name="input_hint_default">Fernbedienung: D-Pad zum Bewegen · OK zum Auswählen</string>
+    <string name="input_hint_virtual_mouse">Mausmodus: D-Pad bewegt Zeiger · OK klickt · Zurück beendet</string>
+    <string name="input_hint_mouse">Maus verbunden · Scrollrad unterstützt</string>
+    <string name="input_hint_touch">Touch-Eingabe aktiv</string>
+    <string name="list_hint_open">Drücken Sie OK zum Öffnen · Gedrückt halten zum Löschen</string>
 </resources>

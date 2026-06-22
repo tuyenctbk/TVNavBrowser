@@ -109,6 +109,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             outline: none;
             cursor: pointer;
+            position: relative;
         }
 
         .card:focus, .card:hover {
@@ -133,11 +134,112 @@
             color: var(--text-color);
         }
 
+        .card-delete {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 22px;
+            height: 22px;
+            background-color: #ff4d4d;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 10;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .card:focus .card-delete, .card:hover .card-delete {
+            display: flex;
+        }
+
         .hint {
             margin-top: 40px;
             font-size: 12px;
             color: var(--text-secondary);
             opacity: 0.8;
+        }
+
+        /* Overlay Dialogs */
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 16, 32, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .dialog-content {
+            background-color: var(--card-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .dialog-content h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-size: 20px;
+        }
+
+        .dialog-input {
+            width: 100%;
+            height: 40px;
+            background-color: var(--bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0 12px;
+            color: var(--text-color);
+            font-size: 14px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .dialog-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 200, 87, 0.3);
+        }
+
+        .dialog-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .dialog-btn {
+            flex: 1;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .dialog-btn:focus, .dialog-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            transform: scale(1.03);
         }
     </style>
 </head>
@@ -153,46 +255,235 @@
             </form>
         </div>
 
-        <!-- TV Speed Dial Shortcuts -->
-        <div class="grid">
-            <a class="card" href="https://www.youtube.com">
-                <div class="card-icon">📺</div>
-                <div class="card-title">YouTube</div>
-            </a>
-            <a class="card" href="https://www.twitch.tv">
-                <div class="card-icon">🎮</div>
-                <div class="card-title">Twitch</div>
-            </a>
-            <a class="card" href="https://www.wikipedia.org">
-                <div class="card-icon">📚</div>
-                <div class="card-title">Wikipedia</div>
-            </a>
-            <a class="card" href="https://www.imdb.com">
-                <div class="card-icon">🎬</div>
-                <div class="card-title">IMDb</div>
-            </a>
-            <a class="card" href="https://news.google.com">
-                <div class="card-icon">📰</div>
-                <div class="card-title">Google News</div>
-            </a>
-            <a class="card" href="https://www.weather.com">
-                <div class="card-icon">☀️</div>
-                <div class="card-title">Weather</div>
-            </a>
-            <a class="card" href="https://www.reddit.com">
-                <div class="card-icon">💬</div>
-                <div class="card-title">Reddit</div>
-            </a>
-            <a class="card" href="https://www.github.com">
-                <div class="card-icon">💻</div>
-                <div class="card-title">GitHub</div>
-            </a>
+        <!-- TV Speed Dial Shortcuts Grid -->
+        <div class="grid" id="shortcuts-grid">
+            <!-- Rendered dynamically by script -->
         </div>
 
         <div class="hint">
-            Press Up to focus the address bar · D-pad to navigate speed dial · OK to open
+            Press Up to focus address bar · D-pad to navigate · OK to open · Hold OK/Enter to delete
         </div>
     </div>
 
+    <!-- Add Shortcut Dialog Overlay -->
+    <div id="add-dialog" class="dialog-overlay" style="display: none;">
+        <div class="dialog-content">
+            <h3>Add Speed Dial Shortcut</h3>
+            <input type="text" id="shortcut-title" class="dialog-input" placeholder="Shortcut Name (e.g., Google)" autocomplete="off" />
+            <input type="text" id="shortcut-url" class="dialog-input" placeholder="Website URL (e.g., https://google.com)" autocomplete="off" />
+            <div class="dialog-buttons">
+                <button class="dialog-btn" id="btn-dialog-save" onclick="saveNewShortcut()">Save</button>
+                <button class="dialog-btn" id="btn-dialog-cancel" onclick="hideAddDialog()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Dialog Overlay -->
+    <div id="delete-dialog" class="dialog-overlay" style="display: none;">
+        <div class="dialog-content">
+            <h3>Delete Shortcut</h3>
+            <p id="delete-confirm-text" style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">Are you sure you want to delete this shortcut?</p>
+            <div class="dialog-buttons">
+                <button class="dialog-btn" id="btn-delete-confirm" onclick="confirmDeleteShortcut()">Delete</button>
+                <button class="dialog-btn" id="btn-delete-cancel" onclick="hideDeleteDialog()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultShortcuts = [
+            { title: 'YouTube', url: 'https://www.youtube.com', icon: '📺' },
+            { title: 'Netflix', url: 'https://www.netflix.com', icon: '🎬' },
+            { title: 'Pluto TV', url: 'https://www.pluto.tv', icon: '🍿' },
+            { title: 'Twitch', url: 'https://www.twitch.tv', icon: '🎮' },
+            { title: 'TikTok', url: 'https://www.tiktok.com', icon: '📱' },
+            { title: 'IMDb', url: 'https://www.imdb.com', icon: '🎟️' },
+            { title: 'Google News', url: 'https://news.google.com', icon: '📰' },
+            { title: 'Weather', url: 'https://www.weather.com', icon: '☀️' }
+        ];
+
+        let shortcutsList = [];
+        let deleteTargetIndex = -1;
+        let enterPressTimer = null;
+
+        // Auto-assign emojis based on URLs/Titles
+        function getEmojiForUrl(url, title) {
+            const combined = (url + " " + title).toLowerCase();
+            if (combined.includes("youtube") || combined.includes("video") || combined.includes("tv")) return "📺";
+            if (combined.includes("netflix") || combined.includes("movie") || combined.includes("cinema")) return "🎬";
+            if (combined.includes("pluto")) return "🍿";
+            if (combined.includes("twitch") || combined.includes("game") || combined.includes("play")) return "🎮";
+            if (combined.includes("music") || combined.includes("sound") || combined.includes("spotify")) return "🎵";
+            if (combined.includes("news") || combined.includes("feed")) return "📰";
+            if (combined.includes("weather") || combined.includes("rain") || combined.includes("sun")) return "☀️";
+            if (combined.includes("reddit") || combined.includes("chat") || combined.includes("social")) return "💬";
+            if (combined.includes("mail") || combined.includes("gmail") || combined.includes("email")) return "✉️";
+            if (combined.includes("sport") || combined.includes("football") || combined.includes("soccer")) return "⚽";
+            if (combined.includes("shop") || combined.includes("amazon") || combined.includes("store")) return "🛒";
+            return "🌐";
+        }
+
+        function loadShortcuts() {
+            const stored = localStorage.getItem('tv_shortcuts');
+            if (stored) {
+                shortcutsList = JSON.parse(stored);
+            } else {
+                shortcutsList = defaultShortcuts;
+                localStorage.setItem('tv_shortcuts', JSON.stringify(shortcutsList));
+            }
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('shortcuts-grid');
+            grid.innerHTML = '';
+
+            shortcutsList.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.tabIndex = 0;
+                card.innerHTML = `
+                    <div class="card-delete" onclick="deleteShortcut(${index}, event)">×</div>
+                    <div class="card-icon">${item.icon}</div>
+                    <div class="card-title">${item.title}</div>
+                `;
+
+                // Handle clicks and enters
+                const navigateAction = () => { window.location.href = item.url; };
+                card.addEventListener('click', navigateAction);
+                
+                // OK/Enter D-pad key events (and long press detection)
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.keyCode === 23) {
+                        if (!enterPressTimer) {
+                            enterPressTimer = setTimeout(() => {
+                                triggerDeleteConfirmation(index);
+                                enterPressTimer = null;
+                            }, 1000);
+                        }
+                    }
+                });
+
+                card.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter' || e.keyCode === 23) {
+                        if (enterPressTimer) {
+                            clearTimeout(enterPressTimer);
+                            enterPressTimer = null;
+                            navigateAction();
+                        }
+                    }
+                });
+
+                grid.appendChild(card);
+            });
+
+            // Add "+" card
+            const addCard = document.createElement('div');
+            addCard.className = 'card';
+            addCard.tabIndex = 0;
+            addCard.innerHTML = `
+                <div class="card-icon">➕</div>
+                <div class="card-title">Add Shortcut</div>
+            `;
+            addCard.addEventListener('click', showAddDialog);
+            addCard.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.keyCode === 23) {
+                    showAddDialog();
+                }
+            });
+            grid.appendChild(addCard);
+        }
+
+        // Toggle background focus to trap D-pad inside dialogs
+        function toggleBackgroundFocus(enable) {
+            const mainCards = document.querySelectorAll('.grid .card');
+            const searchInput = document.querySelector('.search-input');
+            mainCards.forEach(card => {
+                card.tabIndex = enable ? 0 : -1;
+            });
+            searchInput.tabIndex = enable ? 0 : -1;
+        }
+
+        // Add Dialog flows
+        function showAddDialog() {
+            document.getElementById('add-dialog').style.display = 'flex';
+            toggleBackgroundFocus(false);
+            document.getElementById('shortcut-title').focus();
+        }
+
+        function hideAddDialog() {
+            document.getElementById('add-dialog').style.display = 'none';
+            document.getElementById('shortcut-title').value = '';
+            document.getElementById('shortcut-url').value = '';
+            toggleBackgroundFocus(true);
+        }
+
+        function saveNewShortcut() {
+            const titleInput = document.getElementById('shortcut-title').value.trim();
+            let urlInput = document.getElementById('shortcut-url').value.trim();
+
+            if (!titleInput || !urlInput) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
+                urlInput = 'https://' + urlInput;
+            }
+
+            const icon = getEmojiForUrl(urlInput, titleInput);
+            shortcutsList.push({ title: titleInput, url: urlInput, icon: icon });
+            localStorage.setItem('tv_shortcuts', JSON.stringify(shortcutsList));
+            
+            hideAddDialog();
+            renderGrid();
+        }
+
+        // Delete flows
+        function deleteShortcut(index, event) {
+            if (event) event.stopPropagation(); // prevent card click navigation
+            triggerDeleteConfirmation(index);
+        }
+
+        function triggerDeleteConfirmation(index) {
+            deleteTargetIndex = index;
+            const item = shortcutsList[index];
+            document.getElementById('delete-confirm-text').innerText = `Are you sure you want to delete the shortcut for "${item.title}"?`;
+            document.getElementById('delete-dialog').style.display = 'flex';
+            toggleBackgroundFocus(false);
+            document.getElementById('btn-delete-cancel').focus(); // default safe option
+        }
+
+        function confirmDeleteShortcut() {
+            if (deleteTargetIndex >= 0) {
+                shortcutsList.splice(deleteTargetIndex, 1);
+                localStorage.setItem('tv_shortcuts', JSON.stringify(shortcutsList));
+            }
+            hideDeleteDialog();
+            renderGrid();
+        }
+
+        function hideDeleteDialog() {
+            document.getElementById('delete-dialog').style.display = 'none';
+            deleteTargetIndex = -1;
+            toggleBackgroundFocus(true);
+        }
+
+        // Handle Escape/Back button key inputs inside dialogs
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' || e.keyCode === 4) {
+                if (document.getElementById('add-dialog').style.display === 'flex') {
+                    e.preventDefault();
+                    hideAddDialog();
+                } else if (document.getElementById('delete-dialog').style.display === 'flex') {
+                    e.preventDefault();
+                    hideDeleteDialog();
+                }
+            }
+        });
+
+        // Initialize Page
+        window.onload = loadShortcuts;
+    </script>
 </body>
 </html>

@@ -74,5 +74,26 @@ Install onto your connected Android TV emulator or physical TV device:
 
 Launch the application:
 ```bash
-adb shell am start -n com.tdpham.tvnavbrowser/.LauncherActivity
+adb shell am start -n com.tdpham.navitvbrowser/.LauncherActivity
+```
+
+---
+
+## 📦 Release Build & Signing
+
+The application is configured to build a signed Release Android App Bundle (AAB) or APK using the following configuration:
+
+*   **Keystore Path**: `common_release_key.jks` (Project Root, copied from Snake's dpad_arcade_release.jks)
+*   **Key Alias**: `dpad_hero_alias`
+*   **Keystore Password**: `dpadhero123`
+*   **Key Password**: `dpadhero123`
+
+### Command to build release AAB:
+```bash
+./gradlew bundleRelease
+```
+
+### Command to build release APK:
+```bash
+./gradlew assembleRelease
 ```

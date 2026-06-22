@@ -1,60 +1,63 @@
 <resources>
-    <string name="app_name">OmniSurf: Navegador Web TV</string>
+    <string name="app_name">Navegador NaviTV</string>
 
     <string name="bookmarks">Marcadores</string>
     <string name="history">Historial</string>
-    <string name="settings">Ajustes</string>
+    <string name="settings">Configuración</string>
     <string name="bookmark_saved">Marcador guardado</string>
-    <string name="bookmark_exists">Ya en marcadores</string>
-    <string name="bookmarks_empty">No hay marcadores. Guarda páginas con el botón ☆.</string>
-    <string name="history_empty">No hay historial de navegación.</string>
+    <string name="bookmark_exists">Ya está en marcadores</string>
+    <string name="bookmarks_empty">Sin marcadores. Guarda páginas con el botón ☆.</string>
+    <string name="history_empty">Sin historial de navegación.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
 
     <string name="onboarding_step">Paso %1$d de %2$d</string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_skip">Omitir</string>
-    <string name="onboarding_get_started">Empezar</string>
-    <string name="onboarding_title_1">Bienvenido a Lite Browser</string>
-    <string name="onboarding_message_1">Navega por la web en tu Android TV con tu mando, teclado o ratón. Usa el D-pad para moverte.</string>
+    <string name="onboarding_get_started">Comenzar</string>
+    <string name="onboarding_title_1">Bienvenido a Navegador NaviTV</string>
+    <string name="onboarding_message_1">Navega por la web en Android TV con tu control remoto, teclado, mouse o panel táctil. Usa el D-pad para moverte entre botones y dentro de la página.</string>
     <string name="onboarding_title_2">Modo ratón y puntero</string>
-    <string name="onboarding_message_2">Activa el modo Ratón para mover un puntero con el D-pad. Conecta un ratón USB o Bluetooth en cualquier momento.</string>
+    <string name="onboarding_message_2">Activa el modo ratón para mover un puntero con el D-pad y hacer clic con OK. Conecta un ratón USB o Bluetooth en cualquier momento; funciona al instante.</string>
     <string name="onboarding_title_3">Guarda tus favoritos</string>
-    <string name="onboarding_message_3">Usa el botón de estrella para guardar páginas. Abre tus marcadores e historial desde la barra de herramientas.</string>
+    <string name="onboarding_message_3">Usa el botón de estrella para guardar páginas. Abre tus marcadores guardados y el historial desde la barra de herramientas en cualquier momento.</string>
     <string name="onboarding_title_4">Todo listo</string>
-    <string name="onboarding_message_4">El historial se guarda automáticamente. Ve a Ajustes để để cambiar tu página de inicio o borrar datos.</string>
+    <string name="onboarding_message_4">El historial se guarda automáticamente. Visita Configuración para cambiar tu página de inicio, bloquear anuncios o borrar datos.</string>
 
-    <string name="rating_title">¿Te gusta Lite Browser?</string>
-    <string name="rating_message">Si te gusta la app, por favor califícanos. ¡Nos ayuda a mejorar!</string>
+    <string name="rating_title">¿Te gusta Navegador NaviTV?</string>
+    <string name="rating_message">Si te gusta la aplicación, por favor califícala. ¡Nos ayuda a mejorar!</string>
     <string name="rating_rate">Calificar</string>
     <string name="rating_remind_later">Recordar más tarde</string>
     <string name="rating_no_thanks">No, gracias</string>
 
-    <string name="settings_homepage_label">URL de Inicio</string>
+    <string name="settings_homepage_label">URL de página de inicio</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
-    <string name="settings_save_homepage">Guardar Inicio</string>
-    <string name="settings_block_embedded_ads">Bloquear anuncios</string>
-    <string name="settings_block_embedded_ads_summary">Oculta anuncios dentro de las páginas web. No afecta al anuncio de la app.</string>
-    <string name="settings_block_ads_enabled">Bloqueo de anuncios activado</string>
-    <string name="settings_block_ads_disabled">Bloqueo de anuncios desactivado</string>
-    <string name="settings_homepage_empty">Introduce una URL de inicio</string>
+    <string name="settings_save_homepage">Guardar página de inicio</string>
+    <string name="settings_block_embedded_ads">Bloquear anuncios web</string>
+    <string name="settings_block_embedded_ads_summary">Oculta automáticamente anuncios en páginas web. No afecta al anuncio de banner de la aplicación.</string>
+    <string name="settings_block_ads_enabled">Bloqueo de anuncios web activado</string>
+    <string name="settings_block_ads_disabled">Bloqueo de anuncios web desactivado</string>
+    <string name="settings_homepage_empty">Ingresa una URL de página de inicio</string>
     <string name="settings_homepage_saved">Página de inicio guardada</string>
-    <string name="settings_clear_history">Borrar Historial</string>
-    <string name="settings_clear_bookmarks">Borrar Marcadores</string>
-    <string name="settings_clear_cache">Borrar Caché</string>
+    <string name="settings_clear_history">Borrar historial</string>
+    <string name="settings_clear_bookmarks">Borrar marcadores</string>
+    <string name="settings_clear_cache">Borrar caché de WebView</string>
     <string name="settings_history_cleared">Historial borrado</string>
     <string name="settings_bookmarks_cleared">Marcadores borrados</string>
     <string name="settings_cache_cleared">Caché borrada</string>
     <string name="settings_cache_failed">No se pudo borrar la caché</string>
 
-    <string name="mouse_mode_on">Ratón: ON</string>
+    <string name="mouse_mode_on">Ratón ACT</string>
     <string name="mouse_mode_off">Ratón</string>
 
     <string name="nav_back">Atrás</string>
     <string name="nav_forward">Adelante</string>
     <string name="nav_refresh">Recargar</string>
     <string name="nav_bookmark">Guardar</string>
-    <string name="url_hint">Busca o ingresa URL</string>
+    <string name="url_hint">Busca o escribe una URL</string>
     <string name="cursor_content_desc">Puntero de ratón virtual</string>
-    <string name="input_hint_default">Mando: D-pad para navegar · OK para seleccionar</string>
-    <string name="input_hint_virtual_mouse">Modo ratón: D-pad mueve el puntero · OK hace clic</string>
+    <string name="input_hint_default">Remoto: D-pad para navegar · OK para seleccionar</string>
+    <string name="input_hint_virtual_mouse">Modo ratón: D-pad mueve puntero · OK hace clic · Atrás sale</string>
+    <string name="input_hint_mouse">Ratón conectado · Rueda de desplazamiento soportada</string>
+    <string name="input_hint_touch">Entrada táctil activa</string>
+    <string name="list_hint_open">Presiona OK para abrir · Mantén presionado para borrar</string>
 </resources>

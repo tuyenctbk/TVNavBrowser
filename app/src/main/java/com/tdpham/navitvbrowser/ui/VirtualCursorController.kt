@@ -1,0 +1,131 @@
+package com.tdpham.navitvbrowser.ui
+
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
+import android.os.SystemClock
+import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
+import android.widget.ImageView
+import android.webkit.WebView
+
+/**
+ * D-pad driven virtual cursor for browsing when a physical mouse is not available.
+ */
+class VirtualCursorController(
+    private val container: View,
+    private val cursor: ImageView,
+    private val webView: WebView,
+    private val speed: Float = 32f
+) {
+    var isEnabled: Boolean = false
+        private set
+
+    private var pulseAnimator: ObjectAnimator? = null
+
+    fun setEnabled(enabled: Boolean) {
+        if (isEnabled == enabled) return
+        isEnabled = enabled
+        if (enabled) {
+            cursor.visibility = View.VISIBLE
+            centerCursor()
+            startPulse()
+            webView.requestFocus()
+        } else {
+            cursor.visibility = View.GONE
+            stopPulse()
+        }
+    }
+
+    fun handleKey(keyCode: Int): Boolean {
+        if (!isEnabled) return false
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                move(0f, -speed)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_DOWN -> {
+                move(0f, speed)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                move(-speed, 0f)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                move(speed, 0f)
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER,
+            KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_BUTTON_X -> {
+                simulateClick()
+                true
+            }
+            else -> false
+        }
+    }
+
+    fun hideForPhysicalPointer() {
+        if (isEnabled) {
+            cursor.visibility = View.GONE
+        }
+    }
+
+    fun showIfEnabled() {
+        if (isEnabled) {
+            cursor.visibility = View.VISIBLE
+        }
+    }
+
+    fun simulateClick() {
+        val x = cursor.x + cursor.width / 2f
+        val y = cursor.y + cursor.height / 2f
+        val downTime = SystemClock.uptimeMillis()
+
+        val downEvent = MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0)
+        val upEvent = MotionEvent.obtain(downTime, downTime + 50, MotionEvent.ACTION_UP, x, y, 0)
+
+        webView.dispatchTouchEvent(downEvent)
+        webView.dispatchTouchEvent(upEvent)
+
+        downEvent.recycle()
+        upEvent.recycle()
+
+        cursor.animate().scaleX(0.85f).scaleY(0.85f).setDuration(80).withEndAction {
+            cursor.animate().scaleX(1f).scaleY(1f).setDuration(80).start()
+        }.start()
+    }
+
+    fun move(dx: Float, dy: Float) {
+        container.post {
+            val maxX = (container.width - cursor.width).coerceAtLeast(0).toFloat()
+            val maxY = (container.height - cursor.height).coerceAtLeast(0).toFloat()
+            cursor.x = (cursor.x + dx).coerceIn(0f, maxX)
+            cursor.y = (cursor.y + dy).coerceIn(0f, maxY)
+        }
+    }
+
+    private fun centerCursor() {
+        container.post {
+            if (container.width == 0 || container.height == 0) return@post
+            cursor.x = container.width / 2f - cursor.width / 2f
+            cursor.y = container.height / 2f - cursor.height / 2f
+        }
+    }
+
+    private fun startPulse() {
+        stopPulse()
+        pulseAnimator = ObjectAnimator.ofFloat(cursor, View.ALPHA, 1f, 0.65f).apply {
+            duration = 700
+            repeatMode = ValueAnimator.REVERSE
+            repeatCount = ValueAnimator.INFINITE
+            start()
+        }
+    }
+
+    private fun stopPulse() {
+        pulseAnimator?.cancel()
+        pulseAnimator = null
+        cursor.alpha = 1f
+    }
+}
