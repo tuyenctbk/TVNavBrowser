@@ -95,14 +95,25 @@ class OnboardingActivity : ComponentActivity() {
         }
 
         if (animate) {
-            tvTitle.animate().alpha(0f).setDuration(120).withEndAction {
+            tvTitle.animate().alpha(0f).translationX(-50f).setDuration(140).start()
+            tvMessage.animate().alpha(0f).translationX(-50f).setDuration(140).start()
+            ivOnboarding.animate().alpha(0f).scaleX(0.9f).scaleY(0.9f).setDuration(140).withEndAction {
                 applyContent()
-                tvTitle.animate().alpha(1f).setDuration(180).start()
-                tvMessage.alpha = 0f
-                tvMessage.animate().alpha(1f).setDuration(220).start()
+                tvTitle.translationX = 50f
+                tvMessage.translationX = 50f
+                ivOnboarding.scaleX = 0.9f
+                ivOnboarding.scaleY = 0.9f
+                tvTitle.animate().alpha(1f).translationX(0f).setDuration(220).start()
+                tvMessage.animate().alpha(1f).translationX(0f).setDuration(220).start()
+                ivOnboarding.animate().alpha(1f).scaleX(1.0f).scaleY(1.0f).setDuration(220).start()
             }.start()
         } else {
             applyContent()
+            tvTitle.translationX = 0f
+            tvMessage.translationX = 0f
+            ivOnboarding.scaleX = 1f
+            ivOnboarding.scaleY = 1f
+            ivOnboarding.alpha = 1f
         }
     }
 

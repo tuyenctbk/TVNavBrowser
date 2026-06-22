@@ -3,6 +3,7 @@ package com.tdpham.tvnavbrowser
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -45,8 +46,15 @@ class BookmarksActivity : ComponentActivity() {
 
         val inflater = LayoutInflater.from(this)
         list.forEach { bookmark ->
-            val row = inflater.inflate(R.layout.item_url_row, container, false) as TextView
-            row.text = getString(R.string.url_row_format, bookmark.title, bookmark.url)
+            val row = inflater.inflate(R.layout.item_url_row, container, false)
+            val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
+            val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
+            val tvRowUrl = row.findViewById<TextView>(R.id.tvRowUrl)
+
+            ivRowIcon.setImageResource(R.drawable.ic_nav_bookmark)
+            tvRowTitle.text = bookmark.title
+            tvRowUrl.text = bookmark.url
+
             FocusAnimationHelper.apply(row)
             row.setOnClickListener { openUrl(bookmark.url) }
             row.setOnLongClickListener {

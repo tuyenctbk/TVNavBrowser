@@ -24,8 +24,14 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdView
+import android.view.LayoutInflater
+import android.widget.LinearLayout
+import com.tdpham.tvnavbrowser.data.entity.BookmarkEntity
+import kotlinx.coroutines.flow.collectLatest
 import com.tdpham.tvnavbrowser.data.db.BrowserDatabase
 import com.tdpham.tvnavbrowser.data.repository.BookmarkRepository
 import com.tdpham.tvnavbrowser.data.repository.HistoryRepository
@@ -46,6 +52,7 @@ class MainActivity : ComponentActivity() {
     companion object {
         const val EXTRA_URL = "extra_url"
         private const val KEY_MOUSE_MODE = "mouse_mode"
+        private const val VOICE_SEARCH_REQUEST_CODE = 999
     }
 
     private lateinit var webView: WebView
@@ -55,15 +62,19 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnRefresh: Button
     private lateinit var btnBookmark: Button
     private lateinit var btnMouseMode: Button
+    private lateinit var btnVoiceSearch: Button
     private lateinit var ivCursor: ImageView
     private lateinit var webViewContainer: View
     private lateinit var progressBar: ProgressBar
     private lateinit var tvInputHint: TextView
+    private lateinit var bookmarkBar: View
+    private lateinit var bookmarkBarContainer: LinearLayout
 
     private lateinit var virtualCursor: VirtualCursorController
     private lateinit var historyRepo: HistoryRepository
     private lateinit var bookmarkRepo: BookmarkRepository
     private var bannerAdView: AdView? = null
+    private var isWebViewInputFocused = false
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,10 +93,13 @@ class MainActivity : ComponentActivity() {
         btnRefresh = findViewById(R.id.btnRefresh)
         btnBookmark = findViewById(R.id.btnBookmark)
         btnMouseMode = findViewById(R.id.btnMouseMode)
+        btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
         ivCursor = findViewById(R.id.ivCursor)
         webViewContainer = findViewById(R.id.webViewContainer)
         progressBar = findViewById(R.id.progressBar)
         tvInputHint = findViewById(R.id.tvInputHint)
+        bookmarkBar = findViewById(R.id.bookmarkBar)
+        bookmarkBarContainer = findViewById(R.id.bookmarkBarContainer)
 
         virtualCursor = VirtualCursorController(webViewContainer, ivCursor, webView)
 
@@ -95,6 +109,9 @@ class MainActivity : ComponentActivity() {
         setupFocusAnimations()
         setupBackHandler()
         updateInputHint()
+        updateNavButtonsState()
+        setupBookmarkBarFlow()
+        setupBookmarkBarAutoHide()
 
         if (savedInstanceState != null) {
             webView.restoreState(savedInstanceState)
@@ -148,7 +165,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        if (event.action == KeyEvent.ACTION_DOWN && virtualCursor.isEnabled) {
+        if (event.action == KeyEvent.ACTION_DOWN && virtualCursor.isEnabled && !isKeyboardVisible()) {
             val focused = currentFocus
             if (focused != urlInput && virtualCursor.handleKey(event.keyCode)) {
                 updateInputHint()
@@ -164,6 +181,15 @@ class MainActivity : ComponentActivity() {
             tvInputHint.text = getString(R.string.input_hint_mouse)
             tvInputHint.isVisible = true
             if (webView.dispatchGenericMotionEvent(event)) return true
+        } else if (event.source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK &&
+            event.action == MotionEvent.ACTION_MOVE && virtualCursor.isEnabled
+        ) {
+            val x = event.getAxisValue(MotionEvent.AXIS_X)
+            val y = event.getAxisValue(MotionEvent.AXIS_Y)
+            if (Math.abs(x) > 0.15f || Math.abs(y) > 0.15f) {
+                virtualCursor.move(x * 32f, y * 32f)
+                return true
+            }
         }
         return super.onGenericMotionEvent(event)
     }
@@ -181,6 +207,7 @@ class MainActivity : ComponentActivity() {
     private fun configureWebView() {
         val settings: WebSettings = webView.settings
         settings.javaScriptEnabled = true
+        webView.addJavascriptInterface(WebAppInterface(), "AndroidApp")
         settings.domStorageEnabled = true
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
@@ -212,14 +239,17 @@ class MainActivity : ComponentActivity() {
                 super.onPageStarted(view, url, favicon)
                 progressBar.isVisible = true
                 progressBar.progress = 0
+                isWebViewInputFocused = false
                 view?.evaluateJavascript("window.__tvnavAdBlockerApplied = false;", null)
                 injectFocusStyle(view)
+                updateNavButtonsState()
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 progressBar.isVisible = false
                 injectFocusStyle(view)
+                injectInputFocusListeners(view)
                 view?.requestFocus()
                 virtualCursor.showIfEnabled()
                 if (!UrlUtils.isBrowsableUrl(url.orEmpty())) return
@@ -235,6 +265,7 @@ class MainActivity : ComponentActivity() {
                     }
                     FirebaseInitializer.logEvent("page_view", mapOf("url" to pageUrl))
                 }
+                updateNavButtonsState()
             }
         }
 
@@ -242,12 +273,14 @@ class MainActivity : ComponentActivity() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 progressBar.progress = newProgress
                 progressBar.isVisible = newProgress in 1..99
+                updateNavButtonsState()
             }
         }
     }
 
     private fun setupNavigationButtons() {
         btnMouseMode.setOnClickListener { setMouseMode(!virtualCursor.isEnabled) }
+        btnVoiceSearch.setOnClickListener { startVoiceSearch() }
 
         btnBack.setOnClickListener {
             if (webView.canGoBack()) webView.goBack()
@@ -331,7 +364,7 @@ class MainActivity : ComponentActivity() {
     private fun setupFocusAnimations() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnBookmark,
-            btnMouseMode,
+            btnMouseMode, btnVoiceSearch,
             findViewById(R.id.btnShowBookmarks),
             findViewById(R.id.btnShowHistory),
             findViewById(R.id.btnSettings),
@@ -342,12 +375,23 @@ class MainActivity : ComponentActivity() {
     private fun setupBackHandler() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (virtualCursor.isEnabled) {
-                    setMouseMode(false)
+                if (isKeyboardVisible() || isWebViewInputFocused) {
+                    webView.evaluateJavascript("document.activeElement.blur();", null)
+                    isWebViewInputFocused = false
+                    btnBack.requestFocus()
+                    return
+                }
+                if (urlInput.hasFocus()) {
+                    urlInput.clearFocus()
+                    btnBack.requestFocus()
                     return
                 }
                 if (webView.canGoBack()) {
                     webView.goBack()
+                    return
+                }
+                if (virtualCursor.isEnabled) {
+                    setMouseMode(false)
                 } else {
                     finish()
                 }
@@ -370,7 +414,14 @@ class MainActivity : ComponentActivity() {
         return true
     }
 
-    private fun resolveHomepage(): String = AppPreferences.resolveHomepage(this)
+    private fun resolveHomepage(): String {
+        val homepage = AppPreferences.getHomepage(this)
+        return if (homepage.isEmpty() || homepage == "https://www.google.com") {
+            "file:///android_asset/dashboard.html"
+        } else {
+            homepage
+        }
+    }
 
     private fun loadTypedUrl(input: String) {
         if (input.isEmpty()) return
@@ -395,5 +446,181 @@ class MainActivity : ComponentActivity() {
             "style.innerHTML = '$css';" +
             "})();"
         view?.evaluateJavascript(js, null)
+    }
+
+    private fun updateNavButtonsState() {
+        val canGoBack = webView.canGoBack()
+        btnBack.isEnabled = canGoBack
+        btnBack.alpha = if (canGoBack) 1.0f else 0.4f
+
+        val canGoForward = webView.canGoForward()
+        btnForward.isEnabled = canGoForward
+        btnForward.alpha = if (canGoForward) 1.0f else 0.4f
+    }
+
+    private fun setupBookmarkBarFlow() {
+        lifecycleScope.launch {
+            bookmarkRepo.getAllBookmarks().collectLatest { list ->
+                populateBookmarkBar(list)
+            }
+        }
+    }
+
+    private fun populateBookmarkBar(list: List<BookmarkEntity>) {
+        bookmarkBarContainer.removeAllViews()
+        if (list.isEmpty()) {
+            bookmarkBar.visibility = View.GONE
+            return
+        }
+
+        val inflater = LayoutInflater.from(this)
+        list.forEach { bookmark ->
+            val chip = inflater.inflate(R.layout.item_bookmark_chip, bookmarkBarContainer, false)
+            val tvChipTitle = chip.findViewById<TextView>(R.id.tvChipTitle)
+            tvChipTitle.text = bookmark.title
+
+            FocusAnimationHelper.apply(chip)
+            chip.setOnClickListener {
+                webView.loadUrl(bookmark.url)
+                webView.requestFocus()
+            }
+            bookmarkBarContainer.addView(chip)
+        }
+
+        if (isViewInToolbarOrBookmarkBar(currentFocus)) {
+            showBookmarkBar()
+        }
+    }
+
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val hideBookmarkRunnable = Runnable { animateBookmarkBarVisibility(false) }
+
+    private fun showBookmarkBar() {
+        handler.removeCallbacks(hideBookmarkRunnable)
+        animateBookmarkBarVisibility(true)
+    }
+
+    private fun scheduleHideBookmarkBar(delayMs: Long = 2500L) {
+        handler.removeCallbacks(hideBookmarkRunnable)
+        handler.postDelayed(hideBookmarkRunnable, delayMs)
+    }
+
+    private fun animateBookmarkBarVisibility(show: Boolean) {
+        val containerChildCount = bookmarkBarContainer.childCount
+        if (containerChildCount == 0) {
+            bookmarkBar.visibility = View.GONE
+            return
+        }
+
+        val targetVisibility = if (show) View.VISIBLE else View.GONE
+        if (bookmarkBar.visibility == targetVisibility) return
+
+        android.transition.TransitionManager.beginDelayedTransition(findViewById(android.R.id.content))
+        bookmarkBar.visibility = targetVisibility
+    }
+
+    private fun setupBookmarkBarAutoHide() {
+        window.decorView.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+            if (newFocus != null) {
+                if (isViewInToolbarOrBookmarkBar(newFocus)) {
+                    showBookmarkBar()
+                } else {
+                    scheduleHideBookmarkBar()
+                }
+            } else {
+                scheduleHideBookmarkBar()
+            }
+        }
+    }
+
+    private fun isViewInToolbarOrBookmarkBar(view: View?): Boolean {
+        var current: View? = view
+        while (current != null) {
+            if (current.id == R.id.toolbar || current.id == R.id.bookmarkBar) {
+                return true
+            }
+            val parent = current.parent
+            current = if (parent is View) parent else null
+        }
+        return false
+    }
+
+    private fun startVoiceSearch() {
+        val intent = Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Speak a website URL or search query...")
+        }
+        try {
+            startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Voice search is not supported on this device", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            val results = data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)
+            if (!results.isNullOrEmpty()) {
+                val query = results[0].trim()
+                urlInput.setText(query)
+                loadTypedUrl(query)
+            }
+        }
+    }
+
+    private fun isKeyboardVisible(): Boolean {
+        val insets = ViewCompat.getRootWindowInsets(window.decorView)
+        if (insets != null) {
+            return insets.isVisible(WindowInsetsCompat.Type.ime())
+        }
+        val rect = android.graphics.Rect()
+        window.decorView.getWindowVisibleDisplayFrame(rect)
+        val screenHeight = window.decorView.rootView.height
+        val keypadHeight = screenHeight - rect.bottom
+        return keypadHeight > screenHeight * 0.15
+    }
+
+    private fun injectInputFocusListeners(view: WebView?) {
+        val js = """
+            (function() {
+                function addFocusListeners() {
+                    var inputs = document.querySelectorAll('input, textarea, [contenteditable]');
+                    inputs.forEach(function(input) {
+                        if (!input.dataset.hasTvnavListeners) {
+                            input.dataset.hasTvnavListeners = 'true';
+                            input.addEventListener('focus', function() {
+                                if (window.AndroidApp) window.AndroidApp.onInputFocused();
+                            });
+                            input.addEventListener('blur', function() {
+                                if (window.AndroidApp) window.AndroidApp.onInputBlurred();
+                            });
+                        }
+                    });
+                }
+                addFocusListeners();
+                if (window.MutationObserver) {
+                    var observer = new MutationObserver(addFocusListeners);
+                    observer.observe(document.body, { childList: true, subtree: true });
+                }
+            })();
+        """.trimIndent()
+        view?.evaluateJavascript(js, null)
+    }
+
+    inner class WebAppInterface {
+        @android.webkit.JavascriptInterface
+        fun onInputFocused() {
+            runOnUiThread {
+                isWebViewInputFocused = true
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun onInputBlurred() {
+            runOnUiThread {
+                isWebViewInputFocused = false
+            }
+        }
     }
 }

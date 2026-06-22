@@ -3,6 +3,7 @@ package com.tdpham.tvnavbrowser
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -45,8 +46,15 @@ class HistoryActivity : ComponentActivity() {
 
         val inflater = LayoutInflater.from(this)
         list.forEach { history ->
-            val row = inflater.inflate(R.layout.item_url_row, container, false) as TextView
-            row.text = getString(R.string.url_row_format, history.title, history.url)
+            val row = inflater.inflate(R.layout.item_url_row, container, false)
+            val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
+            val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
+            val tvRowUrl = row.findViewById<TextView>(R.id.tvRowUrl)
+
+            ivRowIcon.setImageResource(R.drawable.ic_nav_history)
+            tvRowTitle.text = history.title
+            tvRowUrl.text = history.url
+
             FocusAnimationHelper.apply(row)
             row.setOnClickListener { openUrl(history.url) }
             row.setOnLongClickListener {

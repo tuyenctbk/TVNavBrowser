@@ -5,7 +5,7 @@
         <shape android:shape="rectangle">
             <gradient
                 android:angle="135"
-                android:endColor="#0F172A"
+                android:endColor="#0B0F19"
                 android:startColor="#1E293B"
                 android:centerColor="#111827"
                 android:type="linear" />
@@ -45,7 +45,7 @@
             <!-- Outer Glow -->
             <path
                 android:fillColor="#1AFFFFC8"
-                android:pathData="M54,14c-22.09,0 -40,17.91 -40,40s17.91,40 40,40s40,-17.91 40,-40s-17.91,-40 -54,-40z" />
+                android:pathData="M54,14c-22.09,0 -40,17.91 -40,40s17.91,40 40,40s40,-17.91 40,-40s-17.91,-40 -40,-40z" />
 
             <!-- Compass Ring -->
             <path
@@ -69,28 +69,42 @@
         </vector>
     </item>
 
-    <!-- Brand Typography: LITE BROWSER -->
+    <!-- Brand Typography: LITE BROWSER (Stacked Two-Line Lockup) -->
     <item
         android:gravity="center_vertical|left"
-        android:left="132dp">
+        android:left="132dp"
+        android:width="156dp"
+        android:height="48dp">
         <vector
-            android:width="160dp"
-            android:height="40dp"
-            android:viewportWidth="160"
-            android:viewportHeight="40">
+            android:width="200dp"
+            android:height="62dp"
+            android:viewportWidth="200"
+            android:viewportHeight="62">
+            <!-- Line 1: LITE (White) -->
             <!-- L -->
-            <path android:fillColor="#FFFFFF" android:pathData="M5,5v30h28v-4h-24v-26h-4z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M10,5v20h18v-4h-14V5h-4z" />
             <!-- I -->
-            <path android:fillColor="#FFFFFF" android:pathData="M37,5v30h4v-30h-4z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M34,5v20h4V5h-4z" />
             <!-- T -->
-            <path android:fillColor="#FFFFFF" android:pathData="M48,5h32v4h-14v26h-4v-26h-14v-4z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M44,5h20v4h-8v16h-4V9h-8V5z" />
             <!-- E -->
-            <path android:fillColor="#FFFFFF" android:pathData="M85,5v30h28v-4h-24v-8h20v-4h-20v-10h24v-4h-28z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M70,5v20h18v-4h-14v-5h12v-4h-12V9h14V5H70z" />
 
-            <!-- B (Accent Gold) -->
-            <path android:fillColor="#FFFFC857" android:pathData="M120,5h10c4,0 7,3 7,7c0,3 -2,5 -5,6c3,1 5,4 5,7c0,4 -4,8 -8,8h-9v-28z M124,17h6c1.5,0 3,-1.5 3,-3s-1.5,-3 -3,-3h-6v6z M124,28h7c1.5,0 3,-1.5 3,-3s-1.5,-3 -3,-3h-7v6z" />
-            <!-- R (Accent Gold) -->
-            <path android:fillColor="#FFFFC857" android:pathData="M138,5h8c4,0 7,3 7,7c0,3 -2,5 -5,6l5,15h-4l-5,-14h-4v14h-4v-28z M142,17h4c1.5,0 3,-1.5 3,-3s-1.5,-3 -3,-3h-4v6z" />
+            <!-- Line 2: BROWSER (Accent Gold) -->
+            <!-- B -->
+            <path android:fillColor="#FFFFC857" android:pathData="M10,34h8c2.5,0 4.5,1.5 4.5,3.5c0,1.8 -1.2,2.8 -3,3.2c2,0.4 3.5,1.5 3.5,3.8c0,2.5 -2,4.5 -5,4.5h-8V34z M13.5,39h4.5c1,0 1.8,-0.7 1.8,-1.7s-0.8,-1.8 -1.8,-1.8h-4.5V39z M13.5,45.5h5c1,0 2,-0.7 2,-1.7s-1,-1.8 -2,-1.8h-5V45.5z" />
+            <!-- R -->
+            <path android:fillColor="#FFFFC857" android:pathData="M32,34h7.5c2.5,0 4.5,1.8 4.5,4c0,1.8 -1.2,3.2 -3,3.8l4,7.2h-4l-3.5,-6.5h-2v6.5h-3.5V34z M35.5,39h4c1,0 1.8,-0.7 1.8,-1.8s-0.8,-1.7 -1.8,-1.7h-4V39z" />
+            <!-- O -->
+            <path android:fillColor="#FFFFC857" android:fillType="evenOdd" android:pathData="M52,34h12v15H52V34z M55.5,37.5h5v8h-5v-8z" />
+            <!-- W -->
+            <path android:fillColor="#FFFFC857" android:pathData="M73,34h3.5l2.2,9l2.2,-9h3.2l2.2,9l2.2,-9h3.5l-4,15h-3.5l-2,-8.5l-2,8.5h-3.5L73,34z" />
+            <!-- S -->
+            <path android:fillColor="#FFFFC857" android:pathData="M101,34h12v3.5h-8.5v2.2h8.5v9.3h-12V45.5h8.5v-2.2h-8.5V34z" />
+            <!-- E -->
+            <path android:fillColor="#FFFFC857" android:pathData="M122,34v15h12v-3.5h-8.5v-2.2h7.5v-3.5h-7.5V37.5h8.5V34H122z" />
+            <!-- R -->
+            <path android:fillColor="#FFFFC857" android:pathData="M143,34h7.5c2.5,0 4.5,1.8 4.5,4c0,1.8 -1.2,3.2 -3,3.8l4,7.2h-4l-3.5,-6.5h-2v6.5h-3.5V34z M146.5,39h4c1,0 1.8,-0.7 1.8,-1.8s-0.8,-1.7 -1.8,-1.7h-4V39z" />
         </vector>
     </item>
 

@@ -56,7 +56,8 @@ class VirtualCursorController(
                 move(speed, 0f)
                 true
             }
-            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER -> {
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER,
+            KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_BUTTON_X -> {
                 simulateClick()
                 true
             }
@@ -95,7 +96,7 @@ class VirtualCursorController(
         }.start()
     }
 
-    private fun move(dx: Float, dy: Float) {
+    fun move(dx: Float, dy: Float) {
         container.post {
             val maxX = (container.width - cursor.width).coerceAtLeast(0).toFloat()
             val maxY = (container.height - cursor.height).coerceAtLeast(0).toFloat()

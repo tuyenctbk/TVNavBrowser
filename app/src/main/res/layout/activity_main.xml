@@ -26,8 +26,10 @@
                 style="@style/ToolbarButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_nav_back"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnForward"
-                android:nextFocusDown="@id/webView"
                 android:text="@string/nav_back" />
 
             <Button
@@ -36,8 +38,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:drawableStart="@drawable/ic_nav_forward"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnRefresh"
-                android:nextFocusDown="@id/webView"
                 android:text="@string/nav_forward" />
 
             <Button
@@ -46,8 +50,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:drawableStart="@drawable/ic_nav_refresh"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnBookmark"
-                android:nextFocusDown="@id/webView"
                 android:text="@string/nav_refresh" />
 
             <Button
@@ -56,8 +62,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:drawableStart="@drawable/ic_nav_bookmark"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnShowBookmarks"
-                android:nextFocusDown="@id/webView"
                 android:text="@string/nav_bookmark" />
 
             <Button
@@ -66,8 +74,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:drawableStart="@drawable/ic_nav_bookmarks_list"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnShowHistory"
-                android:nextFocusDown="@id/webView"
                 android:text="@string/bookmarks" />
 
             <Button
@@ -76,8 +86,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:drawableStart="@drawable/ic_nav_history"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnSettings"
-                android:nextFocusDown="@id/webView"
                 android:text="@string/history" />
 
             <Button
@@ -86,8 +98,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:drawableStart="@drawable/ic_nav_settings"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnMouseMode"
-                android:nextFocusDown="@id/webView"
                 android:text="@string/settings" />
 
             <Button
@@ -96,9 +110,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:nextFocusRight="@id/urlInput"
-                android:nextFocusDown="@id/webView"
+                android:drawableStart="@drawable/ic_nav_mouse"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
+                android:nextFocusRight="@id/btnVoiceSearch"
                 android:text="@string/mouse_mode_off" />
+
+            <Button
+                android:id="@+id/btnVoiceSearch"
+                style="@style/ToolbarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:drawableStart="@drawable/ic_nav_mic"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/text_primary"
+                android:nextFocusRight="@id/urlInput"
+                android:text="Voice" />
 
             <EditText
                 android:id="@+id/urlInput"
@@ -109,7 +137,6 @@
                 android:hint="@string/url_hint"
                 android:imeOptions="actionGo"
                 android:inputType="textUri|textNoSuggestions"
-                android:nextFocusDown="@id/webView"
                 android:paddingStart="14dp"
                 android:paddingEnd="14dp"
                 android:singleLine="true"
@@ -130,6 +157,27 @@
         android:progress="0"
         android:progressDrawable="@drawable/progress_page"
         android:visibility="gone" />
+
+    <!-- Smart Auto-Hiding Bookmark Bar -->
+    <HorizontalScrollView
+        android:id="@+id/bookmarkBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_toolbar"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:padding="6dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/bookmarkBarContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+
+    </HorizontalScrollView>
 
     <FrameLayout
         android:id="@+id/webViewContainer"
