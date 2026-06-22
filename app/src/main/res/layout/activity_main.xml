@@ -24,109 +24,118 @@
             <Button
                 android:id="@+id/btnBack"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_back"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnForward"
-                android:text="@string/nav_back" />
+                android:contentDescription="@string/nav_back" />
 
             <Button
                 android:id="@+id/btnForward"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_forward"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnRefresh"
-                android:text="@string/nav_forward" />
+                android:contentDescription="@string/nav_forward" />
 
             <Button
                 android:id="@+id/btnRefresh"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_refresh"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnBookmark"
-                android:text="@string/nav_refresh" />
+                android:contentDescription="@string/nav_refresh" />
 
             <Button
                 android:id="@+id/btnBookmark"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_bookmark"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnShowBookmarks"
-                android:text="@string/nav_bookmark" />
+                android:contentDescription="@string/nav_bookmark" />
 
             <Button
                 android:id="@+id/btnShowBookmarks"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_bookmarks_list"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnShowHistory"
-                android:text="@string/bookmarks" />
+                android:contentDescription="@string/bookmarks" />
 
             <Button
                 android:id="@+id/btnShowHistory"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_history"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnSettings"
-                android:text="@string/history" />
+                android:contentDescription="@string/history" />
 
             <Button
                 android:id="@+id/btnSettings"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_settings"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnMouseMode"
-                android:text="@string/settings" />
+                android:contentDescription="@string/settings" />
 
             <Button
                 android:id="@+id/btnMouseMode"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_mouse"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/btnVoiceSearch"
-                android:text="@string/mouse_mode_off" />
+                android:contentDescription="@string/mouse_mode_off" />
 
             <Button
                 android:id="@+id/btnVoiceSearch"
                 style="@style/ToolbarButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_mic"
-                android:drawablePadding="6dp"
                 android:drawableTint="@color/text_primary"
                 android:nextFocusRight="@id/urlInput"
-                android:text="Voice" />
+                android:contentDescription="Voice Search" />
 
             <EditText
                 android:id="@+id/urlInput"

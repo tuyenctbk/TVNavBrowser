@@ -317,9 +317,12 @@ class MainActivity : ComponentActivity() {
 
     private fun setMouseMode(enabled: Boolean) {
         virtualCursor.setEnabled(enabled)
-        btnMouseMode.text = getString(
-            if (enabled) R.string.mouse_mode_on else R.string.mouse_mode_off
-        )
+        val tintColor = if (enabled) {
+            getColor(R.color.accent)
+        } else {
+            getColor(R.color.text_primary)
+        }
+        btnMouseMode.compoundDrawableTintList = android.content.res.ColorStateList.valueOf(tintColor)
         btnMouseMode.animate()
             .scaleX(if (enabled) 1.08f else 1f)
             .scaleY(if (enabled) 1.08f else 1f)

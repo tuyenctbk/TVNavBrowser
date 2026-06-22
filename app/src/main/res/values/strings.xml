@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Lite Browser</string>
+    <string name="app_name">NaviTV Browser</string>
 
     <string name="bookmarks">Bookmarks</string>
     <string name="history">History</string>
@@ -14,7 +14,7 @@
     <string name="onboarding_next">Next</string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_get_started">Get Started</string>
-    <string name="onboarding_title_1">Welcome to Lite Browser</string>
+    <string name="onboarding_title_1">Welcome to NaviTV Browser</string>
     <string name="onboarding_message_1">Browse the web on Android TV with your remote, keyboard, mouse, or touchpad. Use the D-pad to move between buttons and into the page.</string>
     <string name="onboarding_title_2">Mouse and pointer mode</string>
     <string name="onboarding_message_2">Turn on Mouse mode to move a pointer with the D-pad and click with OK. Plug in a USB or Bluetooth mouse anytime — it works instantly.</string>
@@ -23,7 +23,7 @@
     <string name="onboarding_title_4">You are all set</string>
     <string name="onboarding_message_4">History is saved automatically. Visit Settings to change your homepage, block website ads, or clear data.</string>
 
-    <string name="rating_title">Enjoying Lite Browser?</string>
+    <string name="rating_title">Enjoying NaviTV Browser?</string>
     <string name="rating_message">If you like the app, please consider rating it. It helps us improve!</string>
     <string name="rating_rate">Rate</string>
     <string name="rating_remind_later">Remind me later</string>

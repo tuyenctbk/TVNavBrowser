@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TVNav Browser"
+rootProject.name = "NaviTV Browser"
 include(":app")
  
