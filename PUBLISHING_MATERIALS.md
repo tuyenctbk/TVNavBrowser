@@ -81,3 +81,81 @@ In the Play Console, go to **Release > Setup > Advanced settings > Device catego
 Google Play requires a public URL for your Privacy Policy.
 *   **Privacy Policy Link**: You can host the contents of `PRIVACY_POLICY.md` on a GitHub Pages link or your website.
     *   Example URL: `https://tuyenctbk.github.io/TVNavBrowser/privacy-policy.html`
+
+---
+
+## 📢 Release Notes / What's New (Supported Languages)
+
+Below are the release notes for the Play Console release submission, kept within Google Play's 500-character limit:
+
+### 🇺🇸 English (EN)
+```text
+• Initial release of NaviTV Browser!
+• Full D-pad remote optimization with smart focus.
+• Voice Search for quick web queries.
+• Customizable Dashboard speed dial shortcuts.
+• Virtual mouse pointer and gamepad support.
+• Built-in website ad blocker toggle.
+• Full Firebase Analytics and Cloud Messaging integrations.
+• Modern dark theme styling and performance improvements.
+```
+
+### 🇪🇸 Spanish (ES)
+```text
+• ¡Lanzamiento inicial de Navegador NaviTV!
+• Optimización completa del control remoto D-pad con enfoque inteligente.
+• Búsqueda por voz para consultas rápidas.
+• Accesos directos personalizables en el panel de inicio.
+• Soporte para puntero de ratón virtual y control de juego.
+• Bloqueador de anuncios web integrado.
+• Integración completa con Firebase Analytics y Cloud Messaging.
+• Diseño de tema oscuro y mejoras de rendimiento.
+```
+
+### 🇵🇹 Portuguese (PT)
+```text
+• Lançamento inicial do Navegador NaviTV!
+• Otimização completa do controle remoto D-pad com foco inteligente.
+• Pesquisa por voz para consultas rápidas.
+• Atalhos personalizáveis no painel de início.
+• Suporte para ponteiro de mouse virtual e controle de jogo.
+• Bloqueador de anúncios de sites integrado.
+• Integração completa com Firebase Analytics e Cloud Messaging.
+• Visual em tema escuro e melhorias de desempenho.
+```
+
+### 🇻🇳 Vietnamese (VI)
+```text
+• Phiên bản đầu tiên của Trình duyệt NaviTV!
+• Tối ưu hóa hoàn toàn cho điều khiển D-pad với tiêu điểm thông minh.
+• Tìm kiếm bằng giọng nói để duyệt tìm nhanh chóng.
+• Phím tắt trang chủ tùy chỉnh linh hoạt.
+• Hỗ trợ chuột ảo và tay cầm chơi game.
+• Tích hợp chặn quảng cáo trang web.
+• Hỗ trợ đầy đủ Firebase Analytics và Cloud Messaging.
+• Giao diện tối hiện đại và tối ưu hiệu năng.
+```
+
+### 🇫🇷 French (FR)
+```text
+• Lancement de Navigateur NaviTV !
+• Optimisation complète de la télécommande directionnelle (D-pad).
+• Recherche vocale pour des requêtes web ultra-rapides.
+• Raccourcis personnalisables sur le tableau de bord de démarrage.
+• Pointeur de souris virtuel et prise en charge des manettes.
+• Bloqueur de publicités intégré.
+• Intégration complète de Firebase Analytics et Cloud Messaging.
+• Thème sombre moderne et optimisations de performance.
+```
+
+### 🇩🇪 German (DE)
+```text
+• Erster Release des NaviTV Browsers!
+• Volle D-Pad Fernbedienungs-Optimierung mit Fokus-Highlights.
+• Sprachsuche für schnelle Web-Abfragen.
+• Anpassbare Schnellwahl-Favoriten auf dem Start-Dashboard.
+• Virtueller Mauszeiger und Unterstützung für Gamepads.
+• Integrierter Werbeblocker für Webseiten.
+• Komplette Firebase Analytics und Cloud Messaging Integration.
+• Elegantes Dark-Mode-Design und Leistungsverbesserungen.
+```
