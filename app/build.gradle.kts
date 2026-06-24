@@ -23,7 +23,7 @@ android {
         create("release") {
             storeFile = rootProject.file("common_release_key.jks")
             storePassword = "dpadhero123"
-            keyAlias = "release_alias"
+            keyAlias = "dpad_hero_alias"
             keyPassword = "dpadhero123"
         }
     }
