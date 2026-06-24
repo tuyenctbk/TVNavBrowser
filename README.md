@@ -84,7 +84,7 @@ adb shell am start -n com.tdpham.navitvbrowser/.LauncherActivity
 The application is configured to build a signed Release Android App Bundle (AAB) or APK using the following configuration:
 
 *   **Keystore Path**: `common_release_key.jks` (Project Root, copied from Snake's dpad_arcade_release.jks)
-*   **Key Alias**: `dpad_hero_alias`
+*   **Key Alias**: `release_alias`
 *   **Keystore Password**: `dpadhero123`
 *   **Key Password**: `dpadhero123`
 
