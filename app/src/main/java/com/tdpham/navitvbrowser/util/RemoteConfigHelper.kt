@@ -7,6 +7,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 object RemoteConfigHelper {
 
     private const val KEY_HOMEPAGE = "homepage_url"
+    private const val KEY_ADBLOCK_LIST = "adblock_suffixes"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     fun fetchAndActivate() {
@@ -14,12 +15,20 @@ object RemoteConfigHelper {
         remoteConfig.setConfigSettingsAsync(
             remoteConfigSettings { minimumFetchIntervalInSeconds = 3600 }
         )
-        remoteConfig.setDefaultsAsync(mapOf(KEY_HOMEPAGE to DEFAULT_HOMEPAGE))
+        remoteConfig.setDefaultsAsync(mapOf(
+            KEY_HOMEPAGE to DEFAULT_HOMEPAGE,
+            KEY_ADBLOCK_LIST to ""
+        ))
         remoteConfig.fetchAndActivate()
     }
 
     fun getHomepageUrl(): String {
         val url = Firebase.remoteConfig.getString(KEY_HOMEPAGE)
         return url.ifBlank { DEFAULT_HOMEPAGE }
+    }
+
+    fun getAdBlockList(): List<String> {
+        val raw = Firebase.remoteConfig.getString(KEY_ADBLOCK_LIST)
+        return if (raw.isBlank()) emptyList() else raw.split(",").map { it.trim() }
     }
 }

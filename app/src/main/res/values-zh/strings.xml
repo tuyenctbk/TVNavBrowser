@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OmniSurf: 电视浏览器</string>
+    <string name="app_name">NaviTV 浏览器</string>
 
     <string name="bookmarks">书签</string>
     <string name="history">历史记录</string>
@@ -14,16 +14,16 @@
     <string name="onboarding_next">下一步</string>
     <string name="onboarding_skip">跳过</string>
     <string name="onboarding_get_started">立即开始</string>
-    <string name="onboarding_title_1">欢迎使用 Lite Browser</string>
-    <string name="onboarding_message_1">使用遥控器、键盘或鼠标在 Android TV 上浏览网页。</string>
+    <string name="onboarding_title_1">欢迎使用 NaviTV 浏览器</string>
+    <string name="onboarding_message_1">使用遥控器、键盘、鼠标或触控板在 Android TV 上浏览网页。使用方向键在按钮之间移动并进入页面。</string>
     <string name="onboarding_title_2">鼠标和指针模式</string>
-    <string name="onboarding_message_2">开启鼠标模式以使用方向键移动指针。</string>
+    <string name="onboarding_message_2">开启鼠标模式以使用方向键移动指针，按 OK 键点击。随时可以插入 USB 或蓝牙鼠标，它们即插即用。</string>
     <string name="onboarding_title_3">保存收藏</string>
-    <string name="onboarding_message_3">使用星形按钮保存页面。</string>
+    <string name="onboarding_message_3">使用星形按钮保存页面。随时从工具栏打开保存的书签和历史记录。</string>
     <string name="onboarding_title_4">全部就绪</string>
-    <string name="onboarding_message_4">历史记录将自动保存。前往设置更改主页或清除数据。</string>
+    <string name="onboarding_message_4">历史记录将自动保存。前往设置更改主页、屏蔽网页广告或清除数据。</string>
 
-    <string name="rating_title">喜欢 Lite Browser 吗？</string>
+    <string name="rating_title">喜欢 NaviTV 浏览器吗？</string>
     <string name="rating_message">如果您喜欢这款应用，请考虑为我们评分。这能帮助我们改进！</string>
     <string name="rating_rate">评分</string>
     <string name="rating_remind_later">以后再说</string>
@@ -33,7 +33,7 @@
     <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">保存主页</string>
     <string name="settings_block_embedded_ads">屏蔽网页广告</string>
-    <string name="settings_block_embedded_ads_summary">自动隐藏网页内的广告。</string>
+    <string name="settings_block_embedded_ads_summary">自动隐藏网页内的广告。不影响应用的横幅广告。</string>
     <string name="settings_block_ads_enabled">已开启广告屏蔽</string>
     <string name="settings_block_ads_disabled">已关闭广告屏蔽</string>
     <string name="settings_homepage_empty">请输入主页 URL</string>
@@ -46,6 +46,11 @@
     <string name="settings_cache_cleared">缓存已清除</string>
     <string name="settings_cache_failed">无法清除缓存</string>
 
+    <string name="settings_force_dark_mode">强制深色模式</string>
+    <string name="settings_force_dark_mode_summary">自动为所有网站应用深色主题（适合电视浏览）。</string>
+    <string name="settings_dark_mode_enabled">强制深色模式：已启用</string>
+    <string name="settings_dark_mode_disabled">强制深色模式：已禁用</string>
+
     <string name="mouse_mode_on">鼠标: 开启</string>
     <string name="mouse_mode_off">鼠标</string>
 
@@ -53,5 +58,16 @@
     <string name="nav_forward">前进</string>
     <string name="nav_refresh">刷新</string>
     <string name="nav_bookmark">保存</string>
+    <string name="nav_desktop_mode">切换桌面网站</string>
+    <string name="nav_returning_home">正在返回仪表板</string>
+    <string name="nav_mobile_site_requested">已请求移动端网站</string>
+    <string name="nav_desktop_site_requested">已请求桌面端网站</string>
+
     <string name="url_hint">搜索或输入网址</string>
+    <string name="cursor_content_desc">虚拟鼠标指针</string>
+    <string name="input_hint_default">遥控器：方向键导航 · OK 键选择</string>
+    <string name="input_hint_virtual_mouse">鼠标模式：方向键移动指针 · OK 键点击 · 返回键退出</string>
+    <string name="input_hint_mouse">已连接鼠标 · 支持滚轮</string>
+    <string name="input_hint_touch">触摸输入已激活</string>
+    <string name="list_hint_open">按 OK 键打开 · 长按删除</string>
 </resources>

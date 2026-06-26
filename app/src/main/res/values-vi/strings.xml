@@ -46,6 +46,11 @@
     <string name="settings_cache_cleared">Đã xóa bộ nhớ đệm</string>
     <string name="settings_cache_failed">Không thể xóa bộ nhớ đệm</string>
 
+    <string name="settings_force_dark_mode">Chế độ tối cưỡng bức</string>
+    <string name="settings_force_dark_mode_summary">Tự động áp dụng chủ đề tối cho tất cả các trang web (Lý tưởng cho việc duyệt TV).</string>
+    <string name="settings_dark_mode_enabled">Chế độ tối cưỡng bức: Đã bật</string>
+    <string name="settings_dark_mode_disabled">Chế độ tối cưỡng bức: Đã tắt</string>
+
     <string name="mouse_mode_on">Chuột: BẬT</string>
     <string name="mouse_mode_off">Chuột</string>
 
@@ -53,6 +58,11 @@
     <string name="nav_forward">Tiếp tục</string>
     <string name="nav_refresh">Tải lại</string>
     <string name="nav_bookmark">Lưu</string>
+    <string name="nav_desktop_mode">Chế độ máy tính</string>
+    <string name="nav_returning_home">Quay lại Trang chủ</string>
+    <string name="nav_mobile_site_requested">Đã yêu cầu trang web di động</string>
+    <string name="nav_desktop_site_requested">Đã yêu cầu trang web máy tính</string>
+
     <string name="url_hint">Tìm kiếm hoặc nhập địa chỉ web</string>
     <string name="cursor_content_desc">Con trỏ chuột ảo</string>
     <string name="input_hint_default">Điều khiển: Phím D-pad để di chuyển · OK để chọn</string>

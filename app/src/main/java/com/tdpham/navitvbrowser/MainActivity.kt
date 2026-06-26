@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnRefresh: Button
     private lateinit var btnBookmark: Button
     private lateinit var btnMouseMode: Button
+    private lateinit var btnDesktopMode: Button
     private lateinit var btnVoiceSearch: Button
     private lateinit var ivCursor: ImageView
     private lateinit var webViewContainer: View
@@ -71,10 +72,10 @@ class MainActivity : ComponentActivity() {
     private lateinit var bookmarkBar: View
     private lateinit var bookmarkBarContainer: LinearLayout
 
+    private var realBookmarks: List<BookmarkEntity> = emptyList()
     private lateinit var virtualCursor: VirtualCursorController
     private lateinit var historyRepo: HistoryRepository
     private lateinit var bookmarkRepo: BookmarkRepository
-    private var bannerAdView: AdView? = null
     private var isWebViewInputFocused = false
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -94,6 +95,7 @@ class MainActivity : ComponentActivity() {
         btnRefresh = findViewById(R.id.btnRefresh)
         btnBookmark = findViewById(R.id.btnBookmark)
         btnMouseMode = findViewById(R.id.btnMouseMode)
+        btnDesktopMode = findViewById(R.id.btnDesktopMode)
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
         ivCursor = findViewById(R.id.ivCursor)
         webViewContainer = findViewById(R.id.webViewContainer)
@@ -124,7 +126,7 @@ class MainActivity : ComponentActivity() {
         }
 
         findViewById<FrameLayout>(R.id.adContainer)?.let {
-            bannerAdView = AdsHelper.createBannerAd(this, it)
+            AdsHelper.loadNativeAd(this, it)
         }
 
         if (AppPreferences.isOnboardingComplete(this)) {
@@ -135,13 +137,18 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         if (::webView.isInitialized) webView.onResume()
-        bannerAdView?.resume()
     }
 
     override fun onPause() {
-        bannerAdView?.pause()
         if (::webView.isInitialized) webView.onPause()
         super.onPause()
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level >= TRIM_MEMORY_MODERATE && ::webView.isInitialized) {
+            webView.clearCache(false) // Clear memory cache but keep disk cache
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -157,8 +164,6 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        bannerAdView?.destroy()
-        bannerAdView = null
         if (::webView.isInitialized) {
             webView.loadUrl("about:blank")
             webView.stopLoading()
@@ -170,9 +175,40 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.keyCode == KeyEvent.KEYCODE_BACK) {
+            if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                event.startTracking()
+                return true
+            } else if (event.action == KeyEvent.ACTION_UP && event.isTracking && !event.isCanceled) {
+                onBackPressedDispatcher.onBackPressed()
+                return true
+            } else if (event.action == KeyEvent.ACTION_DOWN && event.isLongPress) {
+                val homepage = resolveHomepage()
+                if (webView.url != homepage) {
+                    webView.loadUrl(homepage)
+                    Toast.makeText(this, getString(R.string.nav_returning_home), Toast.LENGTH_SHORT).show()
+                }
+                return true
+            }
+        }
+
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_MENU -> {
+                    urlInput.requestFocus()
+                    urlInput.selectAll()
+                    return true
+                }
+                KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_MEDIA_PLAY -> {
+                    webView.reload()
+                    return true
+                }
+            }
+        }
+
         if (event.action == KeyEvent.ACTION_DOWN && virtualCursor.isEnabled && !isKeyboardVisible()) {
             val focused = currentFocus
-            if (focused != urlInput && virtualCursor.handleKey(event.keyCode)) {
+            if (focused != urlInput && virtualCursor.handleKey(event)) {
                 updateInputHint()
                 return true
             }
@@ -245,6 +281,11 @@ class MainActivity : ComponentActivity() {
                 progressBar.isVisible = true
                 progressBar.progress = 0
                 isWebViewInputFocused = false
+                
+                // Hide ad if navigating away from dashboard
+                val isDashboard = url == "file:///android_asset/dashboard.html" || url.isNullOrEmpty()
+                findViewById<View>(R.id.adContainer)?.isVisible = isDashboard
+
                 view?.evaluateJavascript("window.__tvnavAdBlockerApplied = false;", null)
                 injectFocusStyle(view)
                 updateNavButtonsState()
@@ -254,8 +295,16 @@ class MainActivity : ComponentActivity() {
                 super.onPageFinished(view, url)
                 progressBar.isVisible = false
                 injectFocusStyle(view)
+                if (AppPreferences.isForceDarkModeEnabled(this@MainActivity)) {
+                    injectDarkMode(view)
+                }
                 injectInputFocusListeners(view)
-                view?.requestFocus()
+
+                // Only move focus to WebView if the user is NOT currently navigating the toolbar
+                if (!isViewInToolbarOrBookmarkBar(currentFocus)) {
+                    view?.requestFocus()
+                }
+
                 virtualCursor.showIfEnabled()
                 if (!UrlUtils.isBrowsableUrl(url.orEmpty())) return
                 urlInput.setText(url)
@@ -286,6 +335,7 @@ class MainActivity : ComponentActivity() {
     private fun setupNavigationButtons() {
         btnMouseMode.setOnClickListener { setMouseMode(!virtualCursor.isEnabled) }
         btnVoiceSearch.setOnClickListener { startVoiceSearch() }
+        btnDesktopMode.setOnClickListener { toggleDesktopMode() }
 
         btnBack.setOnClickListener {
             if (webView.canGoBack()) webView.goBack()
@@ -318,6 +368,56 @@ class MainActivity : ComponentActivity() {
                 false
             }
         }
+
+        urlInput.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateSuggestions(s?.toString() ?: "")
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
+    }
+
+    private val SUGGESTED_SITES = listOf(
+        "google.com", "youtube.com", "facebook.com", "netflix.com", 
+        "amazon.com", "twitter.com", "instagram.com", "wikipedia.org",
+        "reddit.com", "twitch.tv", "pluto.tv", "disneyplus.com"
+    )
+
+    private fun updateSuggestions(input: String) {
+        if (input.isBlank() || input.startsWith("http") || input.startsWith("file")) {
+            populateBookmarkBar(realBookmarks)
+            return
+        }
+
+        val filtered = SUGGESTED_SITES.filter { it.contains(input.lowercase()) }
+        if (filtered.isNotEmpty()) {
+            val suggestions = filtered.map { BookmarkEntity(title = it, url = "https://$it") }
+            populateBookmarkBar(suggestions)
+            showBookmarkBar()
+        }
+    }
+
+    private fun toggleDesktopMode() {
+        val settings = webView.settings
+        val isDesktop = settings.userAgentString.contains("Windows NT")
+        
+        if (isDesktop) {
+            // Switch to Mobile
+            settings.userAgentString = null // Default mobile UA
+            settings.useWideViewPort = false
+            settings.loadWithOverviewMode = false
+            btnDesktopMode.compoundDrawableTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.text_primary))
+            Toast.makeText(this, getString(R.string.nav_mobile_site_requested), Toast.LENGTH_SHORT).show()
+        } else {
+            // Switch to Desktop
+            settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            settings.useWideViewPort = true
+            settings.loadWithOverviewMode = true
+            btnDesktopMode.compoundDrawableTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.accent))
+            Toast.makeText(this, getString(R.string.nav_desktop_site_requested), Toast.LENGTH_SHORT).show()
+        }
+        webView.reload()
     }
 
     private fun setMouseMode(enabled: Boolean) {
@@ -372,7 +472,7 @@ class MainActivity : ComponentActivity() {
     private fun setupFocusAnimations() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnBookmark,
-            btnMouseMode, btnVoiceSearch,
+            btnMouseMode, btnDesktopMode, btnVoiceSearch,
             findViewById(R.id.btnShowBookmarks),
             findViewById(R.id.btnShowHistory),
             findViewById(R.id.btnSettings),
@@ -456,6 +556,26 @@ class MainActivity : ComponentActivity() {
         view?.evaluateJavascript(js, null)
     }
 
+    private fun injectDarkMode(view: WebView?) {
+        val js = """
+            (function() {
+                var style = document.getElementById('tvnav-dark-mode');
+                if (style) return;
+                style = document.createElement('style');
+                style.id = 'tvnav-dark-mode';
+                style.innerHTML = 'html, body { background-color: #0b1020 !important; color: #ffffff !important; } ' +
+                                  '* { border-color: #333 !important; } ' +
+                                  'a { color: #8ab4f8 !important; } ' +
+                                  'input, textarea { background-color: #1c2640 !important; color: #fff !important; }';
+                document.head.appendChild(style);
+                
+                // Intelligent inversion for images if they are too bright (optional/complex)
+                // document.documentElement.style.filter = 'invert(1) hue-rotate(180deg)';
+            })();
+        """.trimIndent()
+        view?.evaluateJavascript(js, null)
+    }
+
     private fun updateNavButtonsState() {
         val canGoBack = webView.canGoBack()
         btnBack.isEnabled = canGoBack
@@ -469,7 +589,10 @@ class MainActivity : ComponentActivity() {
     private fun setupBookmarkBarFlow() {
         lifecycleScope.launch {
             bookmarkRepo.getAllBookmarks().collectLatest { list ->
-                populateBookmarkBar(list)
+                realBookmarks = list
+                if (urlInput.text.isNullOrBlank()) {
+                    populateBookmarkBar(list)
+                }
             }
         }
     }

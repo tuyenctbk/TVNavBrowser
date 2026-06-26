@@ -61,6 +61,22 @@
             android:layout_marginTop="4dp"
             android:text="@string/settings_block_embedded_ads_summary" />
 
+        <Switch
+            android:id="@+id/switchForceDarkMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:focusable="true"
+            android:text="@string/settings_force_dark_mode"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            style="@style/ScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/settings_force_dark_mode_summary" />
+
         <Button
             android:id="@+id/btnClearHistory"
             style="@style/ToolbarButton"

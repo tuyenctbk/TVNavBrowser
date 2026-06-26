@@ -46,6 +46,11 @@
     <string name="settings_cache_cleared">Cache gelöscht</string>
     <string name="settings_cache_failed">Cache konnte nicht gelöscht werden</string>
 
+    <string name="settings_force_dark_mode">Dunkelmodus erzwingen</string>
+    <string name="settings_force_dark_mode_summary">Wendet automatisch ein dunkles Design auf alle Websites an (ideal für TV-Browsing).</string>
+    <string name="settings_dark_mode_enabled">Dunkelmodus erzwingen: Aktiviert</string>
+    <string name="settings_dark_mode_disabled">Dunkelmodus erzwingen: Deaktiviert</string>
+
     <string name="mouse_mode_on">Maus AN</string>
     <string name="mouse_mode_off">Maus</string>
 
@@ -53,6 +58,11 @@
     <string name="nav_forward">Vorwärts</string>
     <string name="nav_refresh">Aktualisieren</string>
     <string name="nav_bookmark">Speichern</string>
+    <string name="nav_desktop_mode">Desktop-Website umschalten</string>
+    <string name="nav_returning_home">Rückkehr zum Dashboard</string>
+    <string name="nav_mobile_site_requested">Mobile Website angefordert</string>
+    <string name="nav_desktop_site_requested">Desktop-Website angefordert</string>
+
     <string name="url_hint">Suchen oder URL eingeben</string>
     <string name="cursor_content_desc">Virtueller Mauszeiger</string>
     <string name="input_hint_default">Fernbedienung: D-Pad zum Bewegen · OK zum Auswählen</string>

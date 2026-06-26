@@ -10,7 +10,7 @@ material = "1.14.0"
  roomVersion = "2.8.4"
 kotlinVersion = "1.9.20"
 firebaseVersion = "33.1.0"
-admobVersion = "23.0.0"
+admobVersion = "25.4.0"
 leanbackVersion = "1.2.0"
 playReviewVersion = "2.0.2"
 

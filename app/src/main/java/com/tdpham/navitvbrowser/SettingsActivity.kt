@@ -31,6 +31,7 @@ class SettingsActivity : ComponentActivity() {
         val btnClearBookmarks: Button = findViewById(R.id.btnClearBookmarks)
         val btnClearCache: Button = findViewById(R.id.btnClearCache)
         val switchBlockEmbeddedAds: Switch = findViewById(R.id.switchBlockEmbeddedAds)
+        val switchForceDarkMode: Switch = findViewById(R.id.switchForceDarkMode)
 
         etHomepage.setText(AppPreferences.getHomepage(this))
         switchBlockEmbeddedAds.isChecked = AppPreferences.isBlockEmbeddedAdsEnabled(this)
@@ -44,10 +45,18 @@ class SettingsActivity : ComponentActivity() {
             ).show()
         }
 
+        switchForceDarkMode.isChecked = AppPreferences.isForceDarkModeEnabled(this)
+        switchForceDarkMode.setOnCheckedChangeListener { _, isChecked ->
+            AppPreferences.setForceDarkModeEnabled(this, isChecked)
+            FirebaseInitializer.logEvent("settings_darkmode_changed", mapOf("enabled" to isChecked))
+            Toast.makeText(this, if (isChecked) R.string.settings_dark_mode_enabled else R.string.settings_dark_mode_disabled, Toast.LENGTH_SHORT).show()
+        }
+
         val db = BrowserDatabase.getInstance(applicationContext)
 
         FocusAnimationHelper.applyAll(
-            btnSaveHomepage, btnClearHistory, btnClearBookmarks, btnClearCache, etHomepage
+            btnSaveHomepage, btnClearHistory, btnClearBookmarks, btnClearCache, etHomepage,
+            switchBlockEmbeddedAds, switchForceDarkMode
         )
 
         btnSaveHomepage.setOnClickListener {

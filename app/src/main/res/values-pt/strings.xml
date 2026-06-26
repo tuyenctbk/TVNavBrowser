@@ -46,6 +46,11 @@
     <string name="settings_cache_cleared">Cache limpo</string>
     <string name="settings_cache_failed">Não foi possível limpar o cache</string>
 
+    <string name="settings_force_dark_mode">Forçar modo escuro</string>
+    <string name="settings_force_dark_mode_summary">Aplica automaticamente o tema escuro a todos os sites (ideal para navegação na TV).</string>
+    <string name="settings_dark_mode_enabled">Forçar modo escuro: Ativado</string>
+    <string name="settings_dark_mode_disabled">Forçar modo escuro: Desativado</string>
+
     <string name="mouse_mode_on">Mouse LIG</string>
     <string name="mouse_mode_off">Mouse</string>
 
@@ -53,6 +58,11 @@
     <string name="nav_forward">Avançar</string>
     <string name="nav_refresh">Recarregar</string>
     <string name="nav_bookmark">Salvar</string>
+    <string name="nav_desktop_mode">Alternar site para desktop</string>
+    <string name="nav_returning_home">Voltando ao painel</string>
+    <string name="nav_mobile_site_requested">Site para celular solicitado</string>
+    <string name="nav_desktop_site_requested">Site para desktop solicitado</string>
+
     <string name="url_hint">Pesquise ou digite a URL</string>
     <string name="cursor_content_desc">Ponteiro do mouse virtual</string>
     <string name="input_hint_default">Remoto: D-pad para navegar · OK para selecionar</string>

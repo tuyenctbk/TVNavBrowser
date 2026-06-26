@@ -37,23 +37,31 @@ class VirtualCursorController(
         }
     }
 
-    fun handleKey(keyCode: Int): Boolean {
+    fun handleKey(event: KeyEvent): Boolean {
         if (!isEnabled) return false
+        
+        val keyCode = event.keyCode
+        val repeatCount = event.repeatCount
+        
+        // Acceleration: ramp up speed by 25% per repeat, capping at 3.5x
+        val accel = (1f + (repeatCount * 0.25f)).coerceAtMost(3.5f)
+        val currentSpeed = speed * accel
+
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
-                move(0f, -speed)
+                move(0f, -currentSpeed)
                 true
             }
             KeyEvent.KEYCODE_DPAD_DOWN -> {
-                move(0f, speed)
+                move(0f, currentSpeed)
                 true
             }
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                move(-speed, 0f)
+                move(-currentSpeed, 0f)
                 true
             }
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                move(speed, 0f)
+                move(currentSpeed, 0f)
                 true
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER,
@@ -100,8 +108,17 @@ class VirtualCursorController(
         container.post {
             val maxX = (container.width - cursor.width).coerceAtLeast(0).toFloat()
             val maxY = (container.height - cursor.height).coerceAtLeast(0).toFloat()
+            
+            val oldY = cursor.y
             cursor.x = (cursor.x + dx).coerceIn(0f, maxX)
             cursor.y = (cursor.y + dy).coerceIn(0f, maxY)
+
+            // Edge Scrolling: If cursor is at top/bottom limit, scroll the webpage
+            if (cursor.y <= 0f && dy < 0) {
+                webView.scrollBy(0, dy.toInt() * 2)
+            } else if (cursor.y >= maxY && dy > 0) {
+                webView.scrollBy(0, dy.toInt() * 2)
+            }
         }
     }
 

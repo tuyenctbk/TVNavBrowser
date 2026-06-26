@@ -1,14 +1,55 @@
 <resources>
-    <string name="app_name">Lite Browser</string>
+    <string name="app_name">NaviTV ブラウザ</string>
 
     <string name="bookmarks">ブックマーク</string>
     <string name="history">履歴</string>
     <string name="settings">設定</string>
-    <string name="bookmark_saved">保存しました</string>
+    <string name="bookmark_saved">ブックマークに保存しました</string>
+    <string name="bookmark_exists">既に保存されています</string>
+    <string name="bookmarks_empty">ブックマークがありません。☆ボタンでページを保存してください。</string>
+    <string name="history_empty">履歴がありません。</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
 
+    <string name="onboarding_step">%2$dステップ中 %1$dステップ</string>
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_skip">スキップ</string>
     <string name="onboarding_get_started">使ってみる</string>
+    <string name="onboarding_title_1">NaviTV ブラウザへようこそ</string>
+    <string name="onboarding_message_1">リモコン、キーボード、マウス、またはタッチパッドを使用して、Android TV でウェブを閲覧しましょう。Dパッドを使用してボタン間を移動し、ページ内を操作します。</string>
+    <string name="onboarding_title_2">マウスおよびポインターモード</string>
+    <string name="onboarding_message_2">マウスモードをオンにすると、Dパッドでポインターを動かし、OKボタンでクリックできます。USBやBluetoothマウスも接続可能です。</string>
+    <string name="onboarding_title_3">お気に入りを保存</string>
+    <string name="onboarding_message_3">星ボタンを使用してページをブックマークします。保存したブックマークや履歴はいつでもツールバーから開けます。</string>
+    <string name="onboarding_title_4">準備完了</string>
+    <string name="onboarding_message_4">履歴は自動的に保存されます。設定からホームページの変更、広告ブロックの有効化、データの消去が可能です。</string>
+
+    <string name="rating_title">NaviTV ブラウザはお気に入りですか？</string>
+    <string name="rating_message">このアプリを気に入っていただけましたら、ぜひ評価をお願いします。開発の励みになります！</string>
+    <string name="rating_rate">評価する</string>
+    <string name="rating_remind_later">後で通知</string>
+    <string name="rating_no_thanks">いいえ</string>
+
+    <string name="settings_homepage_label">ホームページ URL</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">ホームページを保存</string>
+    <string name="settings_block_embedded_ads">広告をブロック</string>
+    <string name="settings_block_embedded_ads_summary">ウェブページ内の広告を自動的に非表示にします。アプリのバナー広告には影響しません。</string>
+    <string name="settings_block_ads_enabled">広告ブロックが有効になりました</string>
+    <string name="settings_block_ads_disabled">広告ブロックが無効になりました</string>
+    <string name="settings_homepage_empty">ホームページのURLを入力してください</string>
+    <string name="settings_homepage_saved">ホームページを保存しました</string>
+    <string name="settings_clear_history">履歴を消去</string>
+    <string name="settings_clear_bookmarks">ブックマークを消去</string>
+    <string name="settings_clear_cache">キャッシュを消去</string>
+    <string name="settings_history_cleared">履歴を消去しました</string>
+    <string name="settings_bookmarks_cleared">ブックマークを消去しました</string>
+    <string name="settings_cache_cleared">キャッシュを消去しました</string>
+    <string name="settings_cache_failed">キャッシュを消去できませんでした</string>
+
+    <string name="settings_force_dark_mode">強制ダークモード</string>
+    <string name="settings_force_dark_mode_summary">すべてのウェブサイトにダークテーマを自動的に適用します（テレビでの閲覧に最適）。</string>
+    <string name="settings_dark_mode_enabled">強制ダークモード：有効</string>
+    <string name="settings_dark_mode_disabled">強制ダークモード：無効</string>
 
     <string name="mouse_mode_on">マウス: ON</string>
     <string name="mouse_mode_off">マウス</string>
@@ -16,4 +57,17 @@
     <string name="nav_back">戻る</string>
     <string name="nav_forward">進む</string>
     <string name="nav_refresh">再読み込み</string>
+    <string name="nav_bookmark">保存</string>
+    <string name="nav_desktop_mode">PC版サイトに切り替え</string>
+    <string name="nav_returning_home">ダッシュボードに戻ります</string>
+    <string name="nav_mobile_site_requested">モバイル版サイトをリクエストしました</string>
+    <string name="nav_desktop_site_requested">PC版サイトをリクエストしました</string>
+
+    <string name="url_hint">検索またはURLを入力</string>
+    <string name="cursor_content_desc">仮想マウスポインター</string>
+    <string name="input_hint_default">リモコン：Dパッドで移動 ・ OKで選択</string>
+    <string name="input_hint_virtual_mouse">マウスモード：Dパッドでポインター移動 ・ OKでクリック ・ 戻るで終了</string>
+    <string name="input_hint_mouse">マウス接続済み ・ スクロールホイール対応</string>
+    <string name="input_hint_touch">タッチ入力有効</string>
+    <string name="list_hint_open">OKで開く ・ 長押しで削除</string>
 </resources>

@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">متصفح NaviTV</string>
+
+    <string name="bookmarks">الإشارات المرجعية</string>
+    <string name="history">السجل</string>
+    <string name="settings">الإعدادات</string>
+    <string name="bookmark_saved">تم حفظ الإشارة المرجعية</string>
+    <string name="bookmark_exists">موجود بالفعل في الإشارات المرجعية</string>
+    <string name="bookmarks_empty">لا توجد إشارات مرجعية بعد. احفظ الصفحات باستخدام زر ☆.</string>
+    <string name="history_empty">لا يوجد سجل تصفح بعد.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
+
+    <string name="onboarding_step">الخطوة %1$d من %2$d</string>
+    <string name="onboarding_next">التالي</string>
+    <string name="onboarding_skip">تخطي</string>
+    <string name="onboarding_get_started">ابدأ الآن</string>
+    <string name="onboarding_title_1">مرحبًا بك في متصفح NaviTV</string>
+    <string name="onboarding_message_1">تصفح الويب على Android TV باستخدام جهاز التحكم عن بعد أو لوحة المفاتيح أو الماوس أو لوحة اللمس. استخدم D-pad للتنقل بين الأزرار وداخل الصفحة.</string>
+    <string name="onboarding_title_2">وضع الماوس والمؤشر</string>
+    <string name="onboarding_message_2">قم بتشغيل وضع الماوس لتحريك المؤشر باستخدام D-pad والنقر باستخدام زر OK. يمكنك توصيل ماوس USB أو Bluetooth في أي وقت.</string>
+    <string name="onboarding_title_3">احفظ مفضلاتك</string>
+    <string name="onboarding_message_3">استخدم زر النجمة لحفظ الصفحات. افتح الإشارات المرجعية والسجل من شريط الأدوات في أي وقت.</string>
+    <string name="onboarding_title_4">أنت جاهز تمامًا</string>
+    <string name="onboarding_message_4">يتم حفظ السجل تلقائيًا. تفضل بزيارة الإعدادات لتغيير صفحتك الرئيسية أو حظر إعلانات الويب أو مسح البيانات.</string>
+
+    <string name="rating_title">هل تستمتع بمتصفح NaviTV؟</string>
+    <string name="rating_message">إذا أعجبك التطبيق، يرجى التفكير في تقييمه. هذا يساعدنا على التحسين!</string>
+    <string name="rating_rate">تقييم</string>
+    <string name="rating_remind_later">ذكرني لاحقًا</string>
+    <string name="rating_no_thanks">لا، شكرًا</string>
+
+    <string name="settings_homepage_label">عنوان الصفحة الرئيسية</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">حفظ الصفحة الرئيسية</string>
+    <string name="settings_block_embedded_ads">حظر إعلانات المواقع</string>
+    <string name="settings_block_embedded_ads_summary">إخفاء الإعلانات المدمجة في صفحات الويب تلقائيًا. لا يؤثر على إعلان التطبيق.</string>
+    <string name="settings_block_ads_enabled">تم تفعيل حظر إعلانات المواقع</string>
+    <string name="settings_block_ads_disabled">تم تعطيل حظر إعلانات المواقع</string>
+    <string name="settings_homepage_empty">يرجى إدخال عنوان الصفحة الرئيسية</string>
+    <string name="settings_homepage_saved">تم حفظ الصفحة الرئيسية</string>
+    <string name="settings_clear_history">مسح السجل</string>
+    <string name="settings_clear_bookmarks">مسح الإشارات المرجعية</string>
+    <string name="settings_clear_cache">مسح ذاكرة التخزين المؤقت</string>
+    <string name="settings_history_cleared">تم مسح السجل</string>
+    <string name="settings_bookmarks_cleared">تم مسح الإشارات المرجعية</string>
+    <string name="settings_cache_cleared">تم مسح ذاكرة التخزين المؤقت</string>
+    <string name="settings_cache_failed">تعذر مسح ذاكرة التخزين المؤقت</string>
+
+    <string name="settings_force_dark_mode">فرض الوضع الداكن</string>
+    <string name="settings_force_dark_mode_summary">تطبيق المظهر الداكن تلقائيًا على جميع مواقع الويب (مثالي لتصفح التلفزيون).</string>
+    <string name="settings_dark_mode_enabled">فرض الوضع الداكن: مفعل</string>
+    <string name="settings_dark_mode_disabled">فرض الوضع الداكن: معطل</string>
+
+    <string name="mouse_mode_on">الماوس: مفعل</string>
+    <string name="mouse_mode_off">الماوس</string>
+
+    <string name="nav_back">رجوع</string>
+    <string name="nav_forward">للأمام</string>
+    <string name="nav_refresh">إعادة تحميل</string>
+    <string name="nav_bookmark">حفظ</string>
+    <string name="nav_desktop_mode">تبديل موقع سطح المكتب</string>
+    <string name="nav_returning_home">العودة إلى لوحة التحكم</string>
+    <string name="nav_mobile_site_requested">تم طلب نسخة الهاتف</string>
+    <string name="nav_desktop_site_requested">تم طلب نسخة سطح المكتب</string>
+
+    <string name="url_hint">ابحث أو أدخل عنواناً</string>
+    <string name="cursor_content_desc">مؤشر الماوس الافتراضي</string>
+    <string name="input_hint_default">الرئيسية: D-pad للتنقل · OK للاختيار</string>
+    <string name="input_hint_virtual_mouse">وضع الماوس: D-pad لتحريك المؤشر · OK للنقر · رجوع للخروج</string>
+    <string name="input_hint_mouse">تم توصيل الماوس · دعم عجلة التمرير</string>
+    <string name="input_hint_touch">الإدخال باللمس نشط</string>
+    <string name="list_hint_open">اضغط على OK للفتح · اضغط مع الاستمرار للحذف</string>
+</resources>

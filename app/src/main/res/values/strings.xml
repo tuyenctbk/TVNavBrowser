@@ -46,6 +46,11 @@
     <string name="settings_cache_cleared">Cache cleared</string>
     <string name="settings_cache_failed">Could not clear cache</string>
 
+    <string name="settings_force_dark_mode">Force Dark Mode</string>
+    <string name="settings_force_dark_mode_summary">Automatically apply dark theme to all websites (Ideal for TV browsing).</string>
+    <string name="settings_dark_mode_enabled">Force Dark Mode: Enabled</string>
+    <string name="settings_dark_mode_disabled">Force Dark Mode: Disabled</string>
+
     <string name="mouse_mode_on">Mouse ON</string>
     <string name="mouse_mode_off">Mouse</string>
 
@@ -53,6 +58,11 @@
     <string name="nav_forward">Forward</string>
     <string name="nav_refresh">Reload</string>
     <string name="nav_bookmark">Save</string>
+    <string name="nav_desktop_mode">Toggle Desktop Site</string>
+    <string name="nav_returning_home">Returning to Dashboard</string>
+    <string name="nav_mobile_site_requested">Mobile Site Requested</string>
+    <string name="nav_desktop_site_requested">Desktop Site Requested</string>
+
     <string name="url_hint">Search or enter URL</string>
     <string name="cursor_content_desc">Virtual mouse pointer</string>
     <string name="input_hint_default">Remote: D-pad to navigate · OK to select</string>

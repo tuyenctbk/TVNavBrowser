@@ -9,6 +9,7 @@ object AppPreferences {
     private const val KEY_HOMEPAGE = "homepage_url"
     private const val KEY_HOMEPAGE_CUSTOM = "homepage_custom"
     private const val KEY_BLOCK_EMBEDDED_ADS = "block_embedded_ads"
+    private const val KEY_FORCE_DARK_MODE = "force_dark_mode"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     fun isOnboardingComplete(context: Context): Boolean =
@@ -53,6 +54,17 @@ object AppPreferences {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(KEY_BLOCK_EMBEDDED_ADS, enabled)
+            .apply()
+    }
+
+    fun isForceDarkModeEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getBoolean(KEY_FORCE_DARK_MODE, false)
+
+    fun setForceDarkModeEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_FORCE_DARK_MODE, enabled)
             .apply()
     }
 }

@@ -22,8 +22,8 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.tdpham.tvnavbrowser" />
-                  <option name="mobileSdkAppId" value="1:107023916160:android:54b7ac770bbcc524499a65" />
+                  <option name="appId" value="com.tdpham.navitvbrowser" />
+                  <option name="mobileSdkAppId" value="1:107023916160:android:e025772a3003b086499a65" />
                   <option name="projectId" value="tvnav-browser" />
                   <option name="projectNumber" value="107023916160" />
                 </ConnectionSetting>

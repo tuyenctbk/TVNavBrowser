@@ -1,13 +1,70 @@
 <resources>
-    <string name="app_name">Lite Browser</string>
+    <string name="app_name">NaviTV ब्राउज़र</string>
 
     <string name="bookmarks">बुकमार्क</string>
     <string name="history">इतिहास</string>
     <string name="settings">सेटिंग्स</string>
+    <string name="bookmark_saved">बुकमार्क सहेजा गया</string>
+    <string name="bookmark_exists">पहले से बुकमार्क में है</string>
+    <string name="bookmarks_empty">अभी तक कोई बुकमार्क नहीं है। ☆ बटन से पेज सहेजें।</string>
+    <string name="history_empty">अभी तक कोई ब्राउज़िंग इतिहास नहीं है।</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
 
+    <string name="onboarding_step">%2$d में से चरण %1$d</string>
     <string name="onboarding_next">आगे</string>
+    <string name="onboarding_skip">छोड़ें</string>
     <string name="onboarding_get_started">शुरू करें</string>
+    <string name="onboarding_title_1">NaviTV ब्राउज़र में आपका स्वागत है</string>
+    <string name="onboarding_message_1">अपने रिमोट, कीबोर्ड, माउस या टचपैड के साथ Android TV पर वेब ब्राउज़ करें। बटन के बीच जाने के लिए D-पैड का उपयोग करें।</string>
+    <string name="onboarding_title_2">माउस और पॉइंटर मोड</string>
+    <string name="onboarding_message_2">D-पैड के साथ पॉइंटर हिलाने और OK के साथ क्लिक करने के लिए माउस मोड चालू करें।</string>
+    <string name="onboarding_title_3">अपने पसंदीदा सहेजें</string>
+    <string name="onboarding_message_3">पेज बुकमार्क करने के लिए स्टार बटन का उपयोग करें।</string>
+    <string name="onboarding_title_4">आप पूरी तरह तैयार हैं</string>
+    <string name="onboarding_message_4">इतिहास स्वचालित रूप से सहेजा जाता है। अपना होमपेज बदलने या विज्ञापन ब्लॉक करने के लिए सेटिंग्स पर जाएं।</string>
+
+    <string name="rating_title">NaviTV ब्राउज़र का आनंद ले रहे हैं?</string>
+    <string name="rating_message">यदि आपको ऐप पसंद है, तो कृपया रेटिंग देने पर विचार करें।</string>
+    <string name="rating_rate">रेट करें</string>
+    <string name="rating_remind_later">बाद में याद दिलाएं</string>
+    <string name="rating_no_thanks">नहीं, धन्यवाद</string>
+
+    <string name="settings_homepage_label">होमपेज URL</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">होमपेज सहेजें</string>
+    <string name="settings_block_embedded_ads">वेबसाइट विज्ञापन ब्लॉक करें</string>
+    <string name="settings_block_embedded_ads_summary">वेब पेजों के अंदर विज्ञापनों को स्वचालित रूप से छिपाएं।</string>
+    <string name="settings_block_ads_enabled">वेबसाइट विज्ञापन ब्लॉकिंग चालू है</string>
+    <string name="settings_block_ads_disabled">वेबसाइट विज्ञापन ब्लॉकिंग बंद है</string>
+    <string name="settings_homepage_empty">कृपया होमपेज URL दर्ज करें</string>
+    <string name="settings_homepage_saved">होमपेज सहेजा गया</string>
+    <string name="settings_clear_history">इतिहास साफ़ करें</string>
+    <string name="settings_clear_bookmarks">बुकमार्क साफ़ करें</string>
+    <string name="settings_clear_cache">कैश साफ़ करें</string>
+    <string name="settings_history_cleared">इतिहास साफ़ किया गया</string>
+    <string name="settings_bookmarks_cleared">बुकमार्क साफ़ किए गए</string>
+    <string name="settings_cache_cleared">कैश साफ़ किया गया</string>
+    <string name="settings_cache_failed">कैश साफ़ नहीं किया जा सका</string>
+
+    <string name="settings_force_dark_mode">डार्क मोड लागू करें</string>
+    <string name="settings_force_dark_mode_summary">सभी वेबसाइटों पर स्वचालित रूप से डार्क थीम लागू करें (टीवी ब्राउज़िंग के लिए आदर्श)।</string>
+    <string name="settings_dark_mode_enabled">डार्क मोड: चालू</string>
+    <string name="settings_dark_mode_disabled">डार्क मोड: बंद</string>
 
     <string name="mouse_mode_on">माउस: चालू</string>
     <string name="mouse_mode_off">माउस</string>
+
+    <string name="nav_back">पीछे</string>
+    <string name="nav_forward">आगे</string>
+    <string name="nav_refresh">रीलोड करें</string>
+    <string name="nav_bookmark">सहेजें</string>
+    <string name="nav_desktop_mode">डेस्कटॉप साइट</string>
+    <string name="nav_returning_home">होम स्क्रीन पर वापस जा रहे हैं</string>
+    <string name="nav_mobile_site_requested">मोबाइल साइट का अनुरोध किया गया</string>
+    <string name="nav_desktop_site_requested">डेस्क톱 साइट का अनुरोध किया गया</string>
+
+    <string name="url_hint">खोजें या URL दर्ज करें</string>
+    <string name="cursor_content_desc">वर्चुअल माउस पॉइंटर</string>
+    <string name="input_hint_default">रिमोट: नेविगेट करने के लिए D-पैड · चुनने के लिए OK</string>
+    <string name="input_hint_virtual_mouse">माउस मोड: पॉइंटर हिलाने के लिए D-पैड · क्लिक करने के लिए OK · बाहर निकलने के लिए बैक</string>
 </resources>

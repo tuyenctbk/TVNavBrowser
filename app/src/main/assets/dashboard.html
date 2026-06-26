@@ -15,475 +15,243 @@
 
         body {
             margin: 0;
-            padding: 0;
+            padding: 40px;
             background: radial-gradient(circle at center, #1e293b 0%, #0b1020 100%);
             color: var(--text-color);
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow-x: hidden;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
-        .container {
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 20px;
-            letter-spacing: 1px;
+            padding: 0 10px;
         }
 
-        h1 span {
-            color: var(--accent-color);
+        .header h2 {
+            font-size: 28px;
+            margin: 0;
+            font-weight: 500;
         }
 
-        /* Search Section */
-        .search-container {
-            margin-bottom: 40px;
-            width: 100%;
+        .dashboard-icons {
+            display: flex;
+            gap: 15px;
+            opacity: 0.7;
         }
 
-        .search-form {
+        /* Search Bar Area */
+        .search-area {
             display: flex;
             justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .search-box {
+            position: relative;
             width: 100%;
+            max-width: 600px;
         }
 
         .search-input {
-            width: 80%;
-            max-width: 500px;
-            height: 48px;
-            background-color: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            padding: 0 24px;
+            width: 100%;
+            height: 56px;
+            background-color: rgba(28, 38, 64, 0.6);
+            border: 2px solid rgba(255, 200, 87, 0.3);
+            border-radius: 12px;
+            padding: 0 50px 0 20px;
             color: var(--text-color);
-            font-size: 16px;
+            font-size: 18px;
             outline: none;
-            transition: all 0.25s ease-in-out;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .search-input:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 15px rgba(255, 200, 87, 0.4), 0 4px 10px rgba(0, 0, 0, 0.3);
+            background-color: rgba(28, 38, 64, 0.9);
+            box-shadow: 0 0 20px rgba(255, 200, 87, 0.3);
             transform: scale(1.02);
         }
 
-        /* Speed Dial Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        /* Navigation Cards */
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px 10px;
-            text-decoration: none;
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease-in-out;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            outline: none;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .card:focus, .card:hover {
-            transform: scale(1.08);
-            border-color: var(--accent-color);
-            box-shadow: 0 0 20px rgba(255, 200, 87, 0.5);
-            background-color: rgba(255, 200, 87, 0.08);
-        }
-
-        .card-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .card:focus .card-title, .card:hover .card-title {
-            color: var(--text-color);
-        }
-
-        .card-delete {
+        .search-icon {
             position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 22px;
-            height: 22px;
-            background-color: #ff4d4d;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            z-index: 10;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-
-        .card:focus .card-delete, .card:hover .card-delete {
-            display: flex;
-        }
-
-        .hint {
-            margin-top: 40px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            opacity: 0.8;
-        }
-
-        /* Overlay Dialogs */
-        .dialog-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(11, 16, 32, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .dialog-content {
-            background-color: var(--card-bg);
-            border: 2px solid var(--accent-color);
-            border-radius: 16px;
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-        }
-
-        .dialog-content h3 {
-            margin-top: 0;
-            margin-bottom: 20px;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--accent-color);
             font-size: 20px;
         }
 
-        .dialog-input {
-            width: 100%;
-            height: 40px;
-            background-color: var(--bg-color);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 0 12px;
-            color: var(--text-color);
-            font-size: 14px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
+        /* Grid Layout */
+        .section-title {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin: 30px 0 15px 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        /* Shortcut Cards */
+        .card {
+            position: relative;
+            height: 110px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--card-bg);
+            border: 2px solid transparent;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
             outline: none;
         }
 
-        .dialog-input:focus {
+        .card:focus {
+            transform: scale(1.08);
             border-color: var(--accent-color);
-            box-shadow: 0 0 10px rgba(255, 200, 87, 0.3);
+            box-shadow: 0 0 30px rgba(255, 200, 87, 0.4);
+            z-index: 10;
         }
 
-        .dialog-buttons {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-top: 10px;
+        .card img {
+            max-width: 60%;
+            max-height: 50%;
+            object-fit: contain;
+            margin-bottom: 10px;
         }
 
-        .dialog-btn {
-            flex: 1;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+        .card-label {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            transition: all 0.25s;
+        }
+
+        .card:focus .card-label {
+            bottom: 10px;
             color: var(--text-color);
             font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            outline: none;
-            transition: all 0.2s;
         }
 
-        .dialog-btn:focus, .dialog-btn:hover {
+        /* Specific card colors as per screenshot */
+        .card-youtube { background: linear-gradient(135deg, #FF0000 0%, #282828 100%); }
+        .card-netflix { background: linear-gradient(135deg, #E50914 0%, #000000 100%); }
+        .card-twitch { background: linear-gradient(135deg, #9146FF 0%, #6441A5 100%); }
+        .card-hulu { background: linear-gradient(135deg, #1CE783 0%, #000000 100%); }
+        .card-prime { background: linear-gradient(135deg, #00A8E1 0%, #1A98FF 100%); }
+        .card-hbo { background: linear-gradient(135deg, #9917FF 0%, #000000 100%); }
+
+        /* Tip Banner */
+        .tip-banner {
+            margin-top: auto;
+            background-color: rgba(28, 38, 64, 0.8);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tip-icon {
             background-color: var(--accent-color);
             color: var(--bg-color);
-            transform: scale(1.03);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
+
+        .tip-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .tip-text b { color: var(--text-color); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>NaviTV <span>Browser</span></h1>
+    <div class="header">
+        <h2>NaviTV Browser</h2>
+        <div class="dashboard-icons">
+            <span>🔲</span>
+            <span>👤</span>
+        </div>
+    </div>
 
-        <!-- D-pad focusable Google Search -->
-        <div class="search-container">
-            <form class="search-form" action="https://www.google.com/search" method="get" onsubmit="return this.q.value.trim() !== '';">
-                <input class="search-input" type="text" name="q" placeholder="Search Google or enter address..." autocomplete="off" />
+    <div class="search-area">
+        <div class="search-box">
+            <form action="https://www.google.com/search" method="get">
+                <input class="search-input" type="text" name="q" placeholder="www.google.com" autocomplete="off" />
+                <span class="search-icon">🔍</span>
             </form>
         </div>
+    </div>
 
-        <!-- TV Speed Dial Shortcuts Grid -->
-        <div class="grid" id="shortcuts-grid">
-            <!-- Rendered dynamically by script -->
-        </div>
+    <div class="section-title">Dashboard</div>
+    <div class="grid" id="shortcuts-grid">
+        <a href="https://www.youtube.com" class="card card-youtube">
+            <img src="https://www.youtube.com/favicon.ico" style="filter: brightness(0) invert(1); scale: 2;">
+            <div class="card-label">YouTube</div>
+        </a>
+        <a href="https://www.netflix.com" class="card card-netflix">
+            <img src="https://www.netflix.com/favicon.ico" style="filter: brightness(0) invert(1); scale: 2;">
+            <div class="card-label">Netflix</div>
+        </a>
+        <a href="https://www.twitch.tv" class="card card-twitch">
+            <img src="https://www.twitch.tv/favicon.ico" style="filter: brightness(0) invert(1); scale: 2;">
+            <div class="card-label">Twitch</div>
+        </a>
+        <a href="https://www.hulu.com" class="card card-hulu">
+            <div style="font-size: 40px; font-weight: bold;">hulu</div>
+            <div class="card-label">Hulu</div>
+        </a>
+        <a href="https://www.amazon.com/Prime-Video" class="card card-prime">
+            <div style="font-size: 24px; font-weight: bold;">prime video</div>
+            <div class="card-label">Prime Video</div>
+        </a>
+        <a href="https://www.max.com" class="card card-hbo">
+            <div style="font-size: 32px; font-weight: bold;">HBOMAX</div>
+            <div class="card-label">HBO Max</div>
+        </a>
+    </div>
 
-        <div class="hint">
-            Press Up to focus address bar · D-pad to navigate · OK to open · Hold OK/Enter to delete
+    <div class="section-title">Recent</div>
+    <div class="grid" id="recent-grid">
+        <!-- Will be populated if needed -->
+    </div>
+
+    <div class="tip-banner">
+        <div class="tip-icon">✜</div>
+        <div class="tip-text">
+            <b>Tip:</b> Use the D-Pad to navigate and the 'OK' button to select. Press 'Back' to return to the toolbar.<br>
+            NaviTV Browser v1.2
         </div>
     </div>
 
-    <!-- Add Shortcut Dialog Overlay -->
-    <div id="add-dialog" class="dialog-overlay" style="display: none;">
-        <div class="dialog-content">
-            <h3>Add Speed Dial Shortcut</h3>
-            <input type="text" id="shortcut-title" class="dialog-input" placeholder="Shortcut Name (e.g., Google)" autocomplete="off" />
-            <input type="text" id="shortcut-url" class="dialog-input" placeholder="Website URL (e.g., https://google.com)" autocomplete="off" />
-            <div class="dialog-buttons">
-                <button class="dialog-btn" id="btn-dialog-save" onclick="saveNewShortcut()">Save</button>
-                <button class="dialog-btn" id="btn-dialog-cancel" onclick="hideAddDialog()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Dialog Overlay -->
-    <div id="delete-dialog" class="dialog-overlay" style="display: none;">
-        <div class="dialog-content">
-            <h3>Delete Shortcut</h3>
-            <p id="delete-confirm-text" style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">Are you sure you want to delete this shortcut?</p>
-            <div class="dialog-buttons">
-                <button class="dialog-btn" id="btn-delete-confirm" onclick="confirmDeleteShortcut()">Delete</button>
-                <button class="dialog-btn" id="btn-delete-cancel" onclick="hideDeleteDialog()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const defaultShortcuts = [
-            { title: 'YouTube', url: 'https://www.youtube.com', icon: '📺' },
-            { title: 'Netflix', url: 'https://www.netflix.com', icon: '🎬' },
-            { title: 'Pluto TV', url: 'https://www.pluto.tv', icon: '🍿' },
-            { title: 'Twitch', url: 'https://www.twitch.tv', icon: '🎮' },
-            { title: 'TikTok', url: 'https://www.tiktok.com', icon: '📱' },
-            { title: 'IMDb', url: 'https://www.imdb.com', icon: '🎟️' },
-            { title: 'Google News', url: 'https://news.google.com', icon: '📰' },
-            { title: 'Weather', url: 'https://www.weather.com', icon: '☀️' }
-        ];
-
-        let shortcutsList = [];
-        let deleteTargetIndex = -1;
-        let enterPressTimer = null;
-
-        // Auto-assign emojis based on URLs/Titles
-        function getEmojiForUrl(url, title) {
-            const combined = (url + " " + title).toLowerCase();
-            if (combined.includes("youtube") || combined.includes("video") || combined.includes("tv")) return "📺";
-            if (combined.includes("netflix") || combined.includes("movie") || combined.includes("cinema")) return "🎬";
-            if (combined.includes("pluto")) return "🍿";
-            if (combined.includes("twitch") || combined.includes("game") || combined.includes("play")) return "🎮";
-            if (combined.includes("music") || combined.includes("sound") || combined.includes("spotify")) return "🎵";
-            if (combined.includes("news") || combined.includes("feed")) return "📰";
-            if (combined.includes("weather") || combined.includes("rain") || combined.includes("sun")) return "☀️";
-            if (combined.includes("reddit") || combined.includes("chat") || combined.includes("social")) return "💬";
-            if (combined.includes("mail") || combined.includes("gmail") || combined.includes("email")) return "✉️";
-            if (combined.includes("sport") || combined.includes("football") || combined.includes("soccer")) return "⚽";
-            if (combined.includes("shop") || combined.includes("amazon") || combined.includes("store")) return "🛒";
-            return "🌐";
-        }
-
-        function loadShortcuts() {
-            const stored = localStorage.getItem('tv_shortcuts');
-            if (stored) {
-                shortcutsList = JSON.parse(stored);
-            } else {
-                shortcutsList = defaultShortcuts;
-                localStorage.setItem('tv_shortcuts', JSON.stringify(shortcutsList));
-            }
-            renderGrid();
-        }
-
-        function renderGrid() {
-            const grid = document.getElementById('shortcuts-grid');
-            grid.innerHTML = '';
-
-            shortcutsList.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.tabIndex = 0;
-                card.innerHTML = `
-                    <div class="card-delete" onclick="deleteShortcut(${index}, event)">×</div>
-                    <div class="card-icon">${item.icon}</div>
-                    <div class="card-title">${item.title}</div>
-                `;
-
-                // Handle clicks and enters
-                const navigateAction = () => { window.location.href = item.url; };
-                card.addEventListener('click', navigateAction);
-                
-                // OK/Enter D-pad key events (and long press detection)
-                card.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.keyCode === 23) {
-                        if (!enterPressTimer) {
-                            enterPressTimer = setTimeout(() => {
-                                triggerDeleteConfirmation(index);
-                                enterPressTimer = null;
-                            }, 1000);
-                        }
-                    }
-                });
-
-                card.addEventListener('keyup', (e) => {
-                    if (e.key === 'Enter' || e.keyCode === 23) {
-                        if (enterPressTimer) {
-                            clearTimeout(enterPressTimer);
-                            enterPressTimer = null;
-                            navigateAction();
-                        }
-                    }
-                });
-
-                grid.appendChild(card);
-            });
-
-            // Add "+" card
-            const addCard = document.createElement('div');
-            addCard.className = 'card';
-            addCard.tabIndex = 0;
-            addCard.innerHTML = `
-                <div class="card-icon">➕</div>
-                <div class="card-title">Add Shortcut</div>
-            `;
-            addCard.addEventListener('click', showAddDialog);
-            addCard.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.keyCode === 23) {
-                    showAddDialog();
-                }
-            });
-            grid.appendChild(addCard);
-        }
-
-        // Toggle background focus to trap D-pad inside dialogs
-        function toggleBackgroundFocus(enable) {
-            const mainCards = document.querySelectorAll('.grid .card');
-            const searchInput = document.querySelector('.search-input');
-            mainCards.forEach(card => {
-                card.tabIndex = enable ? 0 : -1;
-            });
-            searchInput.tabIndex = enable ? 0 : -1;
-        }
-
-        // Add Dialog flows
-        function showAddDialog() {
-            document.getElementById('add-dialog').style.display = 'flex';
-            toggleBackgroundFocus(false);
-            document.getElementById('shortcut-title').focus();
-        }
-
-        function hideAddDialog() {
-            document.getElementById('add-dialog').style.display = 'none';
-            document.getElementById('shortcut-title').value = '';
-            document.getElementById('shortcut-url').value = '';
-            toggleBackgroundFocus(true);
-        }
-
-        function saveNewShortcut() {
-            const titleInput = document.getElementById('shortcut-title').value.trim();
-            let urlInput = document.getElementById('shortcut-url').value.trim();
-
-            if (!titleInput || !urlInput) {
-                alert('Please fill out all fields.');
-                return;
-            }
-
-            if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-                urlInput = 'https://' + urlInput;
-            }
-
-            const icon = getEmojiForUrl(urlInput, titleInput);
-            shortcutsList.push({ title: titleInput, url: urlInput, icon: icon });
-            localStorage.setItem('tv_shortcuts', JSON.stringify(shortcutsList));
-            
-            hideAddDialog();
-            renderGrid();
-        }
-
-        // Delete flows
-        function deleteShortcut(index, event) {
-            if (event) event.stopPropagation(); // prevent card click navigation
-            triggerDeleteConfirmation(index);
-        }
-
-        function triggerDeleteConfirmation(index) {
-            deleteTargetIndex = index;
-            const item = shortcutsList[index];
-            document.getElementById('delete-confirm-text').innerText = `Are you sure you want to delete the shortcut for "${item.title}"?`;
-            document.getElementById('delete-dialog').style.display = 'flex';
-            toggleBackgroundFocus(false);
-            document.getElementById('btn-delete-cancel').focus(); // default safe option
-        }
-
-        function confirmDeleteShortcut() {
-            if (deleteTargetIndex >= 0) {
-                shortcutsList.splice(deleteTargetIndex, 1);
-                localStorage.setItem('tv_shortcuts', JSON.stringify(shortcutsList));
-            }
-            hideDeleteDialog();
-            renderGrid();
-        }
-
-        function hideDeleteDialog() {
-            document.getElementById('delete-dialog').style.display = 'none';
-            deleteTargetIndex = -1;
-            toggleBackgroundFocus(true);
-        }
-
-        // Handle Escape/Back button key inputs inside dialogs
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' || e.keyCode === 4) {
-                if (document.getElementById('add-dialog').style.display === 'flex') {
-                    e.preventDefault();
-                    hideAddDialog();
-                } else if (document.getElementById('delete-dialog').style.display === 'flex') {
-                    e.preventDefault();
-                    hideDeleteDialog();
-                }
-            }
-        });
-
-        // Initialize Page
-        window.onload = loadShortcuts;
-    </script>
 </body>
 </html>

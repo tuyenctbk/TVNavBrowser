@@ -46,6 +46,11 @@
     <string name="settings_cache_cleared">Cache effacé</string>
     <string name="settings_cache_failed">Impossible d\'effacer le cache</string>
 
+    <string name="settings_force_dark_mode">Forcer le mode sombre</string>
+    <string name="settings_force_dark_mode_summary">Appliquer automatiquement un thème sombre à tous les sites Web (idéal pour la navigation TV).</string>
+    <string name="settings_dark_mode_enabled">Mode sombre forcé : activé</string>
+    <string name="settings_dark_mode_disabled">Mode sombre forcé : désactivé</string>
+
     <string name="mouse_mode_on">Souris ACT</string>
     <string name="mouse_mode_off">Souris</string>
 
@@ -53,6 +58,11 @@
     <string name="nav_forward">Avant</string>
     <string name="nav_refresh">Actualiser</string>
     <string name="nav_bookmark">Enregistrer</string>
+    <string name="nav_desktop_mode">Version pour ordinateur</string>
+    <string name="nav_returning_home">Retour au tableau de bord</string>
+    <string name="nav_mobile_site_requested">Version mobile demandée</string>
+    <string name="nav_desktop_site_requested">Version ordinateur demandée</string>
+
     <string name="url_hint">Rechercher ou saisir une URL</string>
     <string name="cursor_content_desc">Pointeur de souris virtuel</string>
     <string name="input_hint_default">Télécommande : Croix pour naviguer · OK pour sélectionner</string>

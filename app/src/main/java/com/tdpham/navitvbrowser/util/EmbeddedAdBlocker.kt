@@ -111,6 +111,11 @@ object EmbeddedAdBlocker {
         val host = uri.host?.lowercase() ?: return false
         val path = uri.path?.lowercase().orEmpty()
 
+        val dynamicList = RemoteConfigHelper.getAdBlockList()
+        if (dynamicList.any { host == it || host.endsWith(".$it") }) {
+            return true
+        }
+
         if (blockedHostSuffixes.any { host == it || host.endsWith(".$it") }) {
             return true
         }

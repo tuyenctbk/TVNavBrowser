@@ -27,14 +27,14 @@
                 android:pathData="M0,20h320v1h-320z M0,40h320v1h-320z M0,60h320v1h-320z M0,80h320v1h-320z M0,100h320v1h-320z M0,120h320v1h-320z M0,140h320v1h-320z M0,160h320v1h-320z" />
             <path
                 android:fillColor="#08FFFFFF"
-                android:pathData="M40,0v180h1v-180z M80,0v180h1v-180z M120,0v180h1v-180z M160,0v180h1v-180z M200,0v180h1v-180z M240,0v180h1v-180z M280,0v180h1v-180z" />
+                android:pathData="M40,0v180h1v-180z M80,0v180h1v-180z M120,0v180h1v-180z M160,0v180h1v-180z M200,0v180h1v-180z" />
         </vector>
     </item>
 
-    <!-- Compass Logo - Enhanced with Shadows and Glow -->
+    <!-- Compass Logo -->
     <item
-        android:gravity="center_vertical|left"
-        android:left="32dp"
+        android:gravity="center_vertical|start"
+        android:start="32dp"
         android:width="84dp"
         android:height="84dp">
         <vector
@@ -42,70 +42,52 @@
             android:height="108dp"
             android:viewportWidth="108"
             android:viewportHeight="108">
-            <!-- Outer Glow -->
             <path
                 android:fillColor="#1AFFFFC8"
                 android:pathData="M54,14c-22.09,0 -40,17.91 -40,40s17.91,40 40,40s40,-17.91 40,-40s-17.91,-40 -40,-40z" />
-
-            <!-- Compass Ring -->
             <path
                 android:strokeColor="#FFFFC857"
                 android:strokeWidth="2.5"
                 android:pathData="M54,22c-17.67,0 -32,14.33 -32,32s14.33,32 32,32s32,-14.33 32,-32S71.67,22 54,22z" />
-
-            <!-- Compass Needle - Gold Top -->
             <path
                 android:fillColor="#FFFFC857"
                 android:pathData="M54,26l12,28l-12,8l-12,-8z" />
-            <!-- Compass Needle - Darker Gold Bottom -->
             <path
                 android:fillColor="#FFE6A819"
                 android:pathData="M54,82l-12,-28l12,-8l12,8z" />
-
-            <!-- Center Pivot with Glow -->
             <path
                 android:fillColor="#FFFFFF"
                 android:pathData="M54,51c1.66,0 3,1.34 3,3s-1.34,3 -3,3s-3,-1.34 -3,-3S52.34,51 54,51z" />
         </vector>
     </item>
 
-    <!-- Brand Typography: LITE BROWSER (Stacked Two-Line Lockup) -->
+    <!-- Brand Typography: NAVITV BROWSER -->
     <item
-        android:gravity="center_vertical|left"
-        android:left="132dp"
-        android:width="156dp"
-        android:height="48dp">
+        android:gravity="center_vertical|start"
+        android:start="132dp"
+        android:width="160dp"
+        android:height="52dp">
         <vector
             android:width="200dp"
             android:height="62dp"
             android:viewportWidth="200"
             android:viewportHeight="62">
-            <!-- Line 1: LITE (White) -->
-            <!-- L -->
-            <path android:fillColor="#FFFFFF" android:pathData="M10,5v20h18v-4h-14V5h-4z" />
-            <!-- I -->
-            <path android:fillColor="#FFFFFF" android:pathData="M34,5v20h4V5h-4z" />
-            <!-- T -->
-            <path android:fillColor="#FFFFFF" android:pathData="M44,5h20v4h-8v16h-4V9h-8V5z" />
-            <!-- E -->
-            <path android:fillColor="#FFFFFF" android:pathData="M70,5v20h18v-4h-14v-5h12v-4h-12V9h14V5H70z" />
+            <!-- NAVITV -->
+            <path android:fillColor="#FFFFFF" android:pathData="M10,5h4l8,12v-12h4v20h-4l-8,-12v12h-4z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M38,5h4l8,20h-4l-2,-5h-8l-2,5h-4z M38.5,16h7l-3.5,-9z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M58,5h4l6,20h-4l-4,-15l-4,15h-4z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M78,5h4v20h-4z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M88,5h16v4h-6v16h-4v-16h-6z" />
+            <path android:fillColor="#FFFFFF" android:pathData="M110,5h4l6,20h-4l-4,-15l-4,15h-4z" />
 
-            <!-- Line 2: BROWSER (Accent Gold) -->
-            <!-- B -->
-            <path android:fillColor="#FFFFC857" android:pathData="M10,34h8c2.5,0 4.5,1.5 4.5,3.5c0,1.8 -1.2,2.8 -3,3.2c2,0.4 3.5,1.5 3.5,3.8c0,2.5 -2,4.5 -5,4.5h-8V34z M13.5,39h4.5c1,0 1.8,-0.7 1.8,-1.7s-0.8,-1.8 -1.8,-1.8h-4.5V39z M13.5,45.5h5c1,0 2,-0.7 2,-1.7s-1,-1.8 -2,-1.8h-5V45.5z" />
-            <!-- R -->
-            <path android:fillColor="#FFFFC857" android:pathData="M32,34h7.5c2.5,0 4.5,1.8 4.5,4c0,1.8 -1.2,3.2 -3,3.8l4,7.2h-4l-3.5,-6.5h-2v6.5h-3.5V34z M35.5,39h4c1,0 1.8,-0.7 1.8,-1.8s-0.8,-1.7 -1.8,-1.7h-4V39z" />
-            <!-- O -->
-            <path android:fillColor="#FFFFC857" android:fillType="evenOdd" android:pathData="M52,34h12v15H52V34z M55.5,37.5h5v8h-5v-8z" />
-            <!-- W -->
-            <path android:fillColor="#FFFFC857" android:pathData="M73,34h3.5l2.2,9l2.2,-9h3.2l2.2,9l2.2,-9h3.5l-4,15h-3.5l-2,-8.5l-2,8.5h-3.5L73,34z" />
-            <!-- S -->
-            <path android:fillColor="#FFFFC857" android:pathData="M101,34h12v3.5h-8.5v2.2h8.5v9.3h-12V45.5h8.5v-2.2h-8.5V34z" />
-            <!-- E -->
-            <path android:fillColor="#FFFFC857" android:pathData="M122,34v15h12v-3.5h-8.5v-2.2h7.5v-3.5h-7.5V37.5h8.5V34H122z" />
-            <!-- R -->
-            <path android:fillColor="#FFFFC857" android:pathData="M143,34h7.5c2.5,0 4.5,1.8 4.5,4c0,1.8 -1.2,3.2 -3,3.8l4,7.2h-4l-3.5,-6.5h-2v6.5h-3.5V34z M146.5,39h4c1,0 1.8,-0.7 1.8,-1.8s-0.8,-1.7 -1.8,-1.7h-4V39z" />
+            <!-- BROWSER -->
+            <path android:fillColor="#FFFFC857" android:pathData="M10,34h8c3,0 5,2 5,4.5s-2,3.5-4,4c2.5,0.5 4,2 4,4.5s-2,4.5-5,4.5h-8z M13.5,39h4c1,0 2,-1 2,-1.5s-1,-1.5-2,-1.5h-4z M13.5,47h4.5c1,0 2,-1 2,-1.5s-1,-1.5-2,-1.5h-4.5z" />
+            <path android:fillColor="#FFFFC857" android:pathData="M28,34h8c3,0 5,2 5,4s-2,3-4,3.5l4.5,7.5h-4.5l-4,-7h-2v7h-3.5z M31.5,38.5h4c1,0 1.5,-0.5 1.5,-1.5s-0.5,-1.5-1.5,-1.5h-4z" />
+            <path android:fillColor="#FFFFC857" android:pathData="M46,34h12v15h-12z M49.5,37.5v8h5v-8z" />
+            <path android:fillColor="#FFFFC857" android:pathData="M63,34h3.5l2.2,9l2.2,-9h3.2l2.2,9l2.2,-9h3.5l-4,15h-3.5l-2,-8.5l-2,8.5h-3.5z" />
+            <path android:fillColor="#FFFFC857" android:pathData="M87,34h12v3.5h-8.5v2h8.5v9h-12v-3.5h8.5v-2h-8.5z" />
+            <path android:fillColor="#FFFFC857" android:pathData="M105,34v15h12v-3.5h-8.5v-2.2h7.5v-3.5h-7.5v-2.2h8.5v-3.6z" />
+            <path android:fillColor="#FFFFC857" android:pathData="M123,34h8c3,0 5,2 5,4s-2,3-4,3.5l4.5,7.5h-4.5l-4,-7h-2v7h-3.5z M126.5,38.5h4c1,0 1.5,-0.5 1.5,-1.5s-0.5,-1.5-1.5,-1.5h-4z" />
         </vector>
     </item>
-
 </layer-list>

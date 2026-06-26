@@ -108,8 +108,21 @@
                 android:paddingEnd="0dp"
                 android:drawableStart="@drawable/ic_nav_settings"
                 android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnMouseMode"
+                android:nextFocusRight="@id/btnDesktopMode"
                 android:contentDescription="@string/settings" />
+
+            <Button
+                android:id="@+id/btnDesktopMode"
+                style="@style/ToolbarButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="0dp"
+                android:drawableStart="@drawable/ic_nav_desktop"
+                android:drawableTint="@color/text_primary"
+                android:nextFocusRight="@id/btnMouseMode"
+                android:contentDescription="@string/nav_desktop_mode" />
 
             <Button
                 android:id="@+id/btnMouseMode"
@@ -232,7 +245,8 @@
     <FrameLayout
         android:id="@+id/adContainer"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="8dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="80dp" />
 
 </LinearLayout>
