@@ -46,6 +46,11 @@
     <string name="settings_cache_cleared">Caché borrada</string>
     <string name="settings_cache_failed">No se pudo borrar la caché</string>
 
+    <string name="settings_force_dark_mode">Forzar modo oscuro</string>
+    <string name="settings_force_dark_mode_summary">Aplica automáticamente un tema oscuro a todos los sitios web (ideal para navegar en TV).</string>
+    <string name="settings_dark_mode_enabled">Modo oscuro forzado: Activado</string>
+    <string name="settings_dark_mode_disabled">Modo oscuro forzado: Desactivado</string>
+
     <string name="mouse_mode_on">Ratón ACT</string>
     <string name="mouse_mode_off">Ratón</string>
 
@@ -53,6 +58,16 @@
     <string name="nav_forward">Adelante</string>
     <string name="nav_refresh">Recargar</string>
     <string name="nav_bookmark">Guardar</string>
+    <string name="nav_desktop_mode">Cambiar a sitio de escritorio</string>
+    <string name="nav_returning_home">Volviendo al panel</string>
+    <string name="nav_mobile_site_requested">Sitio móvil solicitado</string>
+    <string name="nav_desktop_site_requested">Sitio de escritorio solicitado</string>
+
+    <string name="update_available_title">Actualización disponible</string>
+    <string name="update_available_message">Hay una nueva versión de NaviTV Browser disponible. Actualice ahora para obtener las últimas funciones y mejoras de seguridad.</string>
+    <string name="update_now">Actualizar ahora</string>
+    <string name="update_later">Más tarde</string>
+
     <string name="url_hint">Busca o escribe una URL</string>
     <string name="cursor_content_desc">Puntero de ratón virtual</string>
     <string name="input_hint_default">Remoto: D-pad para navegar · OK para seleccionar</string>

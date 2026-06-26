@@ -63,6 +63,11 @@
     <string name="nav_mobile_site_requested">Mobile Site Requested</string>
     <string name="nav_desktop_site_requested">Desktop Site Requested</string>
 
+    <string name="update_available_title">Update Available</string>
+    <string name="update_available_message">A new version of NaviTV Browser is available. Update now for the latest features and security improvements.</string>
+    <string name="update_now">Update Now</string>
+    <string name="update_later">Later</string>
+
     <string name="url_hint">Search or enter URL</string>
     <string name="cursor_content_desc">Virtual mouse pointer</string>
     <string name="input_hint_default">Remote: D-pad to navigate · OK to select</string>

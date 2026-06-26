@@ -43,6 +43,7 @@ import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
 import com.tdpham.navitvbrowser.util.RatingHelper
+import com.tdpham.navitvbrowser.util.UpdateHelper
 import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -131,6 +132,7 @@ class MainActivity : ComponentActivity() {
 
         if (AppPreferences.isOnboardingComplete(this)) {
             RatingHelper.maybeShowRating(this)
+            UpdateHelper.maybeShowUpdateDialog(this)
         }
     }
 

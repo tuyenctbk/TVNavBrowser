@@ -63,6 +63,11 @@
     <string name="nav_mobile_site_requested">मोबाइल साइट का अनुरोध किया गया</string>
     <string name="nav_desktop_site_requested">डेस्क톱 साइट का अनुरोध किया गया</string>
 
+    <string name="update_available_title">अपडेट उपलब्ध</string>
+    <string name="update_available_message">NaviTV ब्राउज़र का एक नया संस्करण उपलब्ध है। नवीनतम सुविधाओं और सुरक्षा सुधारों के लिए अभी अपडेट करें।</string>
+    <string name="update_now">अभी अपडेट करें</string>
+    <string name="update_later">बाद में</string>
+
     <string name="url_hint">खोजें या URL दर्ज करें</string>
     <string name="cursor_content_desc">वर्चुअल माउस पॉइंटर</string>
     <string name="input_hint_default">रिमोट: नेविगेट करने के लिए D-पैड · चुनने के लिए OK</string>

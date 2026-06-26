@@ -63,6 +63,11 @@
     <string name="nav_mobile_site_requested">Đã yêu cầu trang web di động</string>
     <string name="nav_desktop_site_requested">Đã yêu cầu trang web máy tính</string>
 
+    <string name="update_available_title">Bản cập nhật có sẵn</string>
+    <string name="update_available_message">Đã có phiên bản mới của Trình duyệt NaviTV. Cập nhật ngay để nhận các tính năng mới nhất và cải thiện bảo mật.</string>
+    <string name="update_now">Cập nhật ngay</string>
+    <string name="update_later">Để sau</string>
+
     <string name="url_hint">Tìm kiếm hoặc nhập địa chỉ web</string>
     <string name="cursor_content_desc">Con trỏ chuột ảo</string>
     <string name="input_hint_default">Điều khiển: Phím D-pad để di chuyển · OK để chọn</string>

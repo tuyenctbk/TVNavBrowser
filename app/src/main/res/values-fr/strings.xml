@@ -63,6 +63,11 @@
     <string name="nav_mobile_site_requested">Version mobile demandée</string>
     <string name="nav_desktop_site_requested">Version ordinateur demandée</string>
 
+    <string name="update_available_title">Mise à jour disponible</string>
+    <string name="update_available_message">Une nouvelle version de NaviTV Browser est disponible. Mettez à jour maintenant pour profiter des dernières fonctionnalités et améliorations de sécurité.</string>
+    <string name="update_now">Mettre à jour maintenant</string>
+    <string name="update_later">Plus tard</string>
+
     <string name="url_hint">Rechercher ou saisir une URL</string>
     <string name="cursor_content_desc">Pointeur de souris virtuel</string>
     <string name="input_hint_default">Télécommande : Croix pour naviguer · OK pour sélectionner</string>

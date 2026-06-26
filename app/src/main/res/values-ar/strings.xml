@@ -63,6 +63,11 @@
     <string name="nav_mobile_site_requested">تم طلب نسخة الهاتف</string>
     <string name="nav_desktop_site_requested">تم طلب نسخة سطح المكتب</string>
 
+    <string name="update_available_title">التحديث متاح</string>
+    <string name="update_available_message">يتوفر إصدار جديد من متصفح NaviTV. قم بالتحديث الآن للحصول على أحدث الميزات وتحسينات الأمان.</string>
+    <string name="update_now">تحديث الآن</string>
+    <string name="update_later">لاحقاً</string>
+
     <string name="url_hint">ابحث أو أدخل عنواناً</string>
     <string name="cursor_content_desc">مؤشر الماوس الافتراضي</string>
     <string name="input_hint_default">الرئيسية: D-pad للتنقل · OK للاختيار</string>
