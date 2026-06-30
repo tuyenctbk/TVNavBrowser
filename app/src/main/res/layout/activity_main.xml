@@ -1,252 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_screen"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:background="@drawable/bg_screen">
 
-    <HorizontalScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <LinearLayout
-            android:id="@+id/toolbar"
-            android:layout_width="wrap_content"
+        <HorizontalScrollView
+            android:id="@+id/toolbarContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_toolbar"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <Button
+                    android:id="@+id/btnBack"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_back"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnForward"
+                    android:contentDescription="@string/nav_back" />
+
+                <Button
+                    android:id="@+id/btnForward"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_forward"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnRefresh"
+                    android:contentDescription="@string/nav_forward" />
+
+                <Button
+                    android:id="@+id/btnRefresh"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_refresh"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnBookmark"
+                    android:contentDescription="@string/nav_refresh" />
+
+                <Button
+                    android:id="@+id/btnBookmark"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_bookmark"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnShowBookmarks"
+                    android:contentDescription="@string/nav_bookmark" />
+
+                <Button
+                    android:id="@+id/btnShowBookmarks"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_bookmarks_list"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnShowHistory"
+                    android:contentDescription="@string/bookmarks" />
+
+                <Button
+                    android:id="@+id/btnShowHistory"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_history"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnSettings"
+                    android:contentDescription="@string/history" />
+
+                <Button
+                    android:id="@+id/btnSettings"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_settings"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnDesktopMode"
+                    android:contentDescription="@string/settings" />
+
+                <Button
+                    android:id="@+id/btnDesktopMode"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_desktop"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusRight="@id/btnFullscreen"
+                    android:contentDescription="@string/nav_desktop_mode" />
+
+                <Button
+                    android:id="@+id/btnFullscreen"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_fullscreen"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusLeft="@+id/btnDesktopMode"
+                    android:nextFocusRight="@+id/btnVoiceSearch"
+                    android:contentDescription="@string/nav_fullscreen" />
+
+                <Button
+                    android:id="@+id/btnVoiceSearch"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_mic"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusLeft="@+id/btnFullscreen"
+                    android:nextFocusRight="@id/urlInput"
+                    android:contentDescription="Voice Search" />
+
+                <EditText
+                    android:id="@+id/urlInput"
+                    android:layout_width="280dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_url_bar"
+                    android:hint="@string/url_hint"
+                    android:imeOptions="actionGo"
+                    android:inputType="textUri|textNoSuggestions"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_secondary" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="8dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_page"
+            android:visibility="gone" />
+
+        <!-- Smart Auto-Hiding Bookmark Bar -->
+        <HorizontalScrollView
+            android:id="@+id/bookmarkBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:background="@drawable/bg_toolbar"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="8dp">
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:padding="6dp"
+            android:visibility="gone">
 
-            <Button
-                android:id="@+id/btnBack"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+            <LinearLayout
+                android:id="@+id/bookmarkBarContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" />
+
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:id="@+id/webViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_webview_frame">
+
+            <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusUp="@id/urlInput" />
+
+            <TextView
+                android:id="@+id/tvInputHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_input_hint"
                 android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_back"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnForward"
-                android:contentDescription="@string/nav_back" />
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:text="@string/input_hint_default"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </FrameLayout>
 
-            <Button
-                android:id="@+id/btnForward"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_forward"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnRefresh"
-                android:contentDescription="@string/nav_forward" />
+        <FrameLayout
+            android:id="@+id/adContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="80dp" />
 
-            <Button
-                android:id="@+id/btnRefresh"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_refresh"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnBookmark"
-                android:contentDescription="@string/nav_refresh" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/btnBookmark"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_bookmark"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnShowBookmarks"
-                android:contentDescription="@string/nav_bookmark" />
-
-            <Button
-                android:id="@+id/btnShowBookmarks"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_bookmarks_list"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnShowHistory"
-                android:contentDescription="@string/bookmarks" />
-
-            <Button
-                android:id="@+id/btnShowHistory"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_history"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnSettings"
-                android:contentDescription="@string/history" />
-
-            <Button
-                android:id="@+id/btnSettings"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_settings"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnDesktopMode"
-                android:contentDescription="@string/settings" />
-
-            <Button
-                android:id="@+id/btnDesktopMode"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_desktop"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnMouseMode"
-                android:contentDescription="@string/nav_desktop_mode" />
-
-            <Button
-                android:id="@+id/btnMouseMode"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_mouse"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/btnVoiceSearch"
-                android:contentDescription="@string/mouse_mode_off" />
-
-            <Button
-                android:id="@+id/btnVoiceSearch"
-                style="@style/ToolbarButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="6dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="0dp"
-                android:drawableStart="@drawable/ic_nav_mic"
-                android:drawableTint="@color/text_primary"
-                android:nextFocusRight="@id/urlInput"
-                android:contentDescription="Voice Search" />
-
-            <EditText
-                android:id="@+id/urlInput"
-                android:layout_width="280dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_url_bar"
-                android:hint="@string/url_hint"
-                android:imeOptions="actionGo"
-                android:inputType="textUri|textNoSuggestions"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:singleLine="true"
-                android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_secondary" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="8dp"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="0"
-        android:progressDrawable="@drawable/progress_page"
+    <ImageView
+        android:id="@+id/ivCursor"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:contentDescription="@string/cursor_content_desc"
+        android:src="@drawable/ic_cursor_pointer"
         android:visibility="gone" />
 
-    <!-- Smart Auto-Hiding Bookmark Bar -->
-    <HorizontalScrollView
-        android:id="@+id/bookmarkBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:background="@drawable/bg_toolbar"
-        android:fillViewport="true"
-        android:scrollbars="none"
-        android:padding="6dp"
-        android:visibility="gone">
+</FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/bookmarkBarContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" />
-
-    </HorizontalScrollView>
-
-    <FrameLayout
-        android:id="@+id/webViewContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_webview_frame">
-
-        <WebView
-            android:id="@+id/webView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:nextFocusUp="@id/urlInput" />
-
-        <ImageView
-            android:id="@+id/ivCursor"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:contentDescription="@string/cursor_content_desc"
-            android:src="@drawable/ic_cursor_pointer"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvInputHint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="12dp"
-            android:background="@drawable/bg_input_hint"
-            android:paddingStart="12dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="6dp"
-            android:text="@string/input_hint_default"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:visibility="gone" />
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/adContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minHeight="80dp" />
-
-</LinearLayout>

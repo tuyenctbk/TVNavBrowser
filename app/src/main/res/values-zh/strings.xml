@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">已连接鼠标 · 支持滚轮</string>
     <string name="input_hint_touch">触摸输入已激活</string>
     <string name="list_hint_open">按 OK 键打开 · 长按删除</string>
+
+    <string name="nav_fullscreen">全屏</string>
+    <string name="settings_auto_fullscreen">自动全屏</string>
+    <string name="settings_auto_fullscreen_summary">浏览网页时，在无操作后自动隐藏控制栏。</string>
+    <string name="settings_auto_fullscreen_enabled">自动全屏：已启用</string>
+    <string name="settings_auto_fullscreen_disabled">自动全屏：已禁用</string>
+    <string name="mode_virtual_mouse">虚拟鼠标已激活</string>
+    <string name="mode_dpad">D-pad 方向键模式已激活</string>
 </resources>

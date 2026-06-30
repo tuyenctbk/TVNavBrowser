@@ -10,6 +10,7 @@ object AppPreferences {
     private const val KEY_HOMEPAGE_CUSTOM = "homepage_custom"
     private const val KEY_BLOCK_EMBEDDED_ADS = "block_embedded_ads"
     private const val KEY_FORCE_DARK_MODE = "force_dark_mode"
+    private const val KEY_AUTO_FULLSCREEN = "auto_fullscreen"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     fun isOnboardingComplete(context: Context): Boolean =
@@ -65,6 +66,17 @@ object AppPreferences {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(KEY_FORCE_DARK_MODE, enabled)
+            .apply()
+    }
+
+    fun isAutoFullscreenEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getBoolean(KEY_AUTO_FULLSCREEN, false)
+
+    fun setAutoFullscreenEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_AUTO_FULLSCREEN, enabled)
             .apply()
     }
 }

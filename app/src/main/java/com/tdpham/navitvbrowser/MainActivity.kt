@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnForward: Button
     private lateinit var btnRefresh: Button
     private lateinit var btnBookmark: Button
-    private lateinit var btnMouseMode: Button
     private lateinit var btnDesktopMode: Button
     private lateinit var btnVoiceSearch: Button
     private lateinit var ivCursor: ImageView
@@ -72,12 +71,26 @@ class MainActivity : ComponentActivity() {
     private lateinit var tvInputHint: TextView
     private lateinit var bookmarkBar: View
     private lateinit var bookmarkBarContainer: LinearLayout
+    private lateinit var btnFullscreen: Button
+    private lateinit var toolbarContainer: View
+    private lateinit var rootLayout: View
 
     private var realBookmarks: List<BookmarkEntity> = emptyList()
     private lateinit var virtualCursor: VirtualCursorController
     private lateinit var historyRepo: HistoryRepository
     private lateinit var bookmarkRepo: BookmarkRepository
     private var isWebViewInputFocused = false
+    private var isFullscreenMode = false
+    private val autoFullscreenRunnable = Runnable { toggleFullscreen(true) }
+    private val AUTO_FULLSCREEN_DELAY_MS = 4000L
+    private var modeToast: Toast? = null
+    private var isSwitchingMode = false
+
+    private fun showModeNotice(message: String) {
+        modeToast?.cancel()
+        modeToast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT)
+        modeToast?.show()
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +108,6 @@ class MainActivity : ComponentActivity() {
         btnForward = findViewById(R.id.btnForward)
         btnRefresh = findViewById(R.id.btnRefresh)
         btnBookmark = findViewById(R.id.btnBookmark)
-        btnMouseMode = findViewById(R.id.btnMouseMode)
         btnDesktopMode = findViewById(R.id.btnDesktopMode)
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
         ivCursor = findViewById(R.id.ivCursor)
@@ -104,8 +116,46 @@ class MainActivity : ComponentActivity() {
         tvInputHint = findViewById(R.id.tvInputHint)
         bookmarkBar = findViewById(R.id.bookmarkBar)
         bookmarkBarContainer = findViewById(R.id.bookmarkBarContainer)
+        btnFullscreen = findViewById(R.id.btnFullscreen)
+        toolbarContainer = findViewById(R.id.toolbarContainer)
+        rootLayout = findViewById(R.id.rootLayout)
 
-        virtualCursor = VirtualCursorController(webViewContainer, ivCursor, webView)
+        virtualCursor = VirtualCursorController(rootLayout, ivCursor, webView)
+        virtualCursor.onCursorActivity = {
+            if (isFullscreenMode) {
+                if (ivCursor.y <= 0f) {
+                    toggleFullscreen(false)
+                }
+            }
+            resetInactivityTimer()
+        }
+        virtualCursor.onExitUp = {
+            urlInput.requestFocus()
+        }
+
+        urlInput.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
+            }
+        }
+
+        webView.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (isSwitchingMode) return@OnFocusChangeListener
+            if (hasFocus) {
+                setMouseMode(true)
+                showModeNotice(getString(R.string.mode_virtual_mouse))
+                ivCursor.post {
+                    ivCursor.x = rootLayout.width / 2f - ivCursor.width / 2f
+                    ivCursor.y = webViewContainer.y + 10f
+                }
+            } else {
+                setMouseMode(false)
+                showModeNotice(getString(R.string.mode_dpad))
+                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(webView.windowToken, 0)
+            }
+        }
 
         configureWebView()
         setupNavigationButtons()
@@ -119,11 +169,10 @@ class MainActivity : ComponentActivity() {
 
         if (savedInstanceState != null) {
             webView.restoreState(savedInstanceState)
-            if (savedInstanceState.getBoolean(KEY_MOUSE_MODE, false)) {
-                setMouseMode(true)
-            }
+            setMouseMode(savedInstanceState.getBoolean(KEY_MOUSE_MODE, true))
         } else {
             loadInitialUrl(intent)
+            setMouseMode(true)
         }
 
         findViewById<FrameLayout>(R.id.adContainer)?.let {
@@ -139,10 +188,12 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         if (::webView.isInitialized) webView.onResume()
+        resetInactivityTimer()
     }
 
     override fun onPause() {
         if (::webView.isInitialized) webView.onPause()
+        handler.removeCallbacks(autoFullscreenRunnable)
         super.onPause()
     }
 
@@ -177,6 +228,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        resetInactivityTimer()
         if (event.keyCode == KeyEvent.KEYCODE_BACK) {
             if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
                 event.startTracking()
@@ -197,6 +249,9 @@ class MainActivity : ComponentActivity() {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_MENU -> {
+                    if (isFullscreenMode) {
+                        toggleFullscreen(false)
+                    }
                     urlInput.requestFocus()
                     urlInput.selectAll()
                     return true
@@ -208,9 +263,8 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        if (event.action == KeyEvent.ACTION_DOWN && virtualCursor.isEnabled && !isKeyboardVisible()) {
-            val focused = currentFocus
-            if (focused != urlInput && virtualCursor.handleKey(event)) {
+        if (event.action == KeyEvent.ACTION_DOWN && webView.hasFocus() && virtualCursor.isEnabled && !isKeyboardVisible()) {
+            if (virtualCursor.handleKey(event)) {
                 updateInputHint()
                 return true
             }
@@ -219,6 +273,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onGenericMotionEvent(event: MotionEvent): Boolean {
+        resetInactivityTimer()
         if (InputHelper.isMouseEvent(event)) {
             virtualCursor.hideForPhysicalPointer()
             tvInputHint.text = getString(R.string.input_hint_mouse)
@@ -238,6 +293,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        resetInactivityTimer()
         if (InputHelper.isTouchEvent(event)) {
             virtualCursor.hideForPhysicalPointer()
             tvInputHint.text = getString(R.string.input_hint_touch)
@@ -284,9 +340,13 @@ class MainActivity : ComponentActivity() {
                 progressBar.progress = 0
                 isWebViewInputFocused = false
                 
-                // Hide ad if navigating away from dashboard
-                val isDashboard = url == "file:///android_asset/dashboard.html" || url.isNullOrEmpty()
-                findViewById<View>(R.id.adContainer)?.isVisible = isDashboard
+                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
+                if (view != null) {
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+                
+                updateAdContainerVisibility()
 
                 view?.evaluateJavascript("window.__tvnavAdBlockerApplied = false;", null)
                 injectFocusStyle(view)
@@ -296,6 +356,7 @@ class MainActivity : ComponentActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 progressBar.isVisible = false
+                updateAdContainerVisibility()
                 injectFocusStyle(view)
                 if (AppPreferences.isForceDarkModeEnabled(this@MainActivity)) {
                     injectDarkMode(view)
@@ -335,7 +396,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupNavigationButtons() {
-        btnMouseMode.setOnClickListener { setMouseMode(!virtualCursor.isEnabled) }
+        btnFullscreen.setOnClickListener { toggleFullscreen(!isFullscreenMode) }
         btnVoiceSearch.setOnClickListener { startVoiceSearch() }
         btnDesktopMode.setOnClickListener { toggleDesktopMode() }
 
@@ -423,23 +484,26 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setMouseMode(enabled: Boolean) {
-        virtualCursor.setEnabled(enabled)
-        val tintColor = if (enabled) {
-            getColor(R.color.accent)
-        } else {
-            getColor(R.color.text_primary)
+        if (isSwitchingMode) return
+        isSwitchingMode = true
+        try {
+            virtualCursor.setEnabled(enabled)
+            updateInputHint()
+
+            if (enabled && !webView.hasFocus()) {
+                webView.requestFocus()
+            } else if (!enabled && webView.hasFocus()) {
+                urlInput.requestFocus()
+            }
+            updateAdContainerVisibility()
+
+            FirebaseInitializer.logEvent(
+                if (enabled) "mouse_mode_on" else "mouse_mode_off",
+                null
+            )
+        } finally {
+            isSwitchingMode = false
         }
-        btnMouseMode.compoundDrawableTintList = android.content.res.ColorStateList.valueOf(tintColor)
-        btnMouseMode.animate()
-            .scaleX(if (enabled) 1.08f else 1f)
-            .scaleY(if (enabled) 1.08f else 1f)
-            .setDuration(140)
-            .start()
-        updateInputHint()
-        FirebaseInitializer.logEvent(
-            if (enabled) "mouse_mode_on" else "mouse_mode_off",
-            null
-        )
     }
 
     private fun updateInputHint() {
@@ -474,7 +538,7 @@ class MainActivity : ComponentActivity() {
     private fun setupFocusAnimations() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnBookmark,
-            btnMouseMode, btnDesktopMode, btnVoiceSearch,
+            btnFullscreen, btnDesktopMode, btnVoiceSearch,
             findViewById(R.id.btnShowBookmarks),
             findViewById(R.id.btnShowHistory),
             findViewById(R.id.btnSettings),
@@ -485,26 +549,36 @@ class MainActivity : ComponentActivity() {
     private fun setupBackHandler() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (isFullscreenMode) {
+                    toggleFullscreen(false)
+                    resetInactivityTimer()
+                    btnFullscreen.requestFocus()
+                    return
+                }
                 if (isKeyboardVisible() || isWebViewInputFocused) {
                     webView.evaluateJavascript("document.activeElement.blur();", null)
                     isWebViewInputFocused = false
-                    btnBack.requestFocus()
+                    val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    imm.hideSoftInputFromWindow(webView.windowToken, 0)
+                    webView.requestFocus()
                     return
                 }
                 if (urlInput.hasFocus()) {
+                    val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
                     urlInput.clearFocus()
-                    btnBack.requestFocus()
+                    webView.requestFocus()
+                    return
+                }
+                if (webView.hasFocus() && virtualCursor.isEnabled) {
+                    urlInput.requestFocus()
                     return
                 }
                 if (webView.canGoBack()) {
                     webView.goBack()
                     return
                 }
-                if (virtualCursor.isEnabled) {
-                    setMouseMode(false)
-                } else {
-                    finish()
-                }
+                finish()
             }
         })
     }
@@ -539,6 +613,9 @@ class MainActivity : ComponentActivity() {
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
             url = "https://www.google.com/search?q=" + java.net.URLEncoder.encode(input, "UTF-8")
         }
+        val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
+        urlInput.clearFocus()
         webView.loadUrl(url)
         webView.requestFocus()
         FirebaseInitializer.logEvent("search", mapOf("query" to input))
@@ -739,6 +816,54 @@ class MainActivity : ComponentActivity() {
             })();
         """.trimIndent()
         view?.evaluateJavascript(js, null)
+    }
+
+    private fun updateAdContainerVisibility() {
+        val container = findViewById<View>(R.id.adContainer) ?: return
+        if (isFullscreenMode) {
+            container.visibility = View.GONE
+            return
+        }
+        val url = webView.url
+        val isDashboard = url == "file:///android_asset/dashboard.html" || url.isNullOrEmpty()
+        
+        // Auto-hide guides row if virtual mouse is active or not on dashboard
+        if (isDashboard && !virtualCursor.isEnabled) {
+            container.visibility = View.VISIBLE
+        } else {
+            container.visibility = View.GONE
+        }
+    }
+
+    private fun toggleFullscreen(enabled: Boolean) {
+        if (isFullscreenMode == enabled) return
+        isFullscreenMode = enabled
+
+        toolbarContainer.visibility = if (enabled) View.GONE else View.VISIBLE
+        updateAdContainerVisibility()
+
+        val iconRes = if (enabled) R.drawable.ic_nav_fullscreen_exit else R.drawable.ic_nav_fullscreen
+        btnFullscreen.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0)
+        btnFullscreen.animate()
+            .scaleX(if (enabled) 1.08f else 1f)
+            .scaleY(if (enabled) 1.08f else 1f)
+            .setDuration(140)
+            .start()
+
+        FirebaseInitializer.logEvent(
+            if (enabled) "fullscreen_on" else "fullscreen_off",
+            null
+        )
+    }
+
+    private fun resetInactivityTimer() {
+        handler.removeCallbacks(autoFullscreenRunnable)
+        if (AppPreferences.isAutoFullscreenEnabled(this)) {
+            if (isFullscreenMode) {
+                toggleFullscreen(false)
+            }
+            handler.postDelayed(autoFullscreenRunnable, AUTO_FULLSCREEN_DELAY_MS)
+        }
     }
 
     inner class WebAppInterface {

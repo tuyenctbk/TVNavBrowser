@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">Maus verbunden · Scrollrad unterstützt</string>
     <string name="input_hint_touch">Touch-Eingabe aktiv</string>
     <string name="list_hint_open">Drücken Sie OK zum Öffnen · Gedrückt halten zum Löschen</string>
+
+    <string name="nav_fullscreen">Vollbild</string>
+    <string name="settings_auto_fullscreen">Automatisches Vollbild</string>
+    <string name="settings_auto_fullscreen_summary">Die Kontrollleiste beim Browsen bei Inaktivität automatisch ausblenden.</string>
+    <string name="settings_auto_fullscreen_enabled">Automatisches Vollbild: Aktiviert</string>
+    <string name="settings_auto_fullscreen_disabled">Automatisches Vollbild: Deaktiviert</string>
+    <string name="mode_virtual_mouse">Virtuelle Maus aktiv</string>
+    <string name="mode_dpad">D-Pad-Modus aktiv</string>
 </resources>

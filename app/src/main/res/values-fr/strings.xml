@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">Souris connectée · Molette de défilement prise en charge</string>
     <string name="input_hint_touch">Entrée tactile active</string>
     <string name="list_hint_open">Appuyez sur OK pour ouvrir · Appui long pour supprimer</string>
+
+    <string name="nav_fullscreen">Plein écran</string>
+    <string name="settings_auto_fullscreen">Plein écran automatique</string>
+    <string name="settings_auto_fullscreen_summary">Masquer automatiquement la barre de contrôle en cas d\'inactivité lors de la navigation.</string>
+    <string name="settings_auto_fullscreen_enabled">Plein écran automatique : Activé</string>
+    <string name="settings_auto_fullscreen_disabled">Plein écran automatique : Désactivé</string>
+    <string name="mode_virtual_mouse">Souris virtuelle active</string>
+    <string name="mode_dpad">Mode D-pad actif</string>
 </resources>

@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">マウス接続済み ・ スクロールホイール対応</string>
     <string name="input_hint_touch">タッチ入力有効</string>
     <string name="list_hint_open">OKで開く ・ 長押しで削除</string>
+
+    <string name="nav_fullscreen">全画面</string>
+    <string name="settings_auto_fullscreen">自動全画面表示</string>
+    <string name="settings_auto_fullscreen_summary">閲覧時、操作がない場合にコントロールバーを自動的に非表示にします。</string>
+    <string name="settings_auto_fullscreen_enabled">自動全画面表示：有効</string>
+    <string name="settings_auto_fullscreen_disabled">自動全画面表示：無効</string>
+    <string name="mode_virtual_mouse">バーチャルマウス有効</string>
+    <string name="mode_dpad">Dパッドモード有効</string>
 </resources>

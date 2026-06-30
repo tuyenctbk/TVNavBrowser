@@ -1,0 +1,243 @@
+<en-US>
+App Name: NaviTV Browser
+Short Description: Fast web browser for Android TV. Default Virtual Mouse & Fullscreen mode.
+Full Description:
+Experience the web like never before on your big screen with NaviTV Browser. Designed specifically for Android TV and Set-top boxes, our browser provides a seamless, fast, and secure browsing experience right from your couch.
+
+Key Features:
+- Primary Virtual Mouse Mode: Enabled by default! Easily control a high-precision virtual pointer using your remote's D-pad to navigate any website seamlessly.
+- Webpage Fullscreen Mode: Hide the top control bar to maximize your screen space. Toggle manually with a button click or enable Auto-Fullscreen to automatically hide the bar during inactivity.
+- Leanback Optimized: A user interface designed for the TV screen, easy to navigate with your standard remote.
+- Speed Dial Dashboard: Access your favorite sites like YouTube, Netflix, and Twitch with one click from the home screen.
+- Ad Blocker: Say goodbye to annoying web ads. Our built-in blocker ensures faster page loads and a cleaner experience.
+- Force Dark Mode: Protect your eyes during late-night browsing with our intelligent dark theme for all websites.
+- Voice Search: Speak into your remote to search the web or dictate URLs instantly.
+- Desktop Mode: Switch between mobile and desktop views to get the best out of every website.
+- Privacy Focused: Easy one-click clearing of history, bookmarks, and cache.
+
+Whether you're streaming videos, checking news, or browsing social media, NaviTV Browser is the ultimate utility for your Android TV.
+</en-US>
+
+<es-ES>
+App Name: NaviTV Browser
+Short Description: Navegador rápido para Android TV. Ratón virtual y pantalla completa.
+Full Description:
+Experimente la web como nunca antes en su pantalla grande con NaviTV Browser. Diseñado específicamente para Android TV, nuestro navegador ofrece una experiencia de navegación fluida, rápida y segura desde su sofá.
+
+Características principales:
+- Modo de ratón virtual principal: ¡Activado por defecto! Controle fácilmente un puntero virtual de alta precisión utilizando el D-pad de su control remoto.
+- Modo de pantalla completa: Oculte la barra de control superior para maximizar el espacio de la pantalla. Tenga control manual o active la ocultación automática por inactividad.
+- Optimizado para TV: Interfaz diseñada para pantallas grandes, fácil de usar con tu control remoto estándar.
+- Marcadores Rápidos: Accede a tus sitios favoritos como YouTube y Netflix con un solo clic.
+- Bloqueador de Anuncios: Navega más rápido y sin interrupciones eliminando la publicidad web.
+- Modo Oscuro Forzado: Ideal para navegar de noche, aplica un tema oscuro a todos los sitios web.
+- Búsqueda por Voz: Dicta URLs o busca en Google usando solo tu voz.
+</es-ES>
+
+<ja-JP>
+App Name: NaviTV Browser
+Short Description: Android TV向けの高速ブラウザ。仮想マウスのデフォルト有効化と全画面モード。
+Full Description:
+NaviTVブラウザで、大画面でのウェブ体験を新しく。Android TVおよびセットトップボックス専用に設計されたこのブラウザは、リビングのソファから快適かつ安全にインターネットを楽しむことができます。
+
+主な機能：
+- デフォルト仮想マウスモード： 最初から有効！リモコンの方向キー（D-pad）で高精度な仮想ポインターを簡単に操作できます。
+- 全画面ウェブモード： 上部のコントロールバーを非表示にして画面を最大限に活用。手動切り替えに加え、無操作時に自動で非表示にする機能もサポート。
+- テレビ最適化UI： テレビ画面に特化したデザイン。標準のリモコンだけで直感的に操作可能。
+- スピードダイヤル： ホーム画面からお気に入りサイト（YouTube、Netflixなど）へ1クリックでアクセス。
+- 広告ブロック： 面倒なウェブ広告を自動で非表示にし、ページの読み込みを高速化。
+- 夜間モード： すべてのサイトにスマートなダークテーマを適用し、目を保護。
+- 音声検索： リモコンに向かって話すだけで、ウェブ検索やURL入力が即座に完了。
+</ja-JP>
+
+<fr-FR>
+App Name: NaviTV Browser
+Short Description: Navigateur rapide pour Android TV. Souris virtuelle et plein écran.
+Full Description:
+Découvrez le web comme jamais auparavant sur votre grand écran avec NaviTV Browser. Conçu spécifiquement pour Android TV, notre navigateur offre une expérience fluide, rapide et sécurisée depuis votre canapé.
+
+Caractéristiques principales :
+- Mode Souris Virtuelle Principal : Activé par défaut ! Utilisez le D-pad de votre télécommande pour contrôler un pointeur virtuel de haute précision.
+- Mode Plein Écran : Masquez la barre de contrôle supérieure pour maximiser l'espace d'affichage. Basculez manuellement ou activez le masquage automatique en cas d'inactivité.
+- Optimisé pour la TV : Interface conçue pour l'écran de télévision, facile à naviguer avec votre télécommande standard.
+- Tableau de Bord Rapide : Accédez à vos sites préférés comme YouTube et Netflix en un clic depuis l'écran d'accueil.
+- Bloqueur de Publicité : Dites adieu aux publicités web intrusives pour una navigation plus rapide.
+- Mode Sombre Forcé : Protégez vos yeux lors de vos navigations nocturnes avec un thème sombre pour tous les sites.
+- Recherche Vocale : Dictez des URLs ou effectuez des recherches Google directement avec votre voix.
+</fr-FR>
+
+<hi-IN>
+App Name: NaviTV Browser
+Short Description: Android TV के लिए तेज़ वेब ब्राउज़र। डिफ़ॉल्ट वर्चुअल माउस और फुल स्क्रीन।
+Full Description:
+NaviTV ब्राउज़र के साथ अपनी बड़ी स्क्रीन पर वेब का अनुभव पहले कभी नहीं किया गया है। विशेष रूप से Android TV के लिए डिज़ाइन किया गया, हमारा ब्राउज़र आपके सोफे से ही एक सहज, तेज़ और सुरक्षित ब्राउज़ंग अनुभव प्रदान करता है।
+
+मुख्य विशेषताएं:
+- प्राथमिक वर्चुअल माउस मोड: डिफ़ॉल्ट रूप से सक्षम! किसी भी वेबसाइट पर आसानी से नेविगेट करने के लिए अपने रिमोट के D-pad का उपयोग करें।
+- वेबपेज फुल स्क्रीन मोड: स्क्रीन स्पेस को अधिकतम करने के लिए शीर्ष नियंत्रण बार को छुपाएं। मैन्युअल रूप से स्विच करें या निष्क्रियता पर स्वचालित रूप से छुपाएं।
+- TV के लिए अनुकूलित: टीवी स्क्रीन के लिए डिज़ाइन किया गया इंटरफ़ेस, आपके मानक रिमोट के साथ नेविगेट करना आसान।
+- स्पीड डायल डैशबोर्ड: होम स्क्रीन से एक क्लिक के साथ YouTube और Netflix जैसी अपनी पसंदीदा साइटों तक पहुँचें।
+- विज्ञापन अवरोधक: कष्टप्रद वेब विज्ञापनों को अलविदा कहें। हमारा अंतर्निहित अवरोधक तेज़ पेज लोड सुनिश्चित करता है।
+- डार्क मोड: रात में ब्राउज़िंग के दौरान अपनी आँखों की सुरक्षा के लिए सभी वेबसाइटों के लिए डार्क थीम।
+- वॉयस सर्च: वेब खोजने या URL निर्देशित करने के लिए सीधे अपने रिमोट में बोलें।
+</hi-IN>
+
+<vi>
+App Name: NaviTV Browser
+Short Description: Trình duyệt web nhanh cho Android TV. Chuột ảo mặc định & Toàn màn hình.
+Full Description:
+Trải nghiệm web hơn bao giờ hết trên màn hình lớn với NaviTV Browser. Được thiết kế dành riêng cho Android TV và đầu thu kỹ thuật số, trình duyệt của chúng tôi mang lại trải nghiệm lướt web mượt mà, nhanh chóng và an toàn ngay tại ghế sofa của bạn.
+
+Tính năng chính:
+- Chuột ảo mặc định: Được bật theo mặc định! Dễ dàng điều khiển con trỏ ảo có độ chính xác cao bằng D-pad để lướt mọi trang web.
+- Chế độ toàn màn hình: Ẩn thanh công cụ phía trên để tối đa hóa diện tích hiển thị. Tự tắt/bật thủ công hoặc cài đặt tự động ẩn khi không hoạt động.
+- Tối ưu hóa TV: Giao diện người dùng được thiết kế cho màn hình TV, dễ dàng điều hướng bằng điều khiển từ xa tiêu chuẩn.
+- Bảng điều khiển Speed Dial: Truy cập các trang web yêu thích như YouTube, Netflix và Twitch chỉ với một cú nhấp chuột từ màn hình chính.
+- Chặn quảng cáo: Tạm biệt các quảng cáo web phiền phức. Trình chặn tích hợp của chúng tôi đảm bảo tải trang nhanh hơn.
+- Chế độ tối (Dark Mode): Bảo vệ mắt khi lướt web ban đêm với giao diện tối thông minh cho tất cả các trang web.
+- Tìm kiếm bằng giọng nói: Nói vào điều khiển từ xa để tìm kiếm web hoặc nhập URL ngay lập tức.
+</vi>
+
+<zh-CN>
+App Name: NaviTV Browser
+Short Description: 快速的 Android TV 浏览器。默认启用虚拟鼠标与网页全屏模式。
+Full Description:
+使用 NaviTV 浏览器在您的大家电屏幕上体验前所未有的网页浏览。专为 Android TV 和机顶盒设计，我们的浏览器让您在沙发上即可享受流畅、快速且安全的浏览体验。
+
+主要功能：
+- 主要虚拟鼠标模式： 默认启用！使用遥控器的方向键轻松控制高精度的虚拟指针，无缝浏览任何网页。
+- 网页全屏模式： 隐藏顶部控制栏以最大化屏幕空间。支持手动按钮切换或设置无操作时自动隐藏。
+- 电视端优化: 专为电视屏幕设计的界面，使用标准遥控器即可轻松导航。
+- 快速访问面板: 从主屏幕一键访问您最喜爱的网站，如 YouTube、Netflix 和 Twitch。
+- 广告拦截: 告别烦人的网页广告。内置拦截器确保更快的页面加载速度。
+- 强制深色模式: 通过所有网站的智能深色主题，保护您在深夜浏览时的眼睛。
+- 语音搜索: 直接对遥控器说话，即可搜索网页或即时输入 URL。
+</zh-CN>
+
+<ko-KR>
+App Name: NaviTV Browser
+Short Description: Android TV용 빠른 웹 브라우저. 기본 가상 마우스 및 전체 화면 모드 지원.
+Full Description:
+NaviTV 브라우저로 대형 화면에서 이전과는 다른 웹을 경험해 보세요. Android TV 및 셋톱박스용으로 특별히 설계된 이 브라우저는 소파에서 바로 원활하고 빠르며 안전한 브라우징 경험을 제공합니다.
+
+주요 특징:
+- 기본 가상 마우스 모드: 기본 활성화! 리모컨 D-패드로 고정밀 마우스 커서를 조작하여 모든 웹사이트를 쉽게 탐색하세요.
+- 전체 화면 모드: 상단 도구 바를 숨겨 화면 공간을 극대화합니다. 수동 제어 또는 무작동 시 자동 숨김 모드를 사용할 수 있습니다.
+- TV 최적화: TV 화면용으로 설계된 사용자 인터페이스로 일반 리모컨으로 쉽게 탐색할 수 있습니다.
+- 스피드 다이얼 대시보드: 홈 화면에서 클릭 한 번으로 YouTube, Netflix, Twitch 등 즐겨찾는 사이트에 접속하세요.
+- 광고 차단기: 짜증나는 웹 광고에 작별을 고하세요. 내장된 차단기로 더 빠른 페이지 로딩을 보장합니다.
+- 강제 다크 모드: 모든 웹사이트에 적용되는 지능형 다크 테마로 밤늦게 브라우징할 때 눈을 보호하세요.
+- 음성 검색: 리모컨에 대고 말하여 웹을 검색하거나 URL을 즉시 입력하세요.
+</ko-KR>
+
+<de-DE>
+App Name: NaviTV Browser
+Short Description: Schneller TV-Browser. Standardmäßig virtueller Maus- und Vollbildmodus.
+Full Description:
+Erleben Sie das Web wie nie zuvor auf Ihrem großen Bildschirm mit dem NaviTV Browser. Unser Browser wurde speziell für Android TV und Set-Top-Boxen entwickelt und bietet ein nahtloses, schnelles und sicheres Surferlebnis direkt von Ihrer Couch aus.
+
+Hauptmerkmale:
+- Virtueller Mausmodus Standard: Standardmäßig aktiviert! Verwenden Sie das D-Pad Ihrer Fernbedienung, um einen hochpräzisen virtuellen Zeiger zu steuern.
+- Webseiten-Vollbildmodus: Blenden Sie die obere Kontrollleiste aus, um den Bildschirmplatz zu maximieren. Manuell umschaltbar oder automatisches Ausblenden bei Inaktivität.
+- Optimiert für TV: Eine Benutzeroberfläche, die für den Fernsehbildschirm entwickelt wurde und mit Ihrer Standard-Fernbedienung einfach zu navigieren ist.
+- Speed-Dial-Dashboard: Greifen Sie mit einem Klick vom Startbildschirm aus auf Ihre Lieblingsseiten wie YouTube, Netflix und Twitch zu.
+- Werbeblocker: Verabschieden Sie sich von lästiger Werbung. Unser integrierter Blocker sorgt für schnelleres Laden von Seiten.
+- Erzwungener Dunkelmodus: Schützen Sie Ihre Augen beim nächtlichen Surfen mit unserem intelligenten dunklen Design für alle Websites.
+- Sprachsuche: Sprechen Sie in Ihre Fernbedienung, um im Internet zu suchen oder URLs sofort zu diktieren.
+</de-DE>
+
+<pt-PT>
+App Name: NaviTV Browser
+Short Description: Navegador web rápido para Android TV. Rato virtual por padrão e ecrã inteiro.
+Full Description:
+Experimente a web como nunca antes no seu ecrã gigante com o NaviTV Browser. Concebido especificamente para Android TV e boxes, o nosso navegador proporciona uma experiência de navegação fluida, rápida e segura diretamente do seu sofá.
+
+Características principais:
+- Modo de Rato Virtual Principal: Ativado por padrão! Use o D-pad do seu comando para controlar um ponteiro virtual de alta precisão.
+- Modo de Ecrã Inteiro: Oculte a barra de controlo superior para maximizar o espaço do ecrã. Alterne manualmente ou ative a ocultação automática por inatividade.
+- Optimizado para TV: Uma interface de utilizador concebida para o ecrã da TV, fácil de navegar com o seu comando padrão.
+- Painel de Marcadores Rápidos: Aceda aos seus sites favoritos como YouTube, Netflix e Twitch com um clique a partir do ecrã inicial.
+- Bloqueador de Anúncios: Diga adeus aos anúncios web irritantes. O nosso bloqueador integrado garante carregamentos de página mais rápidos.
+- Modo Escuro Forçado: Proteja os seus olhos durante a navegação noturna com o nosso tema escuro inteligente para todos os websites.
+- Pesquisa por Voz: Fale para o seu comando para pesquisar na web ou ditar URLs instantaneamente.
+</pt-PT>
+
+<ar>
+App Name: متصفح NaviTV
+Short Description: متصفح ويب سريع لـ Android TV. الماوس الافتراضي الافتراضي ووضع الشاشة الكاملة.
+Full Description:
+جرب الإنترنت كما لم تفعل من قبل على شاشتك الكبيرة مع متصفح NaviTV. تم تصميم متصفحنا خصيصًا لأجهزة Android TV وأجهزة الاستقبال، وهو يوفر تجربة تصفح سلسة وسريعة وآمنة مباشرة من أريكتك.
+
+الميزات الرئيسية:
+- وضع الماوس الافتراضي الأساسي: مفعل افتراضيًا! تحكم بسهولة في مؤشر افتراضي عالي الدقة باستخدام D-pad على جهاز التحكم عن بُعد.
+- وضع ملء الشاشة للويب: إخفاء شريط التحكم العلوي لزيادة مساحة الشاشة. قم بالتبديل يدويًا أو تفعيل الإخفاء التلقائي عند عدم النشاط.
+- محسن للتلفزيون: واجهة مستخدم مصممة لشاشة التلفزيون، سهلة التنقل باستخدام جهاز التحكم عن بعد القياسي.
+- لوحة الوصول السريع: قم بالوصول إلى مواقعك المفضلة مثل YouTube و Netflix و Twitch بنقرة واحدة من الشاشة الرئيسية.
+- مانع الإعلانات: قل وداعًا لإعلانات الويب المزعجة. يضمن المانع المدمج تحميل الصفحات بشكل أserع.
+- فرض الوضع الداكن: احمِ عينيك أثناء التصفح في وقت متأخر من الليل من خلال المظهر الداكن الذكي لجميع المواقع.
+- البحث الصوتي: تحدث في جهاز التحكم عن بعد للبحث في الويب أو إملاء عناوين URL على الفور.
+</ar>
+
+<it-IT>
+App Name: NaviTV Browser
+Short Description: Navigatore veloce per Android TV. Mouse virtuale predefinito e schermo intero.
+Full Description:
+Naviga sul web come mai prima d'ora sul grande schermo con NaviTV Browser. Progettato specificamente per Android TV e set-top box, il nostro browser offre un'esperienza di navigazione fluida, veloce e sicura direttamente dal tuo divano.
+
+Caratteristiche principali:
+- Modalità Mouse Virtuale Principale: Attivata per impostazione predefinita! Controlla facilmente un puntatore virtuale ad alta precisione con il D-pad del telecomando.
+- Modalità Schermo Intero: Nascondi la barra di controllo superiore per massimizzare lo spazio sullo schermo. Attiva manualmente o abilita lo Schermo intero automatico per nasconderla in caso di inattività.
+- Ottimizzato per la TV: Interfaccia utente progettata per lo schermo TV, facile da navigare con il telecomando standard.
+- Pannello Preferiti Rapidi: Accedi ai tuoi siti preferiti come YouTube e Netflix con un solo clic dalla schermata iniziale.
+- Blocco Pubblicità: Dì addio ai fastidiosi annunci web. Il nostro ad-blocker integrato garantisce caricamenti più veloci.
+- Forza Tema Scuro: Proteggi i tuoi occhi durante la navigazione notturna con il tema scuro intelligente per tutti i siti.
+- Ricerca Vocale: Parla nel telecomando per cercare sul web o dettare URL istantaneamente.
+</it-IT>
+
+<ru-RU>
+App Name: NaviTV Browser
+Short Description: Быстрый ТВ-браузер. Виртуальная мышь по умолчанию и полноэкранный режим.
+Full Description:
+Откройте для себя интернет на большом экране с NaviTV Browser. Наш веб-браузер разработан специально для Android TV и ТВ-приставок, обеспечивая удобный, быстрый и безопасный просмотр прямо с вашего дивана.
+
+Основные характеристики:
+- Основной режим виртуальной мыши: Включен по умолчанию! Управляйте высокоточным виртуальным указателем с пульта с помощью кнопок направления (D-pad).
+- Полноэкранный режим для сайтов: Скрывайте верхнюю панель управления, чтобы освободить место на экране. Переключайте вручную или включите автоскрытие при отсутствии активности.
+- Оптимизировано для ТВ: Пользовательский интерфейс адаптирован под экраны телевизоров и легко управляется обычным пультом.
+- Быстрый доступ на главном экране: Переходите на любимые сайты, такие как YouTube и Netflix, в один клик.
+- Блокировщик рекламы: Встроенный блокировщик убирает навязчивую рекламу, ускоряя загрузку страниц.
+- Умный ночной режим: Автоматически включает темную тему для всех сайтов, оберегая ваши глаза ночью.
+- Голосовой поиск: Ищите в интернете или вводите адреса голосом через пульт.
+</ru-RU>
+
+<id>
+App Name: NaviTV Browser
+Short Description: Browser web cepat untuk Android TV. Mouse virtual default & Layar Penuh.
+Full Description:
+Rasakan pengalaman menjelajah web di layar besar dengan NaviTV Browser. Dirancang khusus untuk Android TV dan Set-top box, browser kami memberikan pengalaman berselancar yang lancar, cepat, dan aman langsung dari sofa Anda.
+
+Fitur Utama:
+- Mode Mouse Virtual Utama: Aktif secara default! Kendalikan penunjuk virtual presisi tinggi menggunakan D-pad remote Anda dengan mudah.
+- Mode Layar Penuh Halaman Web: Sembunyikan bilah kontrol atas untuk memaksimalkan ruang layar. Alihkan secara manual atau aktifkan Layar Penuh Otomatis untuk menyembunyikan bilah saat tidak ada aktivitas.
+- Dioptimalkan untuk TV: Antarmuka pengguna dirancang untuk layar TV, mudah dinavigasi dengan remote standar Anda.
+- Dasbor Pintasan: Akses situs favorit Anda seperti YouTube dan Netflix dengan satu klik dari layar beranda.
+- Pemblokir Iklan: Ucapkan selamat tinggal pada iklan web yang mengganggu. Pemblokir bawaan kami memastikan pemuatan halaman lebih cepat.
+- Paksa Mode Gelap: Lindungi mata Anda saat berselancar di malam hari dengan tema gelap cerdas untuk semua situs web.
+- Pencarian Suara: Bicara ke remote Anda untuk mencari di web atau mendiktekan URL secara instan.
+</id>
+
+<tr-TR>
+App Name: NaviTV Browser
+Short Description: Android TV için hızlı tarayıcı. Varsayılan Sanal Fare ve Tam Ekran modu.
+Full Description:
+NaviTV Browser ile web'i büyük ekranınızda daha önce hiç olmadığı gibi deneyimleyin. Android TV ve Set-top box cihazları için özel olarak tasarlanan tarayıcımız, doğrudan koltuğunuzdan sorunsuz, hızlı ve güvenli bir tarama deneyimi sunar.
+
+Ana Özellikler:
+- Birincil Sanal Fare Modu: Varsayılan olarak etkindir! Herhangi bir web sitesinde sorunsuz gezinmek için kumandanızın D-pad'ini kullanarak yüksek hassasiyetli bir sanal işaretçiyi kolayca kontrol edin.
+- Web Sayfası Tam Ekran Modu: Ekran alanınızı en üst düzeye çıkarmak için üst kontrol çubuğunu gizleyin. Manuel olarak düğmeyle geçiş yapın veya hareketsizlik durumunda otomatik gizleme için Otomatik Tam Ekran'ı etkinleştirin.
+- TV için Optimize Edilmiş: TV ekranı için tasarlanmış, standart kumandanızla gezinmesi kolay kullanıcı arayüzü.
+- Hızlı Erişim Paneli: YouTube, Netflix ve Twitch gibi favori sitelerinize ana ekrandan tek tıkla erişin.
+- Reklam Engelleyici: Web reklamlarına elveda deyin. Dahili engelleyicimiz daha hızlı sayfa yüklemesi sağlar.
+- Zorunlu Karanlık Mod: Gece taramalarında akıllı karanlık temamızla gözlerinizi koruyun.
+- Sesli Arama: Web'de arama yapmak veya URL'leri yazdırmak için doğrudan kumandanıza konuşun.
+</tr-TR>

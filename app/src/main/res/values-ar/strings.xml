@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">تم توصيل الماوس · دعم عجلة التمرير</string>
     <string name="input_hint_touch">الإدخال باللمس نشط</string>
     <string name="list_hint_open">اضغط على OK للفتح · اضغط مع الاستمرار للحذف</string>
+
+    <string name="nav_fullscreen">شاشة كاملة</string>
+    <string name="settings_auto_fullscreen">شاشة كاملة تلقائية</string>
+    <string name="settings_auto_fullscreen_summary">إخفاء شريط التحكم تلقائيًا عند عدم النشاط أثناء التصفح.</string>
+    <string name="settings_auto_fullscreen_enabled">شاشة كاملة تلقائية: تم التفعيل</string>
+    <string name="settings_auto_fullscreen_disabled">شاشة كاملة تلقائية: تم التعطيل</string>
+    <string name="mode_virtual_mouse">الماوس الافتراضي نشط</string>
+    <string name="mode_dpad">وضع D-pad نشط</string>
 </resources>

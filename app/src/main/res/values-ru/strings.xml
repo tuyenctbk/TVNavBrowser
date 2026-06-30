@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">NaviTV Browser</string>
+
+    <string name="bookmarks">Закладки</string>
+    <string name="history">История</string>
+    <string name="settings">Настройки</string>
+    <string name="bookmark_saved">Закладка сохранена</string>
+    <string name="bookmark_exists">Уже в закладках</string>
+    <string name="bookmarks_empty">Нет закладок. Сохраняйте страницы с помощью кнопки ☆.</string>
+    <string name="history_empty">История просмотра пуста.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
+
+    <string name="onboarding_step">Шаг %1$d из %2$d</string>
+    <string name="onboarding_next">Далее</string>
+    <string name="onboarding_skip">Пропустить</string>
+    <string name="onboarding_get_started">Начать</string>
+    <string name="onboarding_title_1">Добро пожаловать в NaviTV Browser</string>
+    <string name="onboarding_message_1">Просматривайте веб-страницы на Android TV с помощью пульта, клавиатуры, мыши или тачпада. Используйте D-pad для перемещения между кнопками и по странице.</string>
+    <string name="onboarding_title_2">Режим виртуальной мыши</string>
+    <string name="onboarding_message_2">Включите режим мыши, чтобы управлять указателем с помощью D-pad и кликать кнопкой ОК. Подключите USB- или Bluetooth-мышь в любое время — она заработает мгновенно.</string>
+    <string name="onboarding_title_3">Сохраняйте любимое</string>
+    <string name="onboarding_message_3">Используйте кнопку со звездочкой для добавления страниц в закладки. Открывайте сохраненные закладки и историю с панели инструментов в любое время.</string>
+    <string name="onboarding_title_4">Все готово</string>
+    <string name="onboarding_message_4">История сохраняется автоматически. Перейдите в Настройки, чтобы изменить домашнюю страницу, заблокировать рекламу на сайтах или очистить данные.</string>
+
+    <string name="rating_title">Нравится NaviTV Browser?</string>
+    <string name="rating_message">Если вам нравится приложение, пожалуйста, оцените его. Это помогает нам развиваться!</string>
+    <string name="rating_rate">Оценить</string>
+    <string name="rating_remind_later">Напомнить позже</string>
+    <string name="rating_no_thanks">Нет, спасибо</string>
+
+    <string name="settings_homepage_label">Адрес домашней страницы</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">Сохранить домашнюю страницу</string>
+    <string name="settings_block_embedded_ads">Блокировать рекламу на сайтах</string>
+    <string name="settings_block_embedded_ads_summary">Автоматически скрывать встроенную рекламу на веб-страницах. Не влияет на баннерную рекламу в приложении.</string>
+    <string name="settings_block_ads_enabled">Блокировка рекламы включена</string>
+    <string name="settings_block_ads_disabled">Блокировка рекламы выключена</string>
+    <string name="settings_homepage_empty">Пожалуйста, введите адрес домашней страницы</string>
+    <string name="settings_homepage_saved">Домашняя страница сохранена</string>
+    <string name="settings_clear_history">Очистить историю</string>
+    <string name="settings_clear_bookmarks">Очистить закладки</string>
+    <string name="settings_clear_cache">Очистить кэш WebView</string>
+    <string name="settings_history_cleared">История очищена</string>
+    <string name="settings_bookmarks_cleared">Закладки очищены</string>
+    <string name="settings_cache_cleared">Кэш очищен</string>
+    <string name="settings_cache_failed">Не удалось очистить кэш</string>
+
+    <string name="settings_force_dark_mode">Принудительный темный режим</string>
+    <string name="settings_force_dark_mode_summary">Автоматически применять темную тему для всех веб-сайтов (идеально для ТВ).</string>
+    <string name="settings_dark_mode_enabled">Принудительный темный режим: Включен</string>
+    <string name="settings_dark_mode_disabled">Принудительный темный режим: Выключен</string>
+
+    <string name="mouse_mode_on">Мышь ВКЛ</string>
+    <string name="mouse_mode_off">Мышь</string>
+
+    <string name="nav_back">Назад</string>
+    <string name="nav_forward">Вперед</string>
+    <string name="nav_refresh">Обновить</string>
+    <string name="nav_bookmark">Сохранить</string>
+    <string name="nav_desktop_mode">Версия для ПК</string>
+    <string name="nav_returning_home">Возврат на панель</string>
+    <string name="nav_mobile_site_requested">Запрошена мобильная версия</string>
+    <string name="nav_desktop_site_requested">Запрошена версия для ПК</string>
+
+    <string name="update_available_title">Доступно обновление</string>
+    <string name="update_available_message">Доступна новая версия NaviTV Browser. Обновите сейчас для получения последних функций и улучшений безопасности.</string>
+    <string name="update_now">Обновить сейчас</string>
+    <string name="update_later">Позже</string>
+
+    <string name="url_hint">Поиск или ввод адреса</string>
+    <string name="cursor_content_desc">Виртуальный указатель мыши</string>
+    <string name="input_hint_default">Пульт: D-pad для навигации · OK для выбора</string>
+    <string name="input_hint_virtual_mouse">Режим мыши: D-pad двигает указатель · OK кликает · Назад для выхода</string>
+    <string name="input_hint_mouse">Мышь подключена · Поддержка колеса прокрутки</string>
+    <string name="input_hint_touch">Сенсорный ввод активен</string>
+    <string name="list_hint_open">Нажмите OK, чтобы открыть · Долгое нажатие для удаления</string>
+
+    <string name="nav_fullscreen">Полноэкранный режим</string>
+    <string name="settings_auto_fullscreen">Автоматический полный экран</string>
+    <string name="settings_auto_fullscreen_summary">Автоматически скрывать панель управления при отсутствии активности во время просмотра.</string>
+    <string name="settings_auto_fullscreen_enabled">Automatiческй полный экран: Включен</string>
+    <string name="settings_auto_fullscreen_disabled">Автоматический полный экран: Выключен</string>
+    <string name="mode_virtual_mouse">Виртуальная мышь активна</string>
+    <string name="mode_dpad">Режим D-pad активен</string>
+</resources>

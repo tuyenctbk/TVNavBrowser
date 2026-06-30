@@ -1,0 +1,105 @@
+<en-US>
+- Primary Virtual Mouse enabled by default for high-precision web browsing.
+- Automatic navigation switching between Virtual Mouse and D-pad.
+- Fullscreen mode & Auto-Fullscreen setting to hide the top control bar on inactivity.
+- Automated keyboard dismissal on enter or focus change.
+- Native remote key scrolling shortcuts (Page Up/Down, Channel Up/Down).
+</en-US>
+<ar>
+- تم تمكين الماوس الافتراضي الأساسي افتراضيًا لتصفح الويب بدقة عالية.
+- تبديل تلقائي للتنقل بين الماوس الافتراضي ولوحة الاتجاهات (D-pad).
+- وضع الشاشة الكاملة والإخفاء التلقائي لشريط التحكم عند الخمول.
+- إخفاء لوحة المفاتيح تلقائيًا عند الضغط على Enter أو تغيير التركيز.
+- اختصارات التمرير باستخدام أزرار جهاز التحكم عن بعد (Page Up/Down, Channel Up/Down).
+</ar>
+<de-DE>
+- Standardmäßig aktivierter virtueller Mausmodus für präzises Surfen im Web.
+- Automatische Navigation umschalten zwischen virtueller Maus und D-Pad.
+- Vollbildmodus und automatisches Ausblenden der Kontrollleiste bei Inaktivität.
+- Tastatur wird bei Eingabe oder Fokusverlust automatisch ausgeblendet.
+- Direktes Scrollen mit den Fernbedienungstasten (Page Up/Down, Channel Up/Down).
+</de-DE>
+<es-ES>
+- Ratón virtual principal habilitado por defecto para navegación web de alta precisión.
+- Cambio de navegación automático entre Ratón Virtual y D-pad.
+- Modo de pantalla completa y ocultación automática de la barra de control tras inactividad.
+- Cierre automático del teclado al pulsar Enter o perder foco.
+- Accesos directos de desplazamiento con botones del control remoto (Page Up/Down, Channel Up/Down).
+</es-ES>
+<fr-FR>
+- Souris virtuelle activée par défaut pour une navigation web de haute précision.
+- Passage automatique entre la souris virtuelle et la navigation D-pad.
+- Mode plein écran et masquage automatique de la barre de commandes en cas d'inactivité.
+- Fermeture automatique du clavier sur entrée ou changement de focus.
+- Raccourcis de défilement natifs avec les touches de la télécommande (Page Up/Down, Channel Up/Down).
+</fr-FR>
+<hi-IN>
+- उच्च-सटीक वेब ब्राउज़िंग के लिए डिफ़ॉल्ट रूप से सक्षम प्राथमिक वर्चुअल माउस।
+- वर्चुअल माउस और डी-पैड के बीच ऑटोमेटिक नेविगेशन स्विचिंग।
+- इनएक्टिव होने पर कंट्रोल बार को छिपाने के लिए फुलस्क्रीन मोड और ऑटो-फुलस्क्रीन।
+- एंटर दबाने या फ़ोकस बदलने पर कीबोर्ड का ऑटोमेटिक बंद होना।
+- रिमोट बटन (Page Up/Down, Channel Up/Down) के साथ पेज स्क्रॉलिंग शॉर्टकट।
+</hi-IN>
+<id>
+- Mouse virtual utama diaktifkan secara default untuk penjelajahan web presisi tinggi.
+- Peralihan navigasi otomatis antara Mouse Virtual dan D-pad.
+- Mode layar penuh & pengaturan Sembunyikan otomatis bilah kontrol saat tidak ada aktivitas.
+- Penutupan keyboard virtual otomatis saat menekan enter atau kehilangan fokus.
+- Pintasan gulir halaman dengan tombol remote (Page Up/Down, Channel Up/Down).
+</id>
+<it-IT>
+- Mouse virtuale principale abilitato per impostazione predefinita per una navigazione web ad alta precisione.
+- Passaggio automatico della navigazione tra mouse virtuale e D-pad.
+- Modalità a schermo intero e nascondimento automatico della barra dei comandi in caso di inattività.
+- Chiusura automatica della tastiera premendo Invio o spostando il focus.
+- Scorciatoie di scorrimento nativo con tasti del telecomando (Page Up/Down, Channel Up/Down).
+</it-IT>
+<ja-JP>
+- 高精度なウェブ閲覧のためのデフォルト仮想マウスモードの有効化。
+- 仮想マウスとD-pad間の自動ナビゲーションモード切り替え。
+- 操作がない時にコントロールバーを自动的に隠す全画面・自動全画面機能。
+- Enter決定キー入力時やフォーカス移動時のキーボード自動非表示。
+- リモコンキー（Page Up/Down、Channel Up/Down）による専用ページスクロール。
+</ja-JP>
+<ko-KR>
+- 고정밀 웹 브라우징을 위한 가상 마우스 기본 활성화.
+- 가상 마우스와 D-pad 간 자동 탐색 모드 전환.
+- 비활성 시 제어 막대를 숨겨주는 전체 화면 및 자동 전체 화면 모드 추가.
+- 엔터 입력 또는 포커스 이동 시 키보드 자동 숨김.
+- 리모컨 버튼(Page Up/Down, Channel Up/Down)을 통한 전용 페이지 스크롤 지원.
+</ko-KR>
+<pt-PT>
+- Rato virtual principal ativado por padrão para navegação na web de alta precisão.
+- Alternância automática de navegação entre o Rato Virtual e o D-pad.
+- Modo de ecrã inteiro e ocultação automática da barra de controle por inatividade.
+- Fecho automático do teclado ao pressionar Enter ou perder o foco.
+- Atalhos de deslocamento nativos com botões do comando (Page Up/Down, Channel Up/Down).
+</pt-PT>
+<ru-RU>
+- Основной режим виртуальной мыши включен по умолчанию для точного веб-серфинга.
+- Автоматическое переключение навигации между виртуальной мышью и D-pad.
+- Полноэкранный режим и автоскрытие панели управления при отсутствии активности.
+- Автоматическое закрытие клавиатуры при вводе или смене фокуса.
+- Быстрая прокрутка страниц кнопками пульта (Page Up/Down, Channel Up/Down).
+</ru-RU>
+<tr-TR>
+- Yüksek hassasiyetli web taraması için varsayılan olarak etkinleştirilmiş birincil sanal fare.
+- Sanal fare ile D-pad arasında otomatik navigasyon geçişi.
+- Hareketsizlik durumunda kontrol çubuğunu gizleyen tam ekran ve otomatik tam ekran modu.
+- Giriş yapıldığında veya odak değiştiğinde otomatik klavye kapatma.
+- Kumanda üzerindeki Sayfa/Kanal Yukarı/Aşağı tuşlarıyla doğrudan sayfa kaydırma.
+</tr-TR>
+<vi>
+- Chuột ảo mặc định được bật giúp duyệt web với độ chính xác cao.
+- Tự động chuyển đổi giữa chế độ Chuột ảo và D-pad khi thay đổi tiêu điểm.
+- Chế độ toàn màn hình & tự động ẩn thanh điều khiển khi không hoạt động.
+- Tự động ẩn bàn phím ảo khi nhấn Enter hoặc mất tiêu điểm.
+- Phím tắt cuộn trang nhanh bằng nút Lên/Xuống trang và Kênh trên remote.
+</vi>
+<zh-CN>
+- 默认启用主要虚拟鼠标模式，实现高精度网页浏览。
+- 焦点改变时自动在虚拟鼠标与方向键（D-pad）导航之间切换。
+- 提供网页全屏模式与自动全屏设置，在无操作时自动隐藏控制栏。
+- 输入URL或失去焦点时自动收起软键盘。
+- 支持使用遥控器的翻页键（Page Up/Down）和频道键（Channel Up/Down）滚动网页。
+</zh-CN>

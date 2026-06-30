@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">Mouse connected · Scroll wheel supported</string>
     <string name="input_hint_touch">Touch input active</string>
     <string name="list_hint_open">Press OK to open · Long press to delete</string>
+
+    <string name="nav_fullscreen">Fullscreen</string>
+    <string name="settings_auto_fullscreen">Auto Fullscreen</string>
+    <string name="settings_auto_fullscreen_summary">Automatically hide the control bar on inactivity when browsing.</string>
+    <string name="settings_auto_fullscreen_enabled">Auto Fullscreen: Enabled</string>
+    <string name="settings_auto_fullscreen_disabled">Auto Fullscreen: Disabled</string>
+    <string name="mode_virtual_mouse">Virtual Mouse Active</string>
+    <string name="mode_dpad">D-Pad Mode Active</string>
 </resources>

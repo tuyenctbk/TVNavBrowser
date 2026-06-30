@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">Ratón conectado · Rueda de desplazamiento soportada</string>
     <string name="input_hint_touch">Entrada táctil activa</string>
     <string name="list_hint_open">Presiona OK para abrir · Mantén presionado para borrar</string>
+
+    <string name="nav_fullscreen">Pantalla completa</string>
+    <string name="settings_auto_fullscreen">Pantalla completa automática</string>
+    <string name="settings_auto_fullscreen_summary">Ocultar automáticamente la barra de control por inactividad al navegar.</string>
+    <string name="settings_auto_fullscreen_enabled">Pantalla completa automática: Activada</string>
+    <string name="settings_auto_fullscreen_disabled">Pantalla completa automática: Desactivada</string>
+    <string name="mode_virtual_mouse">Ratón virtual activo</string>
+    <string name="mode_dpad">Modo D-pad activo</string>
 </resources>

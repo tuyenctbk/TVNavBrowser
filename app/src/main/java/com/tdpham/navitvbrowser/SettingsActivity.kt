@@ -32,6 +32,7 @@ class SettingsActivity : ComponentActivity() {
         val btnClearCache: Button = findViewById(R.id.btnClearCache)
         val switchBlockEmbeddedAds: Switch = findViewById(R.id.switchBlockEmbeddedAds)
         val switchForceDarkMode: Switch = findViewById(R.id.switchForceDarkMode)
+        val switchAutoFullscreen: Switch = findViewById(R.id.switchAutoFullscreen)
 
         etHomepage.setText(AppPreferences.getHomepage(this))
         switchBlockEmbeddedAds.isChecked = AppPreferences.isBlockEmbeddedAdsEnabled(this)
@@ -52,11 +53,19 @@ class SettingsActivity : ComponentActivity() {
             Toast.makeText(this, if (isChecked) R.string.settings_dark_mode_enabled else R.string.settings_dark_mode_disabled, Toast.LENGTH_SHORT).show()
         }
 
+        switchAutoFullscreen.isChecked = AppPreferences.isAutoFullscreenEnabled(this)
+        switchAutoFullscreen.setOnCheckedChangeListener { _, isChecked ->
+            AppPreferences.setAutoFullscreenEnabled(this, isChecked)
+            FirebaseInitializer.logEvent("settings_autofullscreen_changed", mapOf("enabled" to isChecked))
+            val msgRes = if (isChecked) R.string.settings_auto_fullscreen_enabled else R.string.settings_auto_fullscreen_disabled
+            Toast.makeText(this, msgRes, Toast.LENGTH_SHORT).show()
+        }
+
         val db = BrowserDatabase.getInstance(applicationContext)
 
         FocusAnimationHelper.applyAll(
             btnSaveHomepage, btnClearHistory, btnClearBookmarks, btnClearCache, etHomepage,
-            switchBlockEmbeddedAds, switchForceDarkMode
+            switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen
         )
 
         btnSaveHomepage.setOnClickListener {

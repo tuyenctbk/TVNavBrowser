@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">Đã kết nối chuột · Hỗ trợ con lăn cuộn trang</string>
     <string name="input_hint_touch">Đang sử dụng cảm ứng màn hình</string>
     <string name="list_hint_open">Ấn OK để mở · Giữ lâu phím OK để xóa</string>
+
+    <string name="nav_fullscreen">Toàn màn hình</string>
+    <string name="settings_auto_fullscreen">Tự động toàn màn hình</string>
+    <string name="settings_auto_fullscreen_summary">Tự động ẩn thanh điều khiển khi không hoạt động khi lướt web.</string>
+    <string name="settings_auto_fullscreen_enabled">Tự động toàn màn hình: Đã bật</string>
+    <string name="settings_auto_fullscreen_disabled">Tự động toàn màn hình: Đã tắt</string>
+    <string name="mode_virtual_mouse">Chuột ảo đã kích hoạt</string>
+    <string name="mode_dpad">Chế độ D-pad đã kích hoạt</string>
 </resources>

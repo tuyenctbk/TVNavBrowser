@@ -21,6 +21,9 @@ class VirtualCursorController(
     var isEnabled: Boolean = false
         private set
 
+    var onCursorActivity: (() -> Unit)? = null
+    var onExitUp: (() -> Unit)? = null
+
     private var pulseAnimator: ObjectAnimator? = null
 
     fun setEnabled(enabled: Boolean) {
@@ -69,6 +72,14 @@ class VirtualCursorController(
                 simulateClick()
                 true
             }
+            KeyEvent.KEYCODE_PAGE_UP, KeyEvent.KEYCODE_CHANNEL_UP -> {
+                webView.pageUp(false)
+                true
+            }
+            KeyEvent.KEYCODE_PAGE_DOWN, KeyEvent.KEYCODE_CHANNEL_DOWN -> {
+                webView.pageDown(false)
+                true
+            }
             else -> false
         }
     }
@@ -86,22 +97,33 @@ class VirtualCursorController(
     }
 
     fun simulateClick() {
-        val x = cursor.x + cursor.width / 2f
-        val y = cursor.y + cursor.height / 2f
+        val x = cursor.x
+        val y = cursor.y
         val downTime = SystemClock.uptimeMillis()
+
+        val wasVisible = cursor.visibility == View.VISIBLE
+        if (wasVisible) {
+            cursor.visibility = View.INVISIBLE
+        }
 
         val downEvent = MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0)
         val upEvent = MotionEvent.obtain(downTime, downTime + 50, MotionEvent.ACTION_UP, x, y, 0)
 
-        webView.dispatchTouchEvent(downEvent)
-        webView.dispatchTouchEvent(upEvent)
+        container.dispatchTouchEvent(downEvent)
+        container.dispatchTouchEvent(upEvent)
 
         downEvent.recycle()
         upEvent.recycle()
 
+        if (wasVisible) {
+            cursor.visibility = View.VISIBLE
+        }
+
         cursor.animate().scaleX(0.85f).scaleY(0.85f).setDuration(80).withEndAction {
             cursor.animate().scaleX(1f).scaleY(1f).setDuration(80).start()
         }.start()
+
+        onCursorActivity?.invoke()
     }
 
     fun move(dx: Float, dy: Float) {
@@ -115,10 +137,16 @@ class VirtualCursorController(
 
             // Edge Scrolling: If cursor is at top/bottom limit, scroll the webpage
             if (cursor.y <= 0f && dy < 0) {
-                webView.scrollBy(0, dy.toInt() * 2)
+                if (webView.canScrollVertically(-1)) {
+                    webView.scrollBy(0, dy.toInt() * 2)
+                } else {
+                    onExitUp?.invoke()
+                }
             } else if (cursor.y >= maxY && dy > 0) {
                 webView.scrollBy(0, dy.toInt() * 2)
             }
+
+            onCursorActivity?.invoke()
         }
     }
 

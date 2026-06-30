@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">NaviTV Browser</string>
+
+    <string name="bookmarks">Yer İşaretleri</string>
+    <string name="history">Geçmiş</string>
+    <string name="settings">Ayarlar</string>
+    <string name="bookmark_saved">Yer işareti kaydedildi</string>
+    <string name="bookmark_exists">Zaten yer işaretlerinde</string>
+    <string name="bookmarks_empty">Henüz yer işareti yok. Sayfaları ☆ düğmesiyle kaydedin.</string>
+    <string name="history_empty">Henüz tarama geçmişi yok.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
+
+    <string name="onboarding_step">Adım %1$d / %2$d</string>
+    <string name="onboarding_next">İleri</string>
+    <string name="onboarding_skip">Atla</string>
+    <string name="onboarding_get_started">Başla</string>
+    <string name="onboarding_title_1">NaviTV Browser\'a Hoş Geldiniz</string>
+    <string name="onboarding_message_1">Kumandanız, klavyeniz, fareniz veya dokunmatik yüzeyinizle Android TV\'de web\'de gezinin. Düğmeler arasında ve sayfa içinde hareket etmek için D-pad\'i kullanın.</string>
+    <string name="onboarding_title_2">Sanal fare modu</string>
+    <string name="onboarding_message_2">D-pad ile bir işaretçiyi hareket ettirmek ve OK ile tıklamak için Fare modunu açın. İstediğiniz zaman bir USB veya Bluetooth fare bağlayın — anında çalışır.</string>
+    <string name="onboarding_title_3">Favorilerinizi kaydedin</string>
+    <string name="onboarding_message_3">Sayfaları yer imlerine eklemek için yıldız düğmesini kullanın. Kaydedilen yer imlerini ve geçmişi istediğiniz zaman araç çubuğundan açın.</string>
+    <string name="onboarding_title_4">Her şey hazır</string>
+    <string name="onboarding_message_4">Geçmiş otomatik olarak kaydedilir. Ana sayfanızı değiştirmek, web sitesi reklamlarını engellemek veya verileri temizlemek için Ayarlar\'ı ziyaret edin.</string>
+
+    <string name="rating_title">NaviTV Browser\'ı Beğendiniz mi?</string>
+    <string name="rating_message">Uygulamayı beğendiyseniz, lütfen derecelendirmeyi düşünün. Geliştirmemize yardımcı olur!</string>
+    <string name="rating_rate">Derecelendir</string>
+    <string name="rating_remind_later">Daha sonra hatırlat</string>
+    <string name="rating_no_thanks">Hayır, teşekkürler</string>
+
+    <string name="settings_homepage_label">Ana Sayfa URL\'si</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">Ana Sayfayı Kaydet</string>
+    <string name="settings_block_embedded_ads">Web sitesi reklamlarını engelle</string>
+    <string name="settings_block_embedded_ads_summary">Web sayfalarındaki gömülü reklamları otomatik olarak gizle. Uygulama banner reklamını etkilemez.</string>
+    <string name="settings_block_ads_enabled">Web sitesi reklam engelleme etkin</string>
+    <string name="settings_block_ads_disabled">Web sitesi reklam engelleme devre dışı</string>
+    <string name="settings_homepage_empty">Lütfen bir ana sayfa URL\'si girin</string>
+    <string name="settings_homepage_saved">Ana sayfa kaydedildi</string>
+    <string name="settings_clear_history">Geçmişi Temizle</string>
+    <string name="settings_clear_bookmarks">Yer İşaretlerini Temizle</string>
+    <string name="settings_clear_cache">WebView Önbelleğini Temizle</string>
+    <string name="settings_history_cleared">Geçmiş temizlendi</string>
+    <string name="settings_bookmarks_cleared">Yer işaretleri temizlendi</string>
+    <string name="settings_cache_cleared">Önbellek temizlendi</string>
+    <string name="settings_cache_failed">Önbellek temizlenemedi</string>
+
+    <string name="settings_force_dark_mode">Karanlık Moda Zorla</string>
+    <string name="settings_force_dark_mode_summary">Tüm web sitelerine otomatik olarak karanlık tema uygula (TV\'de gezinmek için ideal).</string>
+    <string name="settings_dark_mode_enabled">Karanlık Moda Zorla: Etkin</string>
+    <string name="settings_dark_mode_disabled">Karanlık Moda Zorla: Devre Dışı</string>
+
+    <string name="mouse_mode_on">Fare AÇIK</string>
+    <string name="mouse_mode_off">Fare</string>
+
+    <string name="nav_back">Geri</string>
+    <string name="nav_forward">İleri</string>
+    <string name="nav_refresh">Yenile</string>
+    <string name="nav_bookmark">Kaydet</string>
+    <string name="nav_desktop_mode">Masaüstü Sitesi</string>
+    <string name="nav_returning_home">Panoya Dönülüyor</string>
+    <string name="nav_mobile_site_requested">Mobil Site İstendi</string>
+    <string name="nav_desktop_site_requested">Masaüstü Sitesi İstendi</string>
+
+    <string name="update_available_title">Güncelleme Mevcut</string>
+    <string name="update_available_message">NaviTV Browser\'ın yeni bir sürümü mevcut. En son özellikler ve güvenlik iyileştirmeleri için şimdi güncelleyin.</string>
+    <string name="update_now">Şimdi Güncelle</string>
+    <string name="update_later">Daha Sonra</string>
+
+    <string name="url_hint">Ara veya URL girin</string>
+    <string name="cursor_content_desc">Sanal fare işaretçisi</string>
+    <string name="input_hint_default">Kumanda: Gezinmek için D-pad · Seçmek için OK</string>
+    <string name="input_hint_virtual_mouse">Fare modu: D-pad işaretçiyi hareket ettirir · OK tıklar · Geri çıkar</string>
+    <string name="input_hint_mouse">Fare bağlandı · Kaydırma tekerleği destekleniyor</string>
+    <string name="input_hint_touch">Dokunmatik giriş aktif</string>
+    <string name="list_hint_open">Açmak için OK tuşuna basın · Silmek için uzun basın</string>
+
+    <string name="nav_fullscreen">Tam Ekran</string>
+    <string name="settings_auto_fullscreen">Otomatik Tam Ekran</string>
+    <string name="settings_auto_fullscreen_summary">Gezinirken işlem yapılmadığında kontrol çubuğunu otomatik olarak gizle.</string>
+    <string name="settings_auto_fullscreen_enabled">Otomatik Tam Ekran: Etkin</string>
+    <string name="settings_auto_fullscreen_disabled">Otomatik Tam Ekran: Devre Dışı</string>
+    <string name="mode_virtual_mouse">Sanal Fare Aktif</string>
+    <string name="mode_dpad">D-pad Modu Aktif</string>
+</resources>

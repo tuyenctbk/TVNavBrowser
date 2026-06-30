@@ -77,6 +77,22 @@
             android:layout_marginTop="4dp"
             android:text="@string/settings_force_dark_mode_summary" />
 
+        <Switch
+            android:id="@+id/switchAutoFullscreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:focusable="true"
+            android:text="@string/settings_auto_fullscreen"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            style="@style/ScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/settings_auto_fullscreen_summary" />
+
         <Button
             android:id="@+id/btnClearHistory"
             style="@style/ToolbarButton"

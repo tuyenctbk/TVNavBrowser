@@ -72,4 +72,12 @@
     <string name="cursor_content_desc">वर्चुअल माउस पॉइंटर</string>
     <string name="input_hint_default">रिमोट: नेविगेट करने के लिए D-पैड · चुनने के लिए OK</string>
     <string name="input_hint_virtual_mouse">माउस मोड: पॉइंटर हिलाने के लिए D-पैड · क्लिक करने के लिए OK · बाहर निकलने के लिए बैक</string>
+
+    <string name="nav_fullscreen">फुल स्क्रीन</string>
+    <string name="settings_auto_fullscreen">ऑटो फुल स्क्रीन</string>
+    <string name="settings_auto_fullscreen_summary">ब्राउज़ करते समय निष्क्रियता पर नियंत्रण बार को स्वचालित रूप से छुपाएं।</string>
+    <string name="settings_auto_fullscreen_enabled">ऑटो फुल स्क्रीन: सक्षम</string>
+    <string name="settings_auto_fullscreen_disabled">ऑटो फुल स्क्रीन: अक्षम</string>
+    <string name="mode_virtual_mouse">आभासी माउस सक्रिय</string>
+    <string name="mode_dpad">डी-पैड मोड सक्रिय</string>
 </resources>

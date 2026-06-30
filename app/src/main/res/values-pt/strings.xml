@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">Mouse conectado · Roda de rolagem suportada</string>
     <string name="input_hint_touch">Entrada por toque ativa</string>
     <string name="list_hint_open">Pressione OK para abrir · Pressione e segure para excluir</string>
+
+    <string name="nav_fullscreen">Ecrã inteiro</string>
+    <string name="settings_auto_fullscreen">Ecrã inteiro automático</string>
+    <string name="settings_auto_fullscreen_summary">Ocultar automaticamente a barra de controlo por inatividade ao navegar.</string>
+    <string name="settings_auto_fullscreen_enabled">Ecrã inteiro automático: Ativado</string>
+    <string name="settings_auto_fullscreen_disabled">Ecrã inteiro automático: Desativado</string>
+    <string name="mode_virtual_mouse">Mouse virtual ativo</string>
+    <string name="mode_dpad">Modo D-pad ativo</string>
 </resources>

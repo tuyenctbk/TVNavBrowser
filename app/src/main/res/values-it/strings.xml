@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">NaviTV Browser</string>
+
+    <string name="bookmarks">Segnalibri</string>
+    <string name="history">Cronologia</string>
+    <string name="settings">Impostazioni</string>
+    <string name="bookmark_saved">Segnalibro salvato</string>
+    <string name="bookmark_exists">Già nei segnalibri</string>
+    <string name="bookmarks_empty">Nessun segnalibro salvato. Salva le pagine con il pulsante ☆.</string>
+    <string name="history_empty">Nessuna cronologia di navigazione.</string>
+    <string name="url_row_format">%1$s\n%2$s</string>
+
+    <string name="onboarding_step">Passo %1$d di %2$d</string>
+    <string name="onboarding_next">Avanti</string>
+    <string name="onboarding_skip">Salta</string>
+    <string name="onboarding_get_started">Inizia</string>
+    <string name="onboarding_title_1">Benvenuto in NaviTV Browser</string>
+    <string name="onboarding_message_1">Naviga sul web su Android TV con il telecomando, tastiera, mouse o touchpad. Usa il D-pad per spostarti tra i pulsanti e nella pagina.</string>
+    <string name="onboarding_title_2">Modalità mouse e puntatore</string>
+    <string name="onboarding_message_2">Attiva la modalità Mouse per muovere un puntatore con il D-pad e fare clic con OK. Collega un mouse USB o Bluetooth in qualsiasi momento: funziona all\'istante.</string>
+    <string name="onboarding_title_3">Salva i tuoi preferiti</string>
+    <string name="onboarding_message_3">Usa il pulsante a stella per salvare le pagine nei segnalibri. Apri i segnalibri salvati e la cronologia dalla barra degli strumenti in qualsiasi momento.</string>
+    <string name="onboarding_title_4">Tutto pronto</string>
+    <string name="onboarding_message_4">La cronologia viene salvata automaticamente. Visita le Impostazioni per cambiare la tua homepage, bloccare la pubblicità o cancellare i dati.</string>
+
+    <string name="rating_title">Ti piace NaviTV Browser?</string>
+    <string name="rating_message">Se ti piace l\'app, valuta la possibilità di valutarla. Ci aiuta a migliorare!</string>
+    <string name="rating_rate">Valuta</string>
+    <string name="rating_remind_later">Ricordamelo più tardi</string>
+    <string name="rating_no_thanks">No, grazie</string>
+
+    <string name="settings_homepage_label">URL della Homepage</string>
+    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_save_homepage">Salva Homepage</string>
+    <string name="settings_block_embedded_ads">Blocca pubblicità web</string>
+    <string name="settings_block_embedded_ads_summary">Nascondi automaticamente gli annunci incorporati nelle pagine web. Non influisce sull\'annuncio banner dell\'app.</string>
+    <string name="settings_block_ads_enabled">Blocco annunci abilitato</string>
+    <string name="settings_block_ads_disabled">Blocco annunci disabilitato</string>
+    <string name="settings_homepage_empty">Inserisci l\'URL della homepage</string>
+    <string name="settings_homepage_saved">Homepage salvata</string>
+    <string name="settings_clear_history">Cancella cronologia</string>
+    <string name="settings_clear_bookmarks">Cancella segnalibri</string>
+    <string name="settings_clear_cache">Cancella cache WebView</string>
+    <string name="settings_history_cleared">Cronologia cancellata</string>
+    <string name="settings_bookmarks_cleared">Segnalibri cancellati</string>
+    <string name="settings_cache_cleared">Cache cancellata</string>
+    <string name="settings_cache_failed">Impossibile cancellare la cache</string>
+
+    <string name="settings_force_dark_mode">Forza Modalità Scura</string>
+    <string name="settings_force_dark_mode_summary">Applica automaticamente il tema scuro a tutti i siti web (ideale per la TV).</string>
+    <string name="settings_dark_mode_enabled">Forza Modalità Scura: Abilitata</string>
+    <string name="settings_dark_mode_disabled">Forza Modalità Scura: Disabilitata</string>
+
+    <string name="mouse_mode_on">Mouse ATTIVO</string>
+    <string name="mouse_mode_off">Mouse</string>
+
+    <string name="nav_back">Indietro</string>
+    <string name="nav_forward">Avanti</string>
+    <string name="nav_refresh">Ricarica</string>
+    <string name="nav_bookmark">Salva</string>
+    <string name="nav_desktop_mode">Sito desktop</string>
+    <string name="nav_returning_home">Ritorno alla dashboard</string>
+    <string name="nav_mobile_site_requested">Richiesto sito mobile</string>
+    <string name="nav_desktop_site_requested">Richiesto sito desktop</string>
+
+    <string name="update_available_title">Aggiornamento Disponibile</string>
+    <string name="update_available_message">È disponibile una nuova versione di NaviTV Browser. Aggiorna ora per le ultime funzionalità e miglioramenti di sicurezza.</string>
+    <string name="update_now">Aggiorna ora</string>
+    <string name="update_later">Più tardi</string>
+
+    <string name="url_hint">Cerca o inserisci URL</string>
+    <string name="cursor_content_desc">Puntatore mouse virtuale</string>
+    <string name="input_hint_default">Telecomando: D-pad per navigare · OK per selezionare</string>
+    <string name="input_hint_virtual_mouse">Modalità mouse: D-pad muove il puntatore · OK fa clic · Indietro esce</string>
+    <string name="input_hint_mouse">Mouse connesso · Rotella di scorrimento supportata</string>
+    <string name="input_hint_touch">Input touch attivo</string>
+    <string name="list_hint_open">Premi OK per aprire · Premi a lungo per eliminare</string>
+
+    <string name="nav_fullscreen">Schermo intero</string>
+    <string name="settings_auto_fullscreen">Schermo intero automatico</string>
+    <string name="settings_auto_fullscreen_summary">Nascondi automaticamente la barra di controllo in caso di inattività durante la navigazione.</string>
+    <string name="settings_auto_fullscreen_enabled">Schermo intero automatico: Abilitato</string>
+    <string name="settings_auto_fullscreen_disabled">Schermo intero automatico: Disabilitato</string>
+    <string name="mode_virtual_mouse">Mouse virtuale attivo</string>
+    <string name="mode_dpad">Modalità D-pad attiva</string>
+</resources>

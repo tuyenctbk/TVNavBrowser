@@ -75,4 +75,12 @@
     <string name="input_hint_mouse">마우스 연결됨 · 스크롤 휠 지원됨</string>
     <string name="input_hint_touch">터치 입력 활성화됨</string>
     <string name="list_hint_open">OK를 눌러 열기 · 길게 눌러 삭제</string>
+
+    <string name="nav_fullscreen">전체 화면</string>
+    <string name="settings_auto_fullscreen">자동 전체 화면</string>
+    <string name="settings_auto_fullscreen_summary">탐색 시 비활성 상태일 때 제어 도구 모음을 자동으로 숨깁니다.</string>
+    <string name="settings_auto_fullscreen_enabled">자동 전체 화면: 사용</string>
+    <string name="settings_auto_fullscreen_disabled">자동 전체 화면: 사용 안 함</string>
+    <string name="mode_virtual_mouse">가상 마우스 활성화됨</string>
+    <string name="mode_dpad">D-패드 모드 활성화됨</string>
 </resources>
