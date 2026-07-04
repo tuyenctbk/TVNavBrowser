@@ -33,7 +33,7 @@ class OnboardingActivity : ComponentActivity() {
     }
 
     private val icons = intArrayOf(
-        R.mipmap.ic_launcher,
+        R.drawable.ic_launcher,
         R.drawable.ic_onboarding_mouse,
         R.drawable.ic_onboarding_bookmark,
         R.drawable.ic_onboarding_settings

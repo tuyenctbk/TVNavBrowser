@@ -176,7 +176,7 @@ class MainActivity : ComponentActivity() {
         }
 
         findViewById<FrameLayout>(R.id.adContainer)?.let {
-            AdsHelper.loadNativeAd(this, it)
+            AdsHelper.initAds(this, it)
         }
 
         if (AppPreferences.isOnboardingComplete(this)) {
@@ -189,11 +189,13 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         if (::webView.isInitialized) webView.onResume()
         resetInactivityTimer()
+        AdsHelper.onResume()
     }
 
     override fun onPause() {
         if (::webView.isInitialized) webView.onPause()
         handler.removeCallbacks(autoFullscreenRunnable)
+        AdsHelper.onPause()
         super.onPause()
     }
 
@@ -224,6 +226,7 @@ class MainActivity : ComponentActivity() {
             webView.webViewClient = WebViewClient()
             webView.destroy()
         }
+        AdsHelper.onDestroy()
         super.onDestroy()
     }
 
@@ -315,6 +318,9 @@ class MainActivity : ComponentActivity() {
         settings.displayZoomControls = false
         settings.setSupportZoom(true)
         settings.setNeedInitialFocus(true)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            settings.safeBrowsingEnabled = true
+        }
         settings.userAgentString =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
