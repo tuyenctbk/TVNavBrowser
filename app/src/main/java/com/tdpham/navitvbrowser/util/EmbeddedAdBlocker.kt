@@ -109,24 +109,50 @@ object EmbeddedAdBlocker {
     fun shouldBlockUrl(url: String): Boolean {
         val uri = runCatching { Uri.parse(url) }.getOrNull() ?: return false
         val host = uri.host?.lowercase() ?: return false
-        val path = uri.path?.lowercase().orEmpty()
 
-        val dynamicList = RemoteConfigHelper.getAdBlockList()
-        if (dynamicList.any { host == it || host.endsWith(".$it") }) {
+        // 1. Fast Set-lookup for host suffix match (both dynamic & static lists)
+        if (isHostBlocked(host)) {
             return true
         }
 
-        if (blockedHostSuffixes.any { host == it || host.endsWith(".$it") }) {
-            return true
-        }
+        // 2. Cheap prefix/contains checks on host
         if (host.startsWith("ads.") || host.contains(".ads.")) {
             return true
         }
+
+        // 3. Keyword searches on host
         if (blockedHostKeywords.any { host.contains(it) }) {
             return true
         }
+
+        // 4. Keyword searches on path (requires path parsing, done last)
+        val path = uri.path?.lowercase().orEmpty()
         if (blockedPathKeywords.any { path.contains(it) }) {
             return true
+        }
+        return false
+    }
+
+    private fun isHostBlocked(host: String): Boolean {
+        if (matchesHostSuffix(host, RemoteConfigHelper.getAdBlockSet())) {
+            return true
+        }
+        if (matchesHostSuffix(host, blockedHostSuffixes)) {
+            return true
+        }
+        return false
+    }
+
+    private fun matchesHostSuffix(host: String, suffixSet: Set<String>): Boolean {
+        if (suffixSet.isEmpty()) return false
+        if (suffixSet.contains(host)) return true
+        var index = host.indexOf('.')
+        while (index != -1) {
+            val parent = host.substring(index + 1)
+            if (suffixSet.contains(parent)) {
+                return true
+            }
+            index = host.indexOf('.', index + 1)
         }
         return false
     }
@@ -139,9 +165,6 @@ object EmbeddedAdBlocker {
 
     private const val DOM_CLEANUP_SCRIPT = """
 (function() {
-  if (window.__tvnavAdBlockerApplied) return;
-  window.__tvnavAdBlockerApplied = true;
-
   var css = [
     'ins.adsbygoogle,',
     '[class*="ad-container"], [class*="ad_container"], [class*="ad-wrapper"],',
@@ -168,6 +191,9 @@ object EmbeddedAdBlocker {
     style.appendChild(document.createTextNode(css));
     (document.head || document.documentElement).appendChild(style);
   }
+
+  if (window.__tvnavAdBlockerApplied) return;
+  window.__tvnavAdBlockerApplied = true;
 
   var selectors = [
     'ins.adsbygoogle',

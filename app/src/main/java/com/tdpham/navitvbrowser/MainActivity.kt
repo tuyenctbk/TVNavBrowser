@@ -311,6 +311,8 @@ class MainActivity : ComponentActivity() {
         settings.javaScriptEnabled = true
         webView.addJavascriptInterface(WebAppInterface(), "AndroidApp")
         settings.domStorageEnabled = true
+        settings.databaseEnabled = true
+        settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
         settings.mediaPlaybackRequiresUserGesture = false
@@ -357,6 +359,10 @@ class MainActivity : ComponentActivity() {
                 view?.evaluateJavascript("window.__tvnavAdBlockerApplied = false;", null)
                 injectFocusStyle(view)
                 updateNavButtonsState()
+
+                if (AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
+                    view?.let { EmbeddedAdBlocker.applyDomCleanup(it) }
+                }
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
@@ -397,6 +403,10 @@ class MainActivity : ComponentActivity() {
                 progressBar.progress = newProgress
                 progressBar.isVisible = newProgress in 1..99
                 updateNavButtonsState()
+
+                if (newProgress >= 30 && AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
+                    view?.let { EmbeddedAdBlocker.applyDomCleanup(it) }
+                }
             }
         }
     }

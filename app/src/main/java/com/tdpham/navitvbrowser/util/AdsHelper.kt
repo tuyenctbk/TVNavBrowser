@@ -63,10 +63,17 @@ object AdsHelper {
     }
 
     /**
-     * Entry point to initialize ads based on device type.
+     * Entry point to initialize ads based on device type and eligibility gates.
      */
     fun initAds(activity: Activity, container: FrameLayout) {
         container.removeAllViews()
+        trackAppOpen(activity)
+
+        if (!shouldShowAds(activity)) {
+            showPlaceholder(activity, container)
+            return
+        }
+
         if (isTvDevice(activity)) {
             loadNativeAd(activity, container)
         } else {
@@ -100,15 +107,8 @@ object AdsHelper {
      */
     private fun loadNativeAd(activity: Activity, container: FrameLayout) {
         // Setup visual placeholder (Tips) while ad loads or if it fails
+        val placeholder = showPlaceholder(activity, container)
         val inflater = LayoutInflater.from(activity)
-        val placeholder = inflater.inflate(R.layout.layout_ad_placeholder, container, false)
-        val tvAdTip = placeholder.findViewById<TextView>(R.id.tvAdTip)
-        val ivTipIcon = placeholder.findViewById<ImageView>(R.id.ivTipIcon)
-        
-        val randomIndex = Random.nextInt(TIPS.size)
-        tvAdTip.text = TIPS[randomIndex]
-        ivTipIcon.setImageResource(TIP_ICONS[randomIndex])
-        container.addView(placeholder)
 
         val adUnitId = if (BuildConfig.DEBUG) TEST_NATIVE_AD_UNIT else activity.getString(R.string.admob_native_ad_unit_id)
 
@@ -170,16 +170,7 @@ object AdsHelper {
      * Loads an Anchored Adaptive Banner optimized for Mobile and Tablet devices.
      */
     private fun loadAdaptiveBannerAd(activity: Activity, container: FrameLayout) {
-        val inflater = LayoutInflater.from(activity)
-        val placeholder = inflater.inflate(R.layout.layout_ad_placeholder, container, false)
-        val tvAdTip = placeholder.findViewById<TextView>(R.id.tvAdTip)
-        val ivTipIcon = placeholder.findViewById<ImageView>(R.id.ivTipIcon)
-
-        val randomIndex = Random.nextInt(TIPS.size)
-        tvAdTip.text = TIPS[randomIndex]
-        ivTipIcon.setImageResource(TIP_ICONS[randomIndex])
-
-        container.addView(placeholder)
+        val placeholder = showPlaceholder(activity, container)
 
         val adUnitId = if (BuildConfig.DEBUG) TEST_BANNER_AD_UNIT else activity.getString(R.string.admob_banner_ad_unit_id)
         val adSize = getAdaptiveAdSize(activity, container)
@@ -247,5 +238,60 @@ object AdsHelper {
         }
         val adWidth = (adWidthPixels / density).toInt()
         return AdSize.getLargeAnchoredAdaptiveBannerAdSize(activity, adWidth)
+    }
+
+    private var isAppOpenCounted = false
+
+    private fun trackAppOpen(context: Context) {
+        if (isAppOpenCounted) return
+        isAppOpenCounted = true
+
+        val prefs = context.getSharedPreferences("ads_prefs", Context.MODE_PRIVATE)
+        val currentOpens = prefs.getInt("app_opens", 0)
+        prefs.edit().putInt("app_opens", currentOpens + 1).apply()
+
+        // Also save first install time if it doesn't exist
+        if (!prefs.contains("first_install_time")) {
+            val installTime = try {
+                context.packageManager.getPackageInfo(context.packageName, 0).firstInstallTime
+            } catch (e: Exception) {
+                System.currentTimeMillis()
+            }
+            prefs.edit().putLong("first_install_time", installTime).apply()
+        }
+    }
+
+    private fun shouldShowAds(context: Context): Boolean {
+        // 1. Check if ads are enabled via Firebase Remote Config
+        if (!RemoteConfigHelper.isAdsEnabled()) {
+            return false
+        }
+
+        val prefs = context.getSharedPreferences("ads_prefs", Context.MODE_PRIVATE)
+        val appOpens = prefs.getInt("app_opens", 0)
+        val firstInstallTime = prefs.getLong("first_install_time", System.currentTimeMillis())
+
+        // Check days since install
+        val minDays = RemoteConfigHelper.getMinDays()
+        val diffMs = System.currentTimeMillis() - firstInstallTime
+        val daysSinceInstall = (diffMs / (1000 * 60 * 60 * 24)).toInt()
+
+        // Check min opens
+        val minOpens = RemoteConfigHelper.getMinOpens()
+
+        return daysSinceInstall >= minDays && appOpens >= minOpens
+    }
+
+    private fun showPlaceholder(activity: Activity, container: FrameLayout): View {
+        val inflater = LayoutInflater.from(activity)
+        val placeholder = inflater.inflate(R.layout.layout_ad_placeholder, container, false)
+        val tvAdTip = placeholder.findViewById<TextView>(R.id.tvAdTip)
+        val ivTipIcon = placeholder.findViewById<ImageView>(R.id.ivTipIcon)
+
+        val randomIndex = Random.nextInt(TIPS.size)
+        tvAdTip.text = TIPS[randomIndex]
+        ivTipIcon.setImageResource(TIP_ICONS[randomIndex])
+        container.addView(placeholder)
+        return placeholder
     }
 }
