@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">Tự động toàn màn hình: Đã tắt</string>
     <string name="mode_virtual_mouse">Chuột ảo đã kích hoạt</string>
     <string name="mode_dpad">Chế độ D-pad đã kích hoạt</string>
+    <string name="error_webview_missing">Hệ thống WebView bị thiếu hoặc bị vô hiệu hóa. Ứng dụng này yêu cầu WebView để hoạt động. Vui lòng kiểm tra cài đặt thiết bị của bạn.</string>
 </resources>

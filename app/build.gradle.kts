@@ -13,8 +13,8 @@ android {
         applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
         targetSdk = 37
-        versionCode = 13
-        versionName = "1.15.1"
+        versionCode = 14
+        versionName = "1.15.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -73,6 +73,9 @@ dependencies {
 
     // Google Mobile Ads (AdMob)
     implementation(libs.google.admob)
+
+    // WebView AndroidX support
+    implementation(libs.androidx.webkit)
 
     // Android TV Leanback
     implementation(libs.androidx.leanback)

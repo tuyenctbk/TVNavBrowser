@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">자동 전체 화면: 사용 안 함</string>
     <string name="mode_virtual_mouse">가상 마우스 활성화됨</string>
     <string name="mode_dpad">D-패드 모드 활성화됨</string>
+    <string name="error_webview_missing">시스템 WebView가 없거나 비활성화되어 있습니다. 이 앱이 작동하려면 WebView가 필요합니다. 기기 설정을 확인하세요.</string>
 </resources>

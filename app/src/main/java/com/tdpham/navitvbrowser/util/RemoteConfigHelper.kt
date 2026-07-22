@@ -13,6 +13,7 @@ object RemoteConfigHelper {
     private const val KEY_ADS_ENABLED = "ads_enabled"
     private const val KEY_ADS_MIN_DAYS = "ads_min_days"
     private const val KEY_ADS_MIN_OPENS = "ads_min_opens"
+    private const val KEY_SAFE_BROWSING = "safe_browsing_enabled"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     @Volatile
@@ -30,7 +31,8 @@ object RemoteConfigHelper {
             KEY_UPDATE_URL to "",
             KEY_ADS_ENABLED to true,
             KEY_ADS_MIN_DAYS to 15L,
-            KEY_ADS_MIN_OPENS to 3L
+            KEY_ADS_MIN_OPENS to 3L,
+            KEY_SAFE_BROWSING to false
         ))
         remoteConfig.fetchAndActivate().addOnCompleteListener {
             synchronized(this) {
@@ -73,5 +75,9 @@ object RemoteConfigHelper {
 
     fun getMinOpens(): Int {
         return Firebase.remoteConfig.getLong(KEY_ADS_MIN_OPENS).toInt()
+    }
+
+    fun isSafeBrowsingEnabled(): Boolean {
+        return Firebase.remoteConfig.getBoolean(KEY_SAFE_BROWSING)
     }
 }

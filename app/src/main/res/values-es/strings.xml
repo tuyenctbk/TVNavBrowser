@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">Pantalla completa automática: Desactivada</string>
     <string name="mode_virtual_mouse">Ratón virtual activo</string>
     <string name="mode_dpad">Modo D-pad activo</string>
+    <string name="error_webview_missing">System WebView falta o está deshabilitado. Esta aplicación requiere WebView para funcionar. Por favor, verifique la configuración de su dispositivo.</string>
 </resources>

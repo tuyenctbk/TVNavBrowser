@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">Schermo intero automatico: Disabilitato</string>
     <string name="mode_virtual_mouse">Mouse virtuale attivo</string>
     <string name="mode_dpad">Modalità D-pad attiva</string>
+    <string name="error_webview_missing">System WebView è mancante o disabilitato. Questa app richiede WebView per funzionare. Controlla le impostazioni del tuo dispositivo.</string>
 </resources>

@@ -127,10 +127,7 @@ object EmbeddedAdBlocker {
 
         // 4. Keyword searches on path (requires path parsing, done last)
         val path = uri.path?.lowercase().orEmpty()
-        if (blockedPathKeywords.any { path.contains(it) }) {
-            return true
-        }
-        return false
+        return blockedPathKeywords.any { path.contains(it) }
     }
 
     private fun isHostBlocked(host: String): Boolean {
@@ -204,30 +201,43 @@ object EmbeddedAdBlocker {
     'iframe[src*="taboola"]', 'iframe[src*="outbrain"]', '.google-auto-placed'
   ];
 
+  var timeout;
   function hideAds() {
     selectors.forEach(function(selector) {
       try {
-        document.querySelectorAll(selector).forEach(function(node) {
-          node.style.setProperty('display', 'none', 'important');
-          node.style.setProperty('visibility', 'hidden', 'important');
-          node.style.setProperty('height', '0', 'important');
-          node.style.setProperty('max-height', '0', 'important');
-          node.style.setProperty('overflow', 'hidden', 'important');
-          node.style.setProperty('opacity', '0', 'important');
-          node.style.setProperty('pointer-events', 'none', 'important');
-        });
+        var nodes = document.querySelectorAll(selector);
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          if (node.style.display !== 'none') {
+            node.style.setProperty('display', 'none', 'important');
+            node.style.setProperty('visibility', 'hidden', 'important');
+            node.style.setProperty('height', '0', 'important');
+            node.style.setProperty('max-height', '0', 'important');
+            node.style.setProperty('overflow', 'hidden', 'important');
+            node.style.setProperty('opacity', '0', 'important');
+            node.style.setProperty('pointer-events', 'none', 'important');
+          }
+        }
       } catch (e) {}
     });
+  }
+
+  function debouncedHideAds() {
+    if (timeout) cancelAnimationFrame(timeout);
+    timeout = requestAnimationFrame(hideAds);
   }
 
   hideAds();
 
   if (window.MutationObserver) {
-    new MutationObserver(function() { hideAds(); })
+    new MutationObserver(debouncedHideAds)
       .observe(document.documentElement, { childList: true, subtree: true });
   }
 
-  setInterval(hideAds, 2000);
+  // Fallback for late loading ads without causing high CPU usage
+  setTimeout(hideAds, 1000);
+  setTimeout(hideAds, 3000);
+  setTimeout(hideAds, 7000);
 })();
 """
 }

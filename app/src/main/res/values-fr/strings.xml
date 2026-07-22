@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">Plein écran automatique : Désactivé</string>
     <string name="mode_virtual_mouse">Souris virtuelle active</string>
     <string name="mode_dpad">Mode D-pad actif</string>
+    <string name="error_webview_missing">Le système WebView est manquant ou désactivé. Cette application nécessite WebView pour fonctionner. Veuillez vérifier les paramètres de votre appareil.</string>
 </resources>

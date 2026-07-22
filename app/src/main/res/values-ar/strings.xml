@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">شاشة كاملة تلقائية: تم التعطيل</string>
     <string name="mode_virtual_mouse">الماوس الافتراضي نشط</string>
     <string name="mode_dpad">وضع D-pad نشط</string>
+    <string name="error_webview_missing">نظام WebView مفقود أو معطل. يتطلب هذا التطبيق WebView ليعمل. يرجى التحقق من إعدادات جهازك.</string>
 </resources>

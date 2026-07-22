@@ -27,9 +27,9 @@ import androidx.core.view.isVisible
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.ads.AdView
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.tdpham.navitvbrowser.data.entity.BookmarkEntity
 import kotlinx.coroutines.flow.collectLatest
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
@@ -43,6 +43,7 @@ import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
 import com.tdpham.navitvbrowser.util.RatingHelper
+import com.tdpham.navitvbrowser.util.RemoteConfigHelper
 import com.tdpham.navitvbrowser.util.UpdateHelper
 import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.Dispatchers
@@ -95,7 +96,14 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        try {
+            setContentView(R.layout.activity_main)
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+            Toast.makeText(this, getString(R.string.error_webview_missing), Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
         overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
 
         val db = BrowserDatabase.getInstance(applicationContext)
@@ -321,7 +329,7 @@ class MainActivity : ComponentActivity() {
         settings.setSupportZoom(true)
         settings.setNeedInitialFocus(true)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            settings.safeBrowsingEnabled = true
+            settings.safeBrowsingEnabled = RemoteConfigHelper.isSafeBrowsingEnabled()
         }
         settings.userAgentString =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -348,7 +356,7 @@ class MainActivity : ComponentActivity() {
                 progressBar.progress = 0
                 isWebViewInputFocused = false
                 
-                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
                 if (view != null) {
                     imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -571,16 +579,16 @@ class MainActivity : ComponentActivity() {
                     btnFullscreen.requestFocus()
                     return
                 }
-                if (isKeyboardVisible() || isWebViewInputFocused) {
+                if (isWebViewInputFocused || isKeyboardVisible()) {
                     webView.evaluateJavascript("document.activeElement.blur();", null)
                     isWebViewInputFocused = false
-                    val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                     imm.hideSoftInputFromWindow(webView.windowToken, 0)
                     webView.requestFocus()
                     return
                 }
                 if (urlInput.hasFocus()) {
-                    val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                     imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
                     urlInput.clearFocus()
                     webView.requestFocus()
@@ -629,7 +637,7 @@ class MainActivity : ComponentActivity() {
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
             url = "https://www.google.com/search?q=" + java.net.URLEncoder.encode(input, "UTF-8")
         }
-        val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
         urlInput.clearFocus()
         webView.loadUrl(url)

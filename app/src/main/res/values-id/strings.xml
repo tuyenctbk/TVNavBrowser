@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">Layar Penuh Otomatis: Dinonaktifkan</string>
     <string name="mode_virtual_mouse">Mouse Virtual Aktif</string>
     <string name="mode_dpad">Mode D-pad Aktif</string>
+    <string name="error_webview_missing">System WebView hilang atau dinonaktifkan. Aplikasi ini memerlukan WebView untuk berfungsi. Silakan periksa pengaturan perangkat Anda.</string>
 </resources>

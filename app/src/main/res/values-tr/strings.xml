@@ -83,4 +83,5 @@
     <string name="settings_auto_fullscreen_disabled">Otomatik Tam Ekran: Devre Dışı</string>
     <string name="mode_virtual_mouse">Sanal Fare Aktif</string>
     <string name="mode_dpad">D-pad Modu Aktif</string>
+    <string name="error_webview_missing">Sistem WebView eksik veya devre dışı. Bu uygulamanın çalışması için WebView gereklidir. Lütfen cihaz ayarlarınızı kontrol edin.</string>
 </resources>
