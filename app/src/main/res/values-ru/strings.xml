@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">Виртуальная мышь активна</string>
     <string name="mode_dpad">Режим D-pad активен</string>
     <string name="error_webview_missing">Системный WebView отсутствует или отключен. Для работы этого приложения требуется WebView. Пожалуйста, проверьте настройки вашего устройства.</string>
+    <string name="nav_summarize">Сводка страницы</string>
+    <string name="ai_summarizing">ИИ составляет сводку страницы...</string>
+    <string name="ai_summary_title">Сводка страницы (ИИ)</string>
+    <string name="ai_error_key_missing">Функции ИИ временно недоступны (ключ отсутствует).</string>
+    <string name="ai_error_empty">На этой странице не найден текст для обобщения.</string>
+    <string name="ai_error_generic">Не удалось создать сводку ИИ. Пожалуйста, попробуйте позже.</string>
 </resources>

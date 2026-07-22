@@ -14,6 +14,7 @@ object RemoteConfigHelper {
     private const val KEY_ADS_MIN_DAYS = "ads_min_days"
     private const val KEY_ADS_MIN_OPENS = "ads_min_opens"
     private const val KEY_SAFE_BROWSING = "safe_browsing_enabled"
+    private const val KEY_GEMINI_API_KEY = "gemini_api_key"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     @Volatile
@@ -32,7 +33,8 @@ object RemoteConfigHelper {
             KEY_ADS_ENABLED to true,
             KEY_ADS_MIN_DAYS to 15L,
             KEY_ADS_MIN_OPENS to 3L,
-            KEY_SAFE_BROWSING to false
+            KEY_SAFE_BROWSING to false,
+            KEY_GEMINI_API_KEY to ""
         ))
         remoteConfig.fetchAndActivate().addOnCompleteListener {
             synchronized(this) {
@@ -79,5 +81,9 @@ object RemoteConfigHelper {
 
     fun isSafeBrowsingEnabled(): Boolean {
         return Firebase.remoteConfig.getBoolean(KEY_SAFE_BROWSING)
+    }
+
+    fun getGeminiApiKey(): String {
+        return Firebase.remoteConfig.getString(KEY_GEMINI_API_KEY)
     }
 }

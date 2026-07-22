@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">Mouse virtuale attivo</string>
     <string name="mode_dpad">Modalità D-pad attiva</string>
     <string name="error_webview_missing">System WebView è mancante o disabilitato. Questa app richiede WebView per funzionare. Controlla le impostazioni del tuo dispositivo.</string>
+    <string name="nav_summarize">Riassumi pagina</string>
+    <string name="ai_summarizing">L\'IA sta riassumendo la pagina...</string>
+    <string name="ai_summary_title">Riassunto della pagina (IA)</string>
+    <string name="ai_error_key_missing">Le funzioni IA non sono disponibili (Chiave mancante).</string>
+    <string name="ai_error_empty">Nessun testo trovato in questa pagina da riassumere.</string>
+    <string name="ai_error_generic">Riassunto IA fallito. Riprova più tardi.</string>
 </resources>

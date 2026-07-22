@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">가상 마우스 활성화됨</string>
     <string name="mode_dpad">D-패드 모드 활성화됨</string>
     <string name="error_webview_missing">시스템 WebView가 없거나 비활성화되어 있습니다. 이 앱이 작동하려면 WebView가 필요합니다. 기기 설정을 확인하세요.</string>
+    <string name="nav_summarize">페이지 요약</string>
+    <string name="ai_summarizing">AI가 페이지를 요약하는 중입니다...</string>
+    <string name="ai_summary_title">페이지 요약 (AI)</string>
+    <string name="ai_error_key_missing">AI 기능을 현재 사용할 수 없습니다 (키 누락).</string>
+    <string name="ai_error_empty">이 페이지에서 요약할 텍스트를 찾을 수 없습니다.</string>
+    <string name="ai_error_generic">AI 요약에 실패했습니다. 나중에 다시 시도해 주세요.</string>
 </resources>

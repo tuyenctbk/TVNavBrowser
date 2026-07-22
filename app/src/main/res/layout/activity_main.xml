@@ -155,8 +155,22 @@
                     android:drawableStart="@drawable/ic_nav_mic"
                     android:drawableTint="@color/text_primary"
                     android:nextFocusLeft="@+id/btnFullscreen"
-                    android:nextFocusRight="@id/urlInput"
+                    android:nextFocusRight="@+id/btnSummarize"
                     android:contentDescription="Voice Search" />
+
+                <Button
+                    android:id="@+id/btnSummarize"
+                    style="@style/ToolbarButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="0dp"
+                    android:drawableStart="@drawable/ic_nav_summarize"
+                    android:drawableTint="@color/text_primary"
+                    android:nextFocusLeft="@+id/btnVoiceSearch"
+                    android:nextFocusRight="@id/urlInput"
+                    android:contentDescription="@string/nav_summarize" />
 
                 <EditText
                     android:id="@+id/urlInput"

@@ -81,4 +81,10 @@
     <string name="mode_virtual_mouse">आभासी माउस सक्रिय</string>
     <string name="mode_dpad">डी-पैड मोड सक्रिय</string>
     <string name="error_webview_missing">सिस्टम WebView गायब है या अक्षम है। इस ऐप को काम करने के लिए WebView की आवश्यकता है। कृपया अपने डिवाइस की सेटिंग जांचें।</string>
+    <string name="nav_summarize">पेज का सारांश</string>
+    <string name="ai_summarizing">एआई पेज का सारांश बना रहा है...</string>
+    <string name="ai_summary_title">पेज सारांश (एआई)</string>
+    <string name="ai_error_key_missing">एआई सुविधाएं वर्तमान में अनुपलब्ध हैं (कुंजी गायब है)।</string>
+    <string name="ai_error_empty">इस पेज पर सारांश बनाने के लिए कोई टेक्स्ट नहीं मिला।</string>
+    <string name="ai_error_generic">एआई सारांश विफल रहा। कृपया बाद में पुनः प्रयास करें।</string>
 </resources>

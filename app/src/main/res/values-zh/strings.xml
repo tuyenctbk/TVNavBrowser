@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">虚拟鼠标已激活</string>
     <string name="mode_dpad">D-pad 方向键模式已激活</string>
     <string name="error_webview_missing">系统 WebView 缺失或已禁用。此应用需要 WebView 才能运行。请检查您的设备设置。</string>
+    <string name="nav_summarize">总结页面</string>
+    <string name="ai_summarizing">AI 正在总结页面...</string>
+    <string name="ai_summary_title">页面总结 (AI)</string>
+    <string name="ai_error_key_missing">AI 功能目前不可用（缺少密钥）。</string>
+    <string name="ai_error_empty">此页面未找到可总结的文本。</string>
+    <string name="ai_error_generic">AI 总结失败。请稍后再试。</string>
 </resources>

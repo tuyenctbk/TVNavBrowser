@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">Virtuelle Maus aktiv</string>
     <string name="mode_dpad">D-Pad-Modus aktiv</string>
     <string name="error_webview_missing">System WebView fehlt oder ist deaktiviert. Diese App benötigt WebView, um zu funktionieren. Bitte überprüfen Sie Ihre Geräteeinstellungen.</string>
+    <string name="nav_summarize">Seite zusammenfassen</string>
+    <string name="ai_summarizing">KI fasst die Seite zusammen...</string>
+    <string name="ai_summary_title">Zusammenfassung (KI)</string>
+    <string name="ai_error_key_missing">KI-Funktionen sind derzeit nicht verfügbar (Schlüssel fehlt).</string>
+    <string name="ai_error_empty">Kein Text auf dieser Seite zum Zusammenfassen gefunden.</string>
+    <string name="ai_error_generic">KI-Zusammenfassung fehlgeschlagen. Bitte versuchen Sie es später noch einmal.</string>
 </resources>

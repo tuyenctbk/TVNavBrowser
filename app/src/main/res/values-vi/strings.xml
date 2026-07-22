@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">Chuột ảo đã kích hoạt</string>
     <string name="mode_dpad">Chế độ D-pad đã kích hoạt</string>
     <string name="error_webview_missing">Hệ thống WebView bị thiếu hoặc bị vô hiệu hóa. Ứng dụng này yêu cầu WebView để hoạt động. Vui lòng kiểm tra cài đặt thiết bị của bạn.</string>
+    <string name="nav_summarize">Tóm tắt trang</string>
+    <string name="ai_summarizing">AI đang tóm tắt trang...</string>
+    <string name="ai_summary_title">Tóm tắt trang (AI)</string>
+    <string name="ai_error_key_missing">Tính năng AI hiện không khả dụng (Thiếu khóa).</string>
+    <string name="ai_error_empty">Không tìm thấy văn bản trên trang này để tóm tắt.</string>
+    <string name="ai_error_generic">Tóm tắt AI thất bại. Vui lòng thử lại sau.</string>
 </resources>

@@ -21,7 +21,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.view.ViewCompat
@@ -39,6 +39,7 @@ import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
 import com.tdpham.navitvbrowser.ui.InputHelper
 import com.tdpham.navitvbrowser.ui.VirtualCursorController
 import com.tdpham.navitvbrowser.util.AdsHelper
+import com.tdpham.navitvbrowser.util.AiHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
@@ -50,7 +51,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_URL = "extra_url"
@@ -66,6 +67,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnBookmark: Button
     private lateinit var btnDesktopMode: Button
     private lateinit var btnVoiceSearch: Button
+    private lateinit var btnSummarize: Button
     private lateinit var ivCursor: ImageView
     private lateinit var webViewContainer: View
     private lateinit var progressBar: ProgressBar
@@ -82,8 +84,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var bookmarkRepo: BookmarkRepository
     private var isWebViewInputFocused = false
     private var isFullscreenMode = false
-    private val autoFullscreenRunnable = Runnable { toggleFullscreen(true) }
-    private val AUTO_FULLSCREEN_DELAY_MS = 4000L
+    private val autoFullscreenRunnable = Runnable { toggleFullscreen(enabled = true) }
+    private val autoFullscreenDelayMs = 4000L
     private var modeToast: Toast? = null
     private var isSwitchingMode = false
 
@@ -104,7 +106,12 @@ class MainActivity : ComponentActivity() {
             finish()
             return
         }
-        overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, android.R.anim.fade_out)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        }
 
         val db = BrowserDatabase.getInstance(applicationContext)
         historyRepo = HistoryRepository(db.historyDao())
@@ -118,6 +125,7 @@ class MainActivity : ComponentActivity() {
         btnBookmark = findViewById(R.id.btnBookmark)
         btnDesktopMode = findViewById(R.id.btnDesktopMode)
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
+        btnSummarize = findViewById(R.id.btnSummarize)
         ivCursor = findViewById(R.id.ivCursor)
         webViewContainer = findViewById(R.id.webViewContainer)
         progressBar = findViewById(R.id.progressBar)
@@ -143,7 +151,7 @@ class MainActivity : ComponentActivity() {
 
         urlInput.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
             }
         }
@@ -160,7 +168,7 @@ class MainActivity : ComponentActivity() {
             } else {
                 setMouseMode(false)
                 showModeNotice(getString(R.string.mode_dpad))
-                val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(webView.windowToken, 0)
             }
         }
@@ -209,6 +217,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
+        @Suppress("DEPRECATION")
         if (level >= TRIM_MEMORY_MODERATE && ::webView.isInitialized) {
             webView.clearCache(false) // Clear memory cache but keep disk cache
         }
@@ -240,23 +249,7 @@ class MainActivity : ComponentActivity() {
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         resetInactivityTimer()
-        if (event.keyCode == KeyEvent.KEYCODE_BACK) {
-            if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
-                event.startTracking()
-                return true
-            } else if (event.action == KeyEvent.ACTION_UP && event.isTracking && !event.isCanceled) {
-                onBackPressedDispatcher.onBackPressed()
-                return true
-            } else if (event.action == KeyEvent.ACTION_DOWN && event.isLongPress) {
-                val homepage = resolveHomepage()
-                if (webView.url != homepage) {
-                    webView.loadUrl(homepage)
-                    Toast.makeText(this, getString(R.string.nav_returning_home), Toast.LENGTH_SHORT).show()
-                }
-                return true
-            }
-        }
-
+        
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_MENU -> {
@@ -281,6 +274,19 @@ class MainActivity : ComponentActivity() {
             }
         }
         return super.dispatchKeyEvent(event)
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            val homepage = resolveHomepage()
+            if (webView.url != homepage) {
+                webView.loadUrl(homepage)
+                Toast.makeText(this, getString(R.string.nav_returning_home), Toast.LENGTH_SHORT).show()
+            }
+            return true
+        }
+        return super.onKeyLongPress(keyCode, event)
     }
 
     override fun onGenericMotionEvent(event: MotionEvent): Boolean {
@@ -319,6 +325,7 @@ class MainActivity : ComponentActivity() {
         settings.javaScriptEnabled = true
         webView.addJavascriptInterface(WebAppInterface(), "AndroidApp")
         settings.domStorageEnabled = true
+        @Suppress("DEPRECATION")
         settings.databaseEnabled = true
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.useWideViewPort = true
@@ -422,6 +429,7 @@ class MainActivity : ComponentActivity() {
     private fun setupNavigationButtons() {
         btnFullscreen.setOnClickListener { toggleFullscreen(!isFullscreenMode) }
         btnVoiceSearch.setOnClickListener { startVoiceSearch() }
+        btnSummarize.setOnClickListener { onSummarizeClicked() }
         btnDesktopMode.setOnClickListener { toggleDesktopMode() }
 
         btnBack.setOnClickListener {
@@ -562,7 +570,7 @@ class MainActivity : ComponentActivity() {
     private fun setupFocusAnimations() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnBookmark,
-            btnFullscreen, btnDesktopMode, btnVoiceSearch,
+            btnFullscreen, btnDesktopMode, btnVoiceSearch, btnSummarize,
             findViewById(R.id.btnShowBookmarks),
             findViewById(R.id.btnShowHistory),
             findViewById(R.id.btnSettings),
@@ -886,7 +894,7 @@ class MainActivity : ComponentActivity() {
             if (isFullscreenMode) {
                 toggleFullscreen(false)
             }
-            handler.postDelayed(autoFullscreenRunnable, AUTO_FULLSCREEN_DELAY_MS)
+            handler.postDelayed(autoFullscreenRunnable, autoFullscreenDelayMs)
         }
     }
 
@@ -904,5 +912,66 @@ class MainActivity : ComponentActivity() {
                 isWebViewInputFocused = false
             }
         }
+    }
+
+    private fun onSummarizeClicked() {
+        if (RemoteConfigHelper.getGeminiApiKey().isBlank()) {
+            Toast.makeText(this, getString(R.string.ai_error_key_missing), Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val url = webView.url
+        if (url == null || !UrlUtils.isBrowsableUrl(url) || url.startsWith("file:///")) {
+            Toast.makeText(this, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // JS to extract text from common elements, avoiding scripts/styles/nav
+        val js = """
+            (function() {
+                var text = "";
+                var elements = document.querySelectorAll('p, h1, h2, h3, article');
+                for (var i = 0; i < elements.length; i++) {
+                    text += elements[i].innerText + " ";
+                }
+                return text.trim();
+            })();
+        """.trimIndent()
+
+        val progressToast = Toast.makeText(this, getString(R.string.ai_summarizing), Toast.LENGTH_LONG)
+        progressToast.show()
+
+        webView.evaluateJavascript(js) { extractedText ->
+            val cleanText = extractedText?.replace("^\"|\"$".toRegex(), "")?.trim()
+            if (cleanText.isNullOrBlank() || cleanText == "null") {
+                progressToast.cancel()
+                Toast.makeText(this, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
+                return@evaluateJavascript
+            }
+
+            lifecycleScope.launch {
+                val result = AiHelper.summarizeText(cleanText)
+                progressToast.cancel()
+                
+                result.onSuccess { summary ->
+                    showSummaryDialog(summary)
+                }.onFailure { error ->
+                    val message = when (error.message) {
+                        "API_KEY_MISSING" -> getString(R.string.ai_error_key_missing)
+                        "EMPTY_TEXT" -> getString(R.string.ai_error_empty)
+                        else -> getString(R.string.ai_error_generic)
+                    }
+                    Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    private fun showSummaryDialog(summary: String) {
+        androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser)
+            .setTitle(getString(R.string.ai_summary_title))
+            .setMessage(summary)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 }

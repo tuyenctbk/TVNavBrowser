@@ -77,6 +77,9 @@ dependencies {
     // WebView AndroidX support
     implementation(libs.androidx.webkit)
 
+    // Gemini AI
+    implementation(libs.google.generativeai)
+
     // Android TV Leanback
     implementation(libs.androidx.leanback)
 

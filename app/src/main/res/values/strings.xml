@@ -84,4 +84,11 @@
     <string name="mode_virtual_mouse">Virtual Mouse Active</string>
     <string name="mode_dpad">D-Pad Mode Active</string>
     <string name="error_webview_missing">System WebView is missing or disabled. This app requires WebView to function. Please check your device settings.</string>
+
+    <string name="nav_summarize">Summarize Page</string>
+    <string name="ai_summarizing">AI is summarizing page...</string>
+    <string name="ai_summary_title">Page Summary (AI)</string>
+    <string name="ai_error_key_missing">AI features are currently unavailable (Key missing).</string>
+    <string name="ai_error_empty">No text found on this page to summarize.</string>
+    <string name="ai_error_generic">AI summarization failed. Please try again later.</string>
 </resources>

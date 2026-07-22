@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">バーチャルマウス有効</string>
     <string name="mode_dpad">Dパッドモード有効</string>
     <string name="error_webview_missing">システムWebViewが見つからないか、無効になっています。このアプリを機能させるにはWebViewが必要です。デバイスの設定を確認してください。</string>
+    <string name="nav_summarize">ページを要約</string>
+    <string name="ai_summarizing">AIがページを要約しています...</string>
+    <string name="ai_summary_title">ページの要約 (AI)</string>
+    <string name="ai_error_key_missing">AI機能は現在利用できません (キーがありません)。</string>
+    <string name="ai_error_empty">このページに要約するテキストが見つかりませんでした。</string>
+    <string name="ai_error_generic">AI要約に失敗しました。後でもう一度お試しください。</string>
 </resources>

@@ -13,6 +13,7 @@ firebaseVersion = "33.1.0"
 admobVersion = "25.4.0"
 leanbackVersion = "1.2.0"
 webkit = "1.16.0"
+generativeai = "0.9.0"
 playReviewVersion = "2.0.2"
 
 [libraries]
@@ -35,6 +36,7 @@ firebase-remoteconfig = { group = "com.google.firebase", name = "firebase-config
 google-admob = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "admobVersion" }
 androidx-leanback = { group = "androidx.leanback", name = "leanback", version.ref = "leanbackVersion" }
 androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
+google-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinVersion" }
 play-review = { group = "com.google.android.play", name = "review", version.ref = "playReviewVersion" }
 play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReviewVersion" }

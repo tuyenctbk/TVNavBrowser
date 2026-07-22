@@ -84,4 +84,10 @@
     <string name="mode_virtual_mouse">Ratón virtual activo</string>
     <string name="mode_dpad">Modo D-pad activo</string>
     <string name="error_webview_missing">System WebView falta o está deshabilitado. Esta aplicación requiere WebView para funcionar. Por favor, verifique la configuración de su dispositivo.</string>
+    <string name="nav_summarize">Resumir página</string>
+    <string name="ai_summarizing">La IA está resumiendo la página...</string>
+    <string name="ai_summary_title">Resumen de la página (IA)</string>
+    <string name="ai_error_key_missing">Las funciones de IA no están disponibles actualmente (falta la clave).</string>
+    <string name="ai_error_empty">No se encontró texto en esta página para resumir.</string>
+    <string name="ai_error_generic">Error al resumir con IA. Por favor, inténtelo de nuevo más tarde.</string>
 </resources>
