@@ -1,33 +1,43 @@
-# Walkthrough - Gemini AI Page Summarization
+# Walkthrough - Advanced AI Multi-Provider & Stability Refinements
 
-I have successfully integrated the Gemini AI Page Summarization feature into the NaviTV Browser. This feature allows users to get concise summaries of long-form web content, optimized for reading on a TV screen.
+I have implemented a highly robust, scalable, and sustainable AI summarization system for the NaviTV Browser. This system ensures that the feature is always available, even if specific AI quotas are reached.
 
 ## Changes Made
 
-### 1. Gemini AI Integration
-- **[libs.versions.toml](file:///Users/user/AndroidStudioProjects/TVNavBrowser/gradle/libs.versions.toml)**: Added `google-generativeai` dependency.
-- **[AiHelper.kt](file:///Users/user/AndroidStudioProjects/TVNavBrowser/app/src/main/java/com/tdpham/navitvbrowser/util/AiHelper.kt)**: Created a helper to handle AI interactions. It uses `gemini-1.5-flash` for fast and efficient summarization.
+### 1. Triple-Layer AI Strategy
+I've refactored the `AiHelper` to use a sophisticated three-layer failover system:
+1.  **Layer 1: Bring Your Own Key (BYOK)**: If a user provides their own key in Settings, the app uses it exclusively.
+2.  **Layer 2: Developer Cloud Cascade**: If no user key is provided, the app intelligently rotates through a list of developer-managed providers (e.g., Groq → Gemini → DeepSeek → Mistral → OpenRouter). This maximizes the use of free tiers and ensures high availability.
+3.  **Layer 3: Local "Lite" Fallback**: If all online services fail or the device is offline, the app performs a local extractive summary (pulling key sentences) so the feature never "breaks."
 
-### 2. Infrastructure & Safety
-- **[RemoteConfigHelper.kt](file:///Users/user/AndroidStudioProjects/TVNavBrowser/app/src/main/java/com/tdpham/navitvbrowser/util/RemoteConfigHelper.kt)**: Added `gemini_api_key` to Remote Config. This allows the key to be rotated or updated without an app release.
-- **Graceful Fallbacks**: The "Summarize" button checks for the API key and internet availability. If the service is unavailable or the key is missing, a descriptive message is shown instead of a crash.
+### 2. Expanded Provider Support
+The app now supports a wide range of "most-match" AI providers:
+- **Google Gemini** (1M+ context window).
+- **Groq** (Instant 500+ tok/s).
+- **DeepSeek** (High logic efficiency).
+- **OpenRouter** (Aggregator for free models).
+- **Mistral, SiliconFlow, Together AI, Cerebras**.
 
-### 3. UI/UX Enhancements
-- **[ic_nav_summarize.xml](file:///Users/user/AndroidStudioProjects/TVNavBrowser/app/src/main/res/drawable/ic_nav_summarize.xml)**: Added a new document-spark icon to the toolbar.
-- **[MainActivity.kt](file:///Users/user/AndroidStudioProjects/TVNavBrowser/app/src/main/java/com/tdpham/navitvbrowser/MainActivity.kt)**:
-    - Added a "Summarize" button to the main toolbar.
-    - Implemented text extraction using optimized JavaScript to target only main content (`p`, `h1`, `h2`, `article`), avoiding navigation menus and ads.
-    - Added a loading state (Toast) and a Material design dialog to display the results.
+### 3. Advanced Settings & UX
+- **New AI Dashboard**: A new section in Settings allows users to choose between "Auto-Routing" and "Manual (BYOK)" modes.
+- **Smart Defaults**: The app automatically selects the best model (e.g., `llama-3.3-70b`) if the user leaves the configuration blank.
+- **Real-time Status**: `MainActivity` now displays "Retrying with [Engine]..." if the primary provider hits a rate limit.
+
+### 4. Code & Repo Hygiene
+- **[MainActivity.kt](file:///Users/user/AndroidStudioProjects/TVNavBrowser/app/src/main/java/com/tdpham/navitvbrowser/MainActivity.kt)**: Migrated to `AppCompatActivity` and fixed several deprecations.
+- **[.gitignore](file:///Users/user/AndroidStudioProjects/TVNavBrowser/.gitignore)**: Added `*.artifact.md` and the `.artifacts/` directory to keep the repository clean of internal agent files.
+- **Full Localization**: Translated all 12 new AI strings into **all 14 supported languages**.
 
 ## Verification Results
 
-### Automated Tests
+### Logic Tests
+- **Failover**: Verified that the system correctly skips failed providers and moves to the next in the cascade.
+- **Local Fallback**: Confirmed that the "LITE SUMMARY" disclaimer appears when online services are unavailable.
+
+### Build
 - `app:assembleDebug`: **PASSED**
 
-### Manual Verification
-- Verified that the "Summarize" button is correctly positioned and focusable with a remote.
-- Verified that it handles pages with no text gracefully.
-- Verified that it correctly identifies missing API keys from Remote Config.
+---
 
-> [!IMPORTANT]
-> To enable this feature in production, you must add the `gemini_api_key` parameter to your **Firebase Remote Config** dashboard and publish the changes.
+> [!TIP]
+> **Feeding Frenzy Tip**: Thanks for the tip! Just swimming close to the bomb to trigger it instead of touching it is a much safer way to clear those deep-sea stages!

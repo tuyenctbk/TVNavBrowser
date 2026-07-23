@@ -25,7 +25,7 @@ class GeminiProvider(private val apiKey: String, private val modelName: String) 
         try {
             val model = GenerativeModel(modelName = modelName, apiKey = apiKey)
             val response = model.generateContent(content {
-                text("Summarize the following web page content concisely for an Android TV user. Focus on the main points and keep it under 150 words: \n\n$text")
+                text("${AiHelper.SYSTEM_PROMPT} \n\n$text")
             })
             response.text?.let { Result.success(it) } ?: Result.failure(Exception("EMPTY_RESPONSE"))
         } catch (e: Exception) {
@@ -49,7 +49,7 @@ class OpenAiCompatibleProvider(
                 put("messages", JSONArray().apply {
                     put(JSONObject().apply {
                         put("role", "system")
-                        put("content", "You are a concise summarizer for Android TV. Keep it under 150 words.")
+                        put("content", AiHelper.SYSTEM_PROMPT)
                     })
                     put(JSONObject().apply {
                         put("role", "user")
@@ -101,6 +101,8 @@ class LocalExtractiveProvider : AiProvider {
 }
 
 object AiHelper {
+    const val SYSTEM_PROMPT = "Summarize the following web page content concisely for an Android TV user. Focus on the main points and keep it under 150 words."
+
     private val sharedClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
@@ -109,9 +111,9 @@ object AiHelper {
     suspend fun getSummaryWithFailover(context: Context, text: String, onRetry: (String) -> Unit): Result<String> {
         // 1. Try Manual BYOK if enabled
         if (AppPreferences.getAiMode(context) == "MANUAL") {
-            val engine = AppPreferences.getAiEngine(context)
+            val engineId = AppPreferences.getAiEngine(context)
             val provider = createProvider(
-                engine = engine,
+                engineId = engineId,
                 key = AppPreferences.getAiCustomKey(context),
                 endpoint = AppPreferences.getAiCustomEndpoint(context),
                 model = AppPreferences.getAiCustomModel(context)
@@ -134,76 +136,37 @@ object AiHelper {
         return LocalExtractiveProvider().summarize(text)
     }
 
-    private fun createProvider(engine: String, key: String, endpoint: String, model: String): AiProvider? {
+    private fun createProvider(engineId: String, key: String, endpoint: String, model: String): AiProvider? {
         if (key.isBlank()) return null
+        val engine = AiEngine.fromId(engineId)
+        
         return when (engine) {
-            "GEMINI" -> GeminiProvider(key, model.ifBlank { "gemini-1.5-flash" })
-            "OPENAI", "GROQ", "DEEPSEEK", "OPENROUTER", "MISTRAL", "SILICONFLOW", "TOGETHER", "CEREBRAS" -> {
-                val finalEndpoint = when {
-                    endpoint.isNotBlank() -> endpoint
-                    engine == "OPENAI" -> "https://api.openai.com/v1/chat/completions"
-                    engine == "GROQ" -> "https://api.groq.com/openai/v1/chat/completions"
-                    engine == "DEEPSEEK" -> "https://api.deepseek.com/chat/completions"
-                    engine == "OPENROUTER" -> "https://openrouter.ai/api/v1/chat/completions"
-                    engine == "MISTRAL" -> "https://api.mistral.ai/v1/chat/completions"
-                    engine == "SILICONFLOW" -> "https://api.siliconflow.cn/v1/chat/completions"
-                    engine == "TOGETHER" -> "https://api.together.xyz/v1/chat/completions"
-                    engine == "CEREBRAS" -> "https://api.cerebras.ai/v1/chat/completions"
-                    else -> ""
-                }
-                val finalModel = when {
-                    model.isNotBlank() -> model
-                    engine == "OPENAI" -> "gpt-4o-mini"
-                    engine == "GROQ" -> "llama-3.3-70b-versatile"
-                    engine == "DEEPSEEK" -> "deepseek-chat"
-                    engine == "OPENROUTER" -> "google/gemini-flash-1.5"
-                    engine == "MISTRAL" -> "mistral-small-latest"
-                    engine == "SILICONFLOW" -> "deepseek-ai/DeepSeek-V3"
-                    engine == "TOGETHER" -> "meta-llama/Llama-3.3-70B-Instruct-Turbo"
-                    engine == "CEREBRAS" -> "llama3.3-70b"
-                    else -> "gpt-4o-mini"
-                }
-                if (finalEndpoint.isBlank()) null else OpenAiCompatibleProvider(engine, key, finalEndpoint, finalModel, sharedClient)
+            AiEngine.GEMINI -> GeminiProvider(key, model.ifBlank { engine.defaultModel })
+            else -> {
+                val finalEndpoint = endpoint.ifBlank { engine.defaultEndpoint }
+                val finalModel = model.ifBlank { engine.defaultModel }
+                if (finalEndpoint.isBlank()) null else OpenAiCompatibleProvider(engine.id, key, finalEndpoint, finalModel, sharedClient)
             }
-            else -> null
         }
     }
 
-    private fun createDevProvider(engine: String): AiProvider? {
-        return when (engine) {
-            "GEMINI" -> {
-                val key = RemoteConfigHelper.getGeminiApiKey()
-                if (key.isNotBlank()) GeminiProvider(key, "gemini-1.5-flash") else null
-            }
-            "GROQ" -> {
-                val key = RemoteConfigHelper.getGroqApiKey()
-                if (key.isNotBlank()) OpenAiCompatibleProvider(engine, key, "https://api.groq.com/openai/v1/chat/completions", "llama-3.3-70b-versatile", sharedClient) else null
-            }
-            "DEEPSEEK" -> {
-                val key = RemoteConfigHelper.getDeepSeekApiKey()
-                if (key.isNotBlank()) OpenAiCompatibleProvider(engine, key, "https://api.deepseek.com/chat/completions", "deepseek-chat", sharedClient) else null
-            }
-            "OPENROUTER" -> {
-                val key = RemoteConfigHelper.getOpenRouterApiKey()
-                if (key.isNotBlank()) OpenAiCompatibleProvider(engine, key, "https://openrouter.ai/api/v1/chat/completions", "google/gemini-flash-1.5", sharedClient) else null
-            }
-            "MISTRAL" -> {
-                val key = RemoteConfigHelper.getMistralApiKey()
-                if (key.isNotBlank()) OpenAiCompatibleProvider(engine, key, "https://api.mistral.ai/v1/chat/completions", "mistral-small-latest", sharedClient) else null
-            }
-            "SILICONFLOW" -> {
-                val key = RemoteConfigHelper.getSiliconFlowApiKey()
-                if (key.isNotBlank()) OpenAiCompatibleProvider(engine, key, "https://api.siliconflow.cn/v1/chat/completions", "deepseek-ai/DeepSeek-V3", sharedClient) else null
-            }
-            "TOGETHER" -> {
-                val key = RemoteConfigHelper.getTogetherApiKey()
-                if (key.isNotBlank()) OpenAiCompatibleProvider(engine, key, "https://api.together.xyz/v1/chat/completions", "meta-llama/Llama-3.3-70B-Instruct-Turbo", sharedClient) else null
-            }
-            "CEREBRAS" -> {
-                val key = RemoteConfigHelper.getCerebrasApiKey()
-                if (key.isNotBlank()) OpenAiCompatibleProvider(engine, key, "https://api.cerebras.ai/v1/chat/completions", "llama3.3-70b", sharedClient) else null
-            }
-            else -> null
+    private fun createDevProvider(engineId: String): AiProvider? {
+        val engine = AiEngine.fromId(engineId)
+        val key = when (engine) {
+            AiEngine.OPENAI -> RemoteConfigHelper.getOpenaiApiKey()
+            AiEngine.GEMINI -> RemoteConfigHelper.getGeminiApiKey()
+            AiEngine.GROQ -> RemoteConfigHelper.getGroqApiKey()
+            AiEngine.DEEPSEEK -> RemoteConfigHelper.getDeepSeekApiKey()
+            AiEngine.OPENROUTER -> RemoteConfigHelper.getOpenRouterApiKey()
+            AiEngine.MISTRAL -> RemoteConfigHelper.getMistralApiKey()
+            AiEngine.SILICONFLOW -> RemoteConfigHelper.getSiliconFlowApiKey()
+            AiEngine.TOGETHER -> RemoteConfigHelper.getTogetherApiKey()
+            AiEngine.CEREBRAS -> RemoteConfigHelper.getCerebrasApiKey()
         }
+        
+        if (key.isBlank()) return null
+        
+        return createProvider(engine.id, key, "", "")
     }
 }
+

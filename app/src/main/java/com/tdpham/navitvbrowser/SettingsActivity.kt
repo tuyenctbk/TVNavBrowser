@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
+import com.tdpham.navitvbrowser.util.AiEngine
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +95,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Initialize AI Engine Spinner
-        val engines = arrayOf("GEMINI", "OPENAI", "GROQ", "DEEPSEEK", "OPENROUTER", "MISTRAL", "SILICONFLOW", "TOGETHER", "CEREBRAS")
+        val engines = AiEngine.getAllIds()
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, engines)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spAiEngine.adapter = adapter

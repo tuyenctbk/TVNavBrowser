@@ -29,6 +29,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import org.json.JSONObject
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.tdpham.navitvbrowser.data.entity.BookmarkEntity
 import kotlinx.coroutines.flow.collectLatest
@@ -937,15 +938,25 @@ class MainActivity : AppCompatActivity() {
         progressToast.show()
 
         webView.evaluateJavascript(js) { extractedText ->
-            val cleanText = extractedText?.replace("^\"|\"$".toRegex(), "")?.trim()
-            if (cleanText.isNullOrBlank() || cleanText == "null") {
+            // evaluateJavascript returns a JSON-encoded string (wrapped in quotes and escaped)
+            val cleanText = try {
+                if (extractedText == null || extractedText == "null") null
+                else JSONObject("{\"text\":$extractedText}").getString("text")
+            } catch (e: Exception) {
+                extractedText?.replace("^\"|\"$".toRegex(), "")
+            }?.trim()
+
+            if (cleanText.isNullOrBlank()) {
                 progressToast.cancel()
                 Toast.makeText(this, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
                 return@evaluateJavascript
             }
 
+            // Truncate to avoid token limits (approx 4000 chars is safe for most mini models)
+            val truncatedText = if (cleanText.length > 4000) cleanText.take(4000) + "..." else cleanText
+
             lifecycleScope.launch {
-                val result = AiHelper.getSummaryWithFailover(this@MainActivity, cleanText) { engineName ->
+                val result = AiHelper.getSummaryWithFailover(this@MainActivity, truncatedText) { engineName ->
                     runOnUiThread {
                         progressToast.setText(getString(R.string.ai_status_retrying, engineName))
                         progressToast.show()

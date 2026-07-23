@@ -14,6 +14,7 @@ object RemoteConfigHelper {
     private const val KEY_ADS_MIN_DAYS = "ads_min_days"
     private const val KEY_ADS_MIN_OPENS = "ads_min_opens"
     private const val KEY_SAFE_BROWSING = "safe_browsing_enabled"
+    private const val KEY_OPENAI_API_KEY = "openai_api_key"
     private const val KEY_GEMINI_API_KEY = "gemini_api_key"
     private const val KEY_GROQ_API_KEY = "groq_api_key"
     private const val KEY_DEEPSEEK_API_KEY = "deepseek_api_key"
@@ -42,6 +43,7 @@ object RemoteConfigHelper {
             KEY_ADS_MIN_DAYS to 15L,
             KEY_ADS_MIN_OPENS to 3L,
             KEY_SAFE_BROWSING to false,
+            KEY_OPENAI_API_KEY to "",
             KEY_GEMINI_API_KEY to "",
             KEY_GROQ_API_KEY to "",
             KEY_DEEPSEEK_API_KEY to "",
@@ -99,6 +101,7 @@ object RemoteConfigHelper {
         return Firebase.remoteConfig.getBoolean(KEY_SAFE_BROWSING)
     }
 
+    fun getOpenaiApiKey(): String = Firebase.remoteConfig.getString(KEY_OPENAI_API_KEY)
     fun getGeminiApiKey(): String = Firebase.remoteConfig.getString(KEY_GEMINI_API_KEY)
     fun getGroqApiKey(): String = Firebase.remoteConfig.getString(KEY_GROQ_API_KEY)
     fun getDeepSeekApiKey(): String = Firebase.remoteConfig.getString(KEY_DEEPSEEK_API_KEY)
