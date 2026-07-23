@@ -90,4 +90,17 @@
     <string name="ai_error_key_missing">Os recursos de IA estão indisponíveis no momento (chave ausente).</string>
     <string name="ai_error_empty">Nenhum texto encontrado nesta página para resumir.</string>
     <string name="ai_error_generic">Falha no resumo da IA. Tente novamente mais tarde.</string>
+
+    <string name="settings_ai_section">Configurações de Resumo de IA</string>
+    <string name="settings_ai_mode">Modo de Resumo</string>
+    <string name="settings_ai_mode_auto">Roteamento Automático (Confiável)</string>
+    <string name="settings_ai_mode_manual">Manual / BYOK (Usuário Avançado)</string>
+    <string name="settings_ai_engine">Motor de IA</string>
+    <string name="settings_ai_key_label">Chave API</string>
+    <string name="settings_ai_endpoint_label">URL do Endpoint (Opcional)</string>
+    <string name="settings_ai_model_label">ID do Modelo (Opcional)</string>
+    <string name="settings_save_ai_config">Salvar configuração de IA</string>
+    <string name="settings_ai_config_saved">Configuração de IA salva</string>
+    <string name="ai_status_retrying">Serviço ocupado, tentando %s...</string>
+    <string name="ai_local_summary_note">Nota: Exibindo extração offline porque os provedores de IA estão inacessíveis.</string>
 </resources>

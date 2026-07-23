@@ -90,4 +90,17 @@
     <string name="ai_error_key_missing">AI機能は現在利用できません (キーがありません)。</string>
     <string name="ai_error_empty">このページに要約するテキストが見つかりませんでした。</string>
     <string name="ai_error_generic">AI要約に失敗しました。後でもう一度お試しください。</string>
+
+    <string name="settings_ai_section">AI要約設定</string>
+    <string name="settings_ai_mode">要約モード</string>
+    <string name="settings_ai_mode_auto">自動ルーティング (推奨)</string>
+    <string name="settings_ai_mode_manual">手動 / BYOK (上級者向け)</string>
+    <string name="settings_ai_engine">AIエンジン</string>
+    <string name="settings_ai_key_label">APIキー</string>
+    <string name="settings_ai_endpoint_label">エンドポイントURL (オプション)</string>
+    <string name="settings_ai_model_label">モデルID (オプション)</string>
+    <string name="settings_save_ai_config">AI設定を保存</string>
+    <string name="settings_ai_config_saved">AI設定を保存しました</string>
+    <string name="ai_status_retrying">サーバーが混雑しています。%s を試行中...</string>
+    <string name="ai_local_summary_note">注: AIプロバイダーに接続できないため、オフライン抽出を表示しています。</string>
 </resources>

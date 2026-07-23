@@ -87,4 +87,16 @@
     <string name="ai_error_key_missing">एआई सुविधाएं वर्तमान में अनुपलब्ध हैं (कुंजी गायब है)।</string>
     <string name="ai_error_empty">इस पेज पर सारांश बनाने के लिए कोई टेक्स्ट नहीं मिला।</string>
     <string name="ai_error_generic">एआई सारांश विफल रहा। कृपया बाद में पुनः प्रयास करें।</string>
+    <string name="settings_ai_section">एआई सारांश सेटिंग्स</string>
+    <string name="settings_ai_mode">सारांश मोड</string>
+    <string name="settings_ai_mode_auto">ऑटो-रूटिंग (विश्वसनीय)</string>
+    <string name="settings_ai_mode_manual">मैनुअल / BYOK (पावर यूजर)</string>
+    <string name="settings_ai_engine">एआई इंजन</string>
+    <string name="settings_ai_key_label">API कुंजी</string>
+    <string name="settings_ai_endpoint_label">एंडपॉइंट URL (वैकल्पिक)</string>
+    <string name="settings_ai_model_label">मॉडल ID (वैकल्पिक)</string>
+    <string name="settings_save_ai_config">AI कॉन्फ़ि거ेशन सहेजें</string>
+    <string name="settings_ai_config_saved">एआई कॉन्फ़िगरेशन सहेजा गया</string>
+    <string name="ai_status_retrying">सेवा व्यस्त है, %s का प्रयास किया जा रहा है...</string>
+    <string name="ai_local_summary_note">नोट: ऑफलाइन निष्कर्षण प्रदर्शित किया जा रहा है क्योंकि एआई प्रदाता अप्राप्य हैं।</string>
 </resources>

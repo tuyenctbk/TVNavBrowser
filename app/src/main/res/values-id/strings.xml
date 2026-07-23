@@ -90,4 +90,16 @@
     <string name="ai_error_key_missing">Fitur AI saat ini tidak tersedia (Kunci hilang).</string>
     <string name="ai_error_empty">Tidak ada teks yang ditemukan di halaman ini untuk diringkas.</string>
     <string name="ai_error_generic">Peringkasan AI gagal. Silakan coba lagi nanti.</string>
+    <string name="settings_ai_section">Pengaturan Ringkasan AI</string>
+    <string name="settings_ai_mode">Mode Peringkasan</string>
+    <string name="settings_ai_mode_auto">Perutean Otomatis (Andal)</string>
+    <string name="settings_ai_mode_manual">Manual / BYOK (Pengguna Mahir)</string>
+    <string name="settings_ai_engine">Mesin AI</string>
+    <string name="settings_ai_key_label">Kunci API</string>
+    <string name="settings_ai_endpoint_label">URL Titik Akhir (Opsional)</string>
+    <string name="settings_ai_model_label">ID Model (Opsional)</string>
+    <string name="settings_save_ai_config">Simpan Konfigurasi AI</string>
+    <string name="settings_ai_config_saved">Konfigurasi AI disimpan</string>
+    <string name="ai_status_retrying">Layanan sibuk, mencoba %s...</string>
+    <string name="ai_local_summary_note">Catatan: Menampilkan ekstraksi offline karena penyedia AI tidak dapat dijangkau.</string>
 </resources>

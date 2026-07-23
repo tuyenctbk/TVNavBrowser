@@ -90,4 +90,16 @@
     <string name="ai_error_key_missing">KI-Funktionen sind derzeit nicht verfügbar (Schlüssel fehlt).</string>
     <string name="ai_error_empty">Kein Text auf dieser Seite zum Zusammenfassen gefunden.</string>
     <string name="ai_error_generic">KI-Zusammenfassung fehlgeschlagen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="settings_ai_section">KI-Zusammenfassungseinstellungen</string>
+    <string name="settings_ai_mode">Zusammenfassungsmodus</string>
+    <string name="settings_ai_mode_auto">Automatisches Routing (Zuverlässig)</string>
+    <string name="settings_ai_mode_manual">Manuell / BYOK (Power-User)</string>
+    <string name="settings_ai_engine">KI-Engine</string>
+    <string name="settings_ai_key_label">API-Schlüssel</string>
+    <string name="settings_ai_endpoint_label">Endpoint-URL (Optional)</string>
+    <string name="settings_ai_model_label">Modell-ID (Optional)</string>
+    <string name="settings_save_ai_config">KI-Konfiguration speichern</string>
+    <string name="settings_ai_config_saved">KI-Konfiguration gespeichert</string>
+    <string name="ai_status_retrying">Dienst beschäftigt, versuche %s...</string>
+    <string name="ai_local_summary_note">Hinweis: Es wird eine Offline-Extraktion angezeigt, da KI-Anbieter nicht erreichbar sind.</string>
 </resources>

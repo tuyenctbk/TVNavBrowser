@@ -79,6 +79,7 @@ dependencies {
 
     // Gemini AI
     implementation(libs.google.generativeai)
+    implementation(libs.okhttp)
 
     // Android TV Leanback
     implementation(libs.androidx.leanback)

@@ -90,4 +90,17 @@
     <string name="ai_error_key_missing">AI 功能目前不可用（缺少密钥）。</string>
     <string name="ai_error_empty">此页面未找到可总结的文本。</string>
     <string name="ai_error_generic">AI 总结失败。请稍后再试。</string>
+
+    <string name="settings_ai_section">AI 总结设置</string>
+    <string name="settings_ai_mode">总结模式</string>
+    <string name="settings_ai_mode_auto">自动路由 (可靠)</string>
+    <string name="settings_ai_mode_manual">手动 / BYOK (高级用户)</string>
+    <string name="settings_ai_engine">AI 引擎</string>
+    <string name="settings_ai_key_label">API 密钥</string>
+    <string name="settings_ai_endpoint_label">端点 URL (可选)</string>
+    <string name="settings_ai_model_label">模型 ID (可选)</string>
+    <string name="settings_save_ai_config">保存 AI 配置</string>
+    <string name="settings_ai_config_saved">AI 配置已保存</string>
+    <string name="ai_status_retrying">服务繁忙，正在尝试 %s...</string>
+    <string name="ai_local_summary_note">注意：由于无法连接 AI 提供商，正在显示离线提取内容。</string>
 </resources>

@@ -90,4 +90,16 @@
     <string name="ai_error_key_missing">AI 기능을 현재 사용할 수 없습니다 (키 누락).</string>
     <string name="ai_error_empty">이 페이지에서 요약할 텍스트를 찾을 수 없습니다.</string>
     <string name="ai_error_generic">AI 요약에 실패했습니다. 나중에 다시 시도해 주세요.</string>
+    <string name="settings_ai_section">AI 요약 설정</string>
+    <string name="settings_ai_mode">요약 모드</string>
+    <string name="settings_ai_mode_auto">자동 라우팅 (신뢰할 수 있음)</string>
+    <string name="settings_ai_mode_manual">수동 / BYOK (파워 유저)</string>
+    <string name="settings_ai_engine">AI 엔진</string>
+    <string name="settings_ai_key_label">API 키</string>
+    <string name="settings_ai_endpoint_label">엔드포인트 URL (선택 사항)</string>
+    <string name="settings_ai_model_label">모델 ID (선택 사항)</string>
+    <string name="settings_save_ai_config">AI 구성 저장</string>
+    <string name="settings_ai_config_saved">AI 구성이 저장됨</string>
+    <string name="ai_status_retrying">서비스가 사용 중입니다. %s 시도 중...</string>
+    <string name="ai_local_summary_note">참고: AI 제공업체에 연결할 수 없으므로 오프라인 추출을 표시합니다.</string>
 </resources>

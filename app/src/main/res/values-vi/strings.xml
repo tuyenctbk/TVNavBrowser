@@ -90,4 +90,16 @@
     <string name="ai_error_key_missing">Tính năng AI hiện không khả dụng (Thiếu khóa).</string>
     <string name="ai_error_empty">Không tìm thấy văn bản trên trang này để tóm tắt.</string>
     <string name="ai_error_generic">Tóm tắt AI thất bại. Vui lòng thử lại sau.</string>
+    <string name="settings_ai_section">Cài đặt Tóm tắt AI</string>
+    <string name="settings_ai_mode">Chế độ Tóm tắt</string>
+    <string name="settings_ai_mode_auto">Định tuyến tự động (Tin cậy)</string>
+    <string name="settings_ai_mode_manual">Thủ công / BYOK (Người dùng nâng cao)</string>
+    <string name="settings_ai_engine">Engine AI</string>
+    <string name="settings_ai_key_label">Mã API (Key)</string>
+    <string name="settings_ai_endpoint_label">URL Endpoint (Tùy chọn)</string>
+    <string name="settings_ai_model_label">ID Model (Tùy chọn)</string>
+    <string name="settings_save_ai_config">Lưu cấu hình AI</string>
+    <string name="settings_ai_config_saved">Đã lưu cấu hình AI</string>
+    <string name="ai_status_retrying">Dịch vụ đang bận, đang thử %s...</string>
+    <string name="ai_local_summary_note">Lưu ý: Hiển thị trích xuất ngoại tuyến vì không thể kết nối với nhà cung cấp AI.</string>
 </resources>

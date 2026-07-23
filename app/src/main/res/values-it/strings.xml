@@ -90,4 +90,17 @@
     <string name="ai_error_key_missing">Le funzioni IA non sono disponibili (Chiave mancante).</string>
     <string name="ai_error_empty">Nessun testo trovato in questa pagina da riassumere.</string>
     <string name="ai_error_generic">Riassunto IA fallito. Riprova più tardi.</string>
+
+    <string name="settings_ai_section">Impostazioni riassunto AI</string>
+    <string name="settings_ai_mode">Modalità di riassunto</string>
+    <string name="settings_ai_mode_auto">Routing automatico (Affidabile)</string>
+    <string name="settings_ai_mode_manual">Manuale / BYOK (Utente esperto)</string>
+    <string name="settings_ai_engine">Motore AI</string>
+    <string name="settings_ai_key_label">Chiave API</string>
+    <string name="settings_ai_endpoint_label">URL Endpoint (Opzionale)</string>
+    <string name="settings_ai_model_label">ID Modello (Opzionale)</string>
+    <string name="settings_save_ai_config">Salva configurazione AI</string>
+    <string name="settings_ai_config_saved">Configurazione AI salvata</string>
+    <string name="ai_status_retrying">Servizio occupato, tentativo %s...</string>
+    <string name="ai_local_summary_note">Nota: Viene visualizzata l\'estrazione offline perché i provider AI non sono raggiungibili.</string>
 </resources>

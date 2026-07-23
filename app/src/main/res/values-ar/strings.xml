@@ -90,4 +90,16 @@
     <string name="ai_error_key_missing">ميزات الذكاء الاصطناعي غير متوفرة حاليًا (المفتاح مفقود).</string>
     <string name="ai_error_empty">لم يتم العثور على نص في هذه الصفحة لتلخيصه.</string>
     <string name="ai_error_generic">فشل تلخيص الذكاء الاصطناعي. يرجى المحاولة مرة أخرى لاحقًا.</string>
+    <string name="settings_ai_section">إعدادات ملخص الذكاء الاصطناعي</string>
+    <string name="settings_ai_mode">وضع التلخيص</string>
+    <string name="settings_ai_mode_auto">التوجيه التلقائي (موثوق)</string>
+    <string name="settings_ai_mode_manual">يدوي / BYOK (مستخدم محترف)</string>
+    <string name="settings_ai_engine">محرك الذكاء الاصطناعي</string>
+    <string name="settings_ai_key_label">مفتاح API</string>
+    <string name="settings_ai_endpoint_label">رابط النهاية (اختياري)</string>
+    <string name="settings_ai_model_label">معرف النموذج (اختياري)</string>
+    <string name="settings_save_ai_config">حفظ تكوين الذكاء الاصطناعي</string>
+    <string name="settings_ai_config_saved">تم حفظ تكوين الذكاء الاصطناعي</string>
+    <string name="ai_status_retrying">الخدمة مشغولة، جاري المحاولة %s...</string>
+    <string name="ai_local_summary_note">ملاحظة: يتم عرض ملخص محلي لأن مزودي الذكاء الاصطناعي غير متاحين.</string>
 </resources>

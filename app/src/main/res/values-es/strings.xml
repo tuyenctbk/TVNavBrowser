@@ -90,4 +90,16 @@
     <string name="ai_error_key_missing">Las funciones de IA no están disponibles actualmente (falta la clave).</string>
     <string name="ai_error_empty">No se encontró texto en esta página para resumir.</string>
     <string name="ai_error_generic">Error al resumir con IA. Por favor, inténtelo de nuevo más tarde.</string>
+    <string name="settings_ai_section">Ajustes de resumen de IA</string>
+    <string name="settings_ai_mode">Modo de resumen</string>
+    <string name="settings_ai_mode_auto">Enrutamiento automático (Fiable)</string>
+    <string name="settings_ai_mode_manual">Manual / BYOK (Usuario experto)</string>
+    <string name="settings_ai_engine">Motor de IA</string>
+    <string name="settings_ai_key_label">Clave API</string>
+    <string name="settings_ai_endpoint_label">URL del punto final (Opcional)</string>
+    <string name="settings_ai_model_label">ID del modelo (Opcional)</string>
+    <string name="settings_save_ai_config">Guardar configuración de IA</string>
+    <string name="settings_ai_config_saved">Configuración de IA guardada</string>
+    <string name="ai_status_retrying">Servicio ocupado, intentando %s...</string>
+    <string name="ai_local_summary_note">Nota: Se muestra la extracción fuera de línea porque los proveedores de IA no están disponibles.</string>
 </resources>

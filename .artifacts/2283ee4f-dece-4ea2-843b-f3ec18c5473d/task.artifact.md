@@ -1,0 +1,12 @@
+- [ ] Add OkHttp dependency to `libs.versions.toml` and `build.gradle.kts`
+- [ ] Update `RemoteConfigHelper.kt` with triple-layer support (cascade + keys)
+- [ ] Update `AppPreferences.kt` with AI configuration storage
+- [ ] Implement `AiProvider` interface and its implementations:
+    - [ ] `GeminiProvider`
+    - [ ] `OpenAiCompatibleProvider`
+    - [ ] `LocalExtractiveProvider`
+- [ ] Refactor `AiHelper.kt` with failover logic
+- [ ] Update `strings.xml` with new AI status and mode strings
+- [ ] Create a more advanced `SettingsActivity` UI for AI configuration
+- [ ] Update `MainActivity.kt` to handle retry status and local fallbacks
+- [ ] Verify build and failover logic on TV AVD

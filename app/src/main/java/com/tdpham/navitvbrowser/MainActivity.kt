@@ -915,11 +915,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onSummarizeClicked() {
-        if (RemoteConfigHelper.getGeminiApiKey().isBlank()) {
-            Toast.makeText(this, getString(R.string.ai_error_key_missing), Toast.LENGTH_LONG).show()
-            return
-        }
-
         val url = webView.url
         if (url == null || !UrlUtils.isBrowsableUrl(url) || url.startsWith("file:///")) {
             Toast.makeText(this, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
@@ -950,7 +945,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             lifecycleScope.launch {
-                val result = AiHelper.summarizeText(cleanText)
+                val result = AiHelper.getSummaryWithFailover(this@MainActivity, cleanText) { engineName ->
+                    runOnUiThread {
+                        progressToast.setText(getString(R.string.ai_status_retrying, engineName))
+                        progressToast.show()
+                    }
+                }
                 progressToast.cancel()
                 
                 result.onSuccess { summary ->

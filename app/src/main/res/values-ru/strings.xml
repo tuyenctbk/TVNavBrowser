@@ -90,4 +90,17 @@
     <string name="ai_error_key_missing">Функции ИИ временно недоступны (ключ отсутствует).</string>
     <string name="ai_error_empty">На этой странице не найден текст для обобщения.</string>
     <string name="ai_error_generic">Не удалось создать сводку ИИ. Пожалуйста, попробуйте позже.</string>
+
+    <string name="settings_ai_section">Настройки сводки ИИ</string>
+    <string name="settings_ai_mode">Режим сводки</string>
+    <string name="settings_ai_mode_auto">Автомаршрутизация (надежно)</string>
+    <string name="settings_ai_mode_manual">Вручную / BYOK (для опытных)</string>
+    <string name="settings_ai_engine">Движок ИИ</string>
+    <string name="settings_ai_key_label">API-ключ</string>
+    <string name="settings_ai_endpoint_label">URL-адрес эндпоинта (необязательно)</string>
+    <string name="settings_ai_model_label">ID модели (необязательно)</string>
+    <string name="settings_save_ai_config">Сохранить конфигурацию ИИ</string>
+    <string name="settings_ai_config_saved">Конфигурация ИИ сохранена</string>
+    <string name="ai_status_retrying">Сервис занят, попытка %s...</string>
+    <string name="ai_local_summary_note">Примечание: отображается офлайн-извлечение, так как провайдеры ИИ недоступны.</string>
 </resources>

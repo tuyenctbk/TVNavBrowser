@@ -90,4 +90,17 @@
     <string name="ai_error_key_missing">Yapay zeka özellikleri şu anda kullanılamıyor (Anahtar eksik).</string>
     <string name="ai_error_empty">Bu sayfada özetlenecek metin bulunamadı.</string>
     <string name="ai_error_generic">Yapay zeka özetleme hatası. Lütfen daha sonra tekrar deneyin.</string>
+
+    <string name="settings_ai_section">Yapay Zeka Özet Ayarları</string>
+    <string name="settings_ai_mode">Özetleme Modu</string>
+    <string name="settings_ai_mode_auto">Otomatik Yönlendirme (Güvenilir)</string>
+    <string name="settings_ai_mode_manual">Manuel / BYOK (İleri Düzey Kullanıcı)</string>
+    <string name="settings_ai_engine">Yapay Zeka Motoru</string>
+    <string name="settings_ai_key_label">API Anahtarı</string>
+    <string name="settings_ai_endpoint_label">Uç Nokta URL\'si (İsteğe Bağlı)</string>
+    <string name="settings_ai_model_label">Model Kimliği (İsteğe Bağlı)</string>
+    <string name="settings_save_ai_config">AI Yapılandırmasını Kaydet</string>
+    <string name="settings_ai_config_saved">Yapay zeka yapılandırması kaydedildi</string>
+    <string name="ai_status_retrying">Servis meşgul, %s deneniyor...</string>
+    <string name="ai_local_summary_note">Not: Yapay zeka sağlayıcılarına ulaşılamadığı için çevrimdışı çıkarma görüntüleniyor.</string>
 </resources>

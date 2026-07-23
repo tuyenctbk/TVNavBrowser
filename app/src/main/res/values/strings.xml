@@ -91,4 +91,17 @@
     <string name="ai_error_key_missing">AI features are currently unavailable (Key missing).</string>
     <string name="ai_error_empty">No text found on this page to summarize.</string>
     <string name="ai_error_generic">AI summarization failed. Please try again later.</string>
+
+    <string name="settings_ai_section">AI Summary Settings</string>
+    <string name="settings_ai_mode">Summarization Mode</string>
+    <string name="settings_ai_mode_auto">Auto-Routing (Reliable)</string>
+    <string name="settings_ai_mode_manual">Manual / BYOK (Power User)</string>
+    <string name="settings_ai_engine">AI Engine</string>
+    <string name="settings_ai_key_label">API Key</string>
+    <string name="settings_ai_endpoint_label">Endpoint URL (Optional)</string>
+    <string name="settings_ai_model_label">Model ID (Optional)</string>
+    <string name="settings_save_ai_config">Save AI Configuration</string>
+    <string name="settings_ai_config_saved">AI configuration saved</string>
+    <string name="ai_status_retrying">Service busy, trying %s...</string>
+    <string name="ai_local_summary_note">Note: Displaying offline extraction because AI providers are unreachable.</string>
 </resources>

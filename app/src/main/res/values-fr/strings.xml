@@ -90,4 +90,16 @@
     <string name="ai_error_key_missing">Les fonctionnalités d\'IA sont actuellement indisponibles (Clé manquante).</string>
     <string name="ai_error_empty">Aucun texte trouvé sur cette page pour résumer.</string>
     <string name="ai_error_generic">L\'IA n\'a pas pu résumer. Veuillez réessayer plus tard.</string>
+    <string name="settings_ai_section">Paramètres du résumé IA</string>
+    <string name="settings_ai_mode">Mode de résumé</string>
+    <string name="settings_ai_mode_auto">Routage automatique (Fiable)</string>
+    <string name="settings_ai_mode_manual">Manuel / BYOK (Utilisateur avancé)</string>
+    <string name="settings_ai_engine">Moteur IA</string>
+    <string name="settings_ai_key_label">Clé API</string>
+    <string name="settings_ai_endpoint_label">URL du point de terminaison (Optionnel)</string>
+    <string name="settings_ai_model_label">ID du modèle (Optionnel)</string>
+    <string name="settings_save_ai_config">Enregistrer la configuration de l\'IA</string>
+    <string name="settings_ai_config_saved">Configuration IA enregistrée</string>
+    <string name="ai_status_retrying">Service occupé, tentative %s...</string>
+    <string name="ai_local_summary_note">Note : affichage de l\'extraction hors ligne car les fournisseurs d\'IA sont inaccessibles.</string>
 </resources>
