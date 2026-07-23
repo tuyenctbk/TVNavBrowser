@@ -12,7 +12,7 @@ import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Switch
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
