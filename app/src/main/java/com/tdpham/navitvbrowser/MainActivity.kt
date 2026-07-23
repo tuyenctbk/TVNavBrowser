@@ -21,7 +21,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.view.ViewCompat
@@ -52,7 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_URL = "extra_url"
@@ -103,9 +103,17 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.activity_main)
         } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)
-            Toast.makeText(this, getString(R.string.error_webview_missing), Toast.LENGTH_LONG).show()
-            finish()
-            return
+            val msg = e.message ?: ""
+            if (msg.contains("WebView", ignoreCase = true) || msg.contains("Browser", ignoreCase = true)) {
+                Toast.makeText(this, getString(R.string.error_webview_missing), Toast.LENGTH_LONG).show()
+                finish()
+                return
+            } else {
+                // If it's not a clear WebView error, show a general error
+                Toast.makeText(this, "Application error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                finish()
+                return
+            }
         }
         if (android.os.Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, android.R.anim.fade_out)
@@ -248,6 +256,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    @Suppress("RestrictedApi")
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         resetInactivityTimer()
         
@@ -892,9 +901,8 @@ class MainActivity : AppCompatActivity() {
     private fun resetInactivityTimer() {
         handler.removeCallbacks(autoFullscreenRunnable)
         if (AppPreferences.isAutoFullscreenEnabled(this)) {
-            if (isFullscreenMode) {
-                toggleFullscreen(false)
-            }
+            // Only exit fullscreen if we are in it and want to show UI for active navigation.
+            // But don't do it for every small move to avoid flickering UI.
             handler.postDelayed(autoFullscreenRunnable, autoFullscreenDelayMs)
         }
     }

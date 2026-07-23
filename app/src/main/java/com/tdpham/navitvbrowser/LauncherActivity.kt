@@ -32,16 +32,22 @@ class LauncherActivity : ComponentActivity() {
     }
 
     private fun isWebViewAvailable(): Boolean {
-        return try {
-            WebViewCompat.getCurrentWebViewPackage(this) != null
-        } catch (_: Exception) {
-            // Fallback: try to instantiate CookieManager as a last resort
-            try {
-                android.webkit.CookieManager.getInstance()
-                true
-            } catch (_: Exception) {
-                false
+        // First try the standard AndroidX way
+        try {
+            if (WebViewCompat.getCurrentWebViewPackage(this) != null) {
+                return true
             }
+        } catch (_: Exception) {
+            // Fall through to fallback
+        }
+
+        // Fallback: try to instantiate CookieManager or access WebView settings.
+        // This works on most devices even if the package isn't explicitly reported.
+        return try {
+            android.webkit.CookieManager.getInstance()
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 }
