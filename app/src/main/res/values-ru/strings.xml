@@ -1,106 +1,89 @@
 <resources>
-    <string name="app_name">NaviTV Browser</string>
-
+    <string name="app_name">Браузер NaviTV</string>
     <string name="bookmarks">Закладки</string>
     <string name="history">История</string>
     <string name="settings">Настройки</string>
     <string name="bookmark_saved">Закладка сохранена</string>
     <string name="bookmark_exists">Уже в закладках</string>
-    <string name="bookmarks_empty">Нет закладок. Сохраняйте страницы с помощью кнопки ☆.</string>
-    <string name="history_empty">История просмотра пуста.</string>
+    <string name="bookmarks_empty">Закладок пока нет. Сохраняйте страницы кнопкой ☆.</string>
+    <string name="history_empty">История просмотров пуста.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
-
     <string name="onboarding_step">Шаг %1$d из %2$d</string>
     <string name="onboarding_next">Далее</string>
     <string name="onboarding_skip">Пропустить</string>
     <string name="onboarding_get_started">Начать</string>
-    <string name="onboarding_title_1">Добро пожаловать в NaviTV Browser</string>
-    <string name="onboarding_message_1">Просматривайте веб-страницы на Android TV с помощью пульта, клавиатуры, мыши или тачпада. Используйте D-pad для перемещения между кнопками и по странице.</string>
-    <string name="onboarding_title_2">Режим виртуальной мыши</string>
-    <string name="onboarding_message_2">Включите режим мыши, чтобы управлять указателем с помощью D-pad и кликать кнопкой ОК. Подключите USB- или Bluetooth-мышь в любое время — она заработает мгновенно.</string>
+    <string name="onboarding_title_1">Добро пожаловать в NaviTV</string>
+    <string name="onboarding_message_1">Просматривайте веб-страницы на Android TV с помощью пульта, клавиатуры или мыши. Используйте D-pad для навигации.</string>
+    <string name="onboarding_title_2">Режим мыши и указателя</string>
+    <string name="onboarding_message_2">Включите режим мыши, чтобы перемещать указатель пультом и кликать кнопкой OK. Подключите USB или Bluetooth мышь в любое время.</string>
     <string name="onboarding_title_3">Сохраняйте любимое</string>
-    <string name="onboarding_message_3">Используйте кнопку со звездочкой для добавления страниц в закладки. Открывайте сохраненные закладки и историю с панели инструментов в любое время.</string>
+    <string name="onboarding_message_3">Используйте кнопку со звездочкой для закладок. Открывайте сохраненное из панели инструментов.</string>
     <string name="onboarding_title_4">Все готово</string>
-    <string name="onboarding_message_4">История сохраняется автоматически. Перейдите в Настройки, чтобы изменить домашнюю страницу, заблокировать рекламу на сайтах или очистить данные.</string>
-
-    <string name="rating_title">Нравится NaviTV Browser?</string>
+    <string name="onboarding_message_4">История сохраняется автоматически. В настройках можно изменить главную страницу или включить блокировку рекламы.</string>
+    <string name="rating_title">Нравится NaviTV?</string>
     <string name="rating_message">Если вам нравится приложение, пожалуйста, оцените его. Это помогает нам развиваться!</string>
     <string name="rating_rate">Оценить</string>
     <string name="rating_remind_later">Напомнить позже</string>
     <string name="rating_no_thanks">Нет, спасибо</string>
-
-    <string name="settings_homepage_label">Адрес домашней страницы</string>
+    <string name="settings_homepage_label">URL главной страницы</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
-    <string name="settings_save_homepage">Сохранить домашнюю страницу</string>
+    <string name="settings_save_homepage">Сохранить главную</string>
     <string name="settings_block_embedded_ads">Блокировать рекламу на сайтах</string>
-    <string name="settings_block_embedded_ads_summary">Автоматически скрывать встроенную рекламу на веб-страницах. Не влияет на баннерную рекламу в приложении.</string>
+    <string name="settings_block_embedded_ads_summary">Автоматически скрывать встроенную рекламу на страницах. Не влияет на баннер приложения.</string>
     <string name="settings_block_ads_enabled">Блокировка рекламы включена</string>
     <string name="settings_block_ads_disabled">Блокировка рекламы выключена</string>
-    <string name="settings_homepage_empty">Пожалуйста, введите адрес домашней страницы</string>
-    <string name="settings_homepage_saved">Домашняя страница сохранена</string>
+    <string name="settings_homepage_empty">Введите URL главной страницы</string>
+    <string name="settings_homepage_saved">Главная страница сохранена</string>
     <string name="settings_clear_history">Очистить историю</string>
     <string name="settings_clear_bookmarks">Очистить закладки</string>
     <string name="settings_clear_cache">Очистить кэш WebView</string>
     <string name="settings_history_cleared">История очищена</string>
-    <string name="settings_bookmarks_cleared">Закладки очищены</string>
+    <string name="settings_bookmarks_cleared">Закладки удалены</string>
     <string name="settings_cache_cleared">Кэш очищен</string>
     <string name="settings_cache_failed">Не удалось очистить кэш</string>
-
     <string name="settings_force_dark_mode">Принудительный темный режим</string>
-    <string name="settings_force_dark_mode_summary">Автоматически применять темную тему для всех веб-сайтов (идеально для ТВ).</string>
-    <string name="settings_dark_mode_enabled">Принудительный темный режим: Включен</string>
-    <string name="settings_dark_mode_disabled">Принудительный темный режим: Выключен</string>
-
+    <string name="settings_force_dark_mode_summary">Автоматически применять темную тему ко всем сайтам (идеально для ТВ).</string>
+    <string name="settings_dark_mode_enabled">Темный режим: Включен</string>
+    <string name="settings_dark_mode_disabled">Темный режим: Выключен</string>
     <string name="mouse_mode_on">Мышь ВКЛ</string>
     <string name="mouse_mode_off">Мышь</string>
-
     <string name="nav_back">Назад</string>
     <string name="nav_forward">Вперед</string>
     <string name="nav_refresh">Обновить</string>
     <string name="nav_bookmark">Сохранить</string>
     <string name="nav_desktop_mode">Версия для ПК</string>
-    <string name="nav_returning_home">Возврат на панель</string>
+    <string name="nav_returning_home">Возврат на главную</string>
     <string name="nav_mobile_site_requested">Запрошена мобильная версия</string>
     <string name="nav_desktop_site_requested">Запрошена версия для ПК</string>
-
     <string name="update_available_title">Доступно обновление</string>
-    <string name="update_available_message">Доступна новая версия NaviTV Browser. Обновите сейчас для получения последних функций и улучшений безопасности.</string>
+    <string name="update_available_message">Доступна новая версия браузера NaviTV. Обновите сейчас для получения новых функций.</string>
     <string name="update_now">Обновить сейчас</string>
     <string name="update_later">Позже</string>
-
-    <string name="url_hint">Поиск или ввод адреса</string>
+    <string name="url_hint">Поиск или ввод URL</string>
     <string name="cursor_content_desc">Виртуальный указатель мыши</string>
     <string name="input_hint_default">Пульт: D-pad для навигации · OK для выбора</string>
-    <string name="input_hint_virtual_mouse">Режим мыши: D-pad двигает указатель · OK кликает · Назад для выхода</string>
-    <string name="input_hint_mouse">Мышь подключена · Поддержка колеса прокрутки</string>
+    <string name="input_hint_virtual_mouse">Режим мыши: D-pad двигает указатель · OK кликает · Назад выходит</string>
+    <string name="input_hint_mouse">Мышь подключена · Колесо прокрутки поддерживается</string>
     <string name="input_hint_touch">Сенсорный ввод активен</string>
-    <string name="list_hint_open">Нажмите OK, чтобы открыть · Долгое нажатие для удаления</string>
-
-    <string name="nav_fullscreen">Полноэкранный режим</string>
+    <string name="list_hint_open">ОК чтобы открыть · Удержание для удаления</string>
+    <string name="nav_fullscreen">Полный экран</string>
     <string name="settings_auto_fullscreen">Автоматический полный экран</string>
-    <string name="settings_auto_fullscreen_summary">Автоматически скрывать панель управления при отсутствии активности во время просмотра.</string>
-    <string name="settings_auto_fullscreen_enabled">Automatiческй полный экран: Включен</string>
-    <string name="settings_auto_fullscreen_disabled">Автоматический полный экран: Выключен</string>
+    <string name="settings_auto_fullscreen_summary">Автоматически скрывать панель управления при бездействии.</string>
+    <string name="settings_auto_fullscreen_enabled">Автополный экран: Включен</string>
+    <string name="settings_auto_fullscreen_disabled">Автополный экран: Выключен</string>
     <string name="mode_virtual_mouse">Виртуальная мышь активна</string>
-    <string name="mode_dpad">Режим D-pad активен</string>
-    <string name="error_webview_missing">Системный WebView отсутствует или отключен. Для работы этого приложения требуется WebView. Пожалуйста, проверьте настройки вашего устройства.</string>
+    <string name="mode_dpad">Режим D-Pad активен</string>
+    <string name="error_webview_missing">Системный WebView отсутствует или отключен.</string>
+    <string name="error_generic_app">Ошибка приложения: %1$s</string>
+    <string name="error_voice_search_unsupported">Голосовой поиск не поддерживается на этом устройстве</string>
     <string name="nav_summarize">Сводка страницы</string>
     <string name="ai_summarizing">ИИ составляет сводку страницы...</string>
-    <string name="ai_summary_title">Сводка страницы (ИИ)</string>
-    <string name="ai_error_key_missing">Функции ИИ временно недоступны (ключ отсутствует).</string>
-    <string name="ai_error_empty">На этой странице не найден текст для обобщения.</string>
-    <string name="ai_error_generic">Не удалось создать сводку ИИ. Пожалуйста, попробуйте позже.</string>
-
-    <string name="settings_ai_section">Настройки сводки ИИ</string>
-    <string name="settings_ai_mode">Режим сводки</string>
-    <string name="settings_ai_mode_auto">Автомаршрутизация (надежно)</string>
-    <string name="settings_ai_mode_manual">Вручную / BYOK (для опытных)</string>
-    <string name="settings_ai_engine">Движок ИИ</string>
-    <string name="settings_ai_key_label">API-ключ</string>
-    <string name="settings_ai_endpoint_label">URL-адрес эндпоинта (необязательно)</string>
-    <string name="settings_ai_model_label">ID модели (необязательно)</string>
-    <string name="settings_save_ai_config">Сохранить конфигурацию ИИ</string>
-    <string name="settings_ai_config_saved">Конфигурация ИИ сохранена</string>
-    <string name="ai_status_retrying">Сервис занят, попытка %s...</string>
-    <string name="ai_local_summary_note">Примечание: отображается офлайн-извлечение, так как провайдеры ИИ недоступны.</string>
+    <string name="ai_summary_title">Краткое содержание (ИИ)</string>
+    <string name="ai_error_key_missing">Функции ИИ временно недоступны (нет ключа).</string>
+    <string name="ai_error_empty">На этой странице не найден текст для анализа.</string>
+    <string name="ai_error_generic">Ошибка ИИ-анализа. Попробуйте позже.</string>
+    <string name="ai_local_summary_note">Примечание: Отображается локальное извлечение, так как ИИ-провайдеры недоступны.</string>
+    <string name="share_title">Поделиться NaviTV</string>
+    <string name="share_message">Помогите другим найти лучший браузер для Android TV!</string>
+    <string name="share_scan_hint">Отсканируйте телефоном, чтобы поделиться</string>
 </resources>

@@ -1,59 +1,52 @@
 <resources>
     <string name="app_name">NaviTV 브라우저</string>
-
     <string name="bookmarks">북마크</string>
     <string name="history">기록</string>
     <string name="settings">설정</string>
-    <string name="bookmark_saved">북마크에 저장됨</string>
-    <string name="bookmark_exists">이미 북마크에 있음</string>
-    <string name="bookmarks_empty">북마크가 없습니다. ☆ 버튼으로 페이지를 저장하세요.</string>
-    <string name="history_empty">방문 기록이 없습니다.</string>
+    <string name="bookmark_saved">북마크 저장됨</string>
+    <string name="bookmark_exists">이미 북마크되어 있음</string>
+    <string name="bookmarks_empty">아직 북마크가 없습니다. ☆ 버튼으로 페이지를 저장하세요.</string>
+    <string name="history_empty">아직 탐색 기록이 없습니다.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
-
     <string name="onboarding_step">%2$d단계 중 %1$d단계</string>
     <string name="onboarding_next">다음</string>
     <string name="onboarding_skip">건너뛰기</string>
     <string name="onboarding_get_started">시작하기</string>
     <string name="onboarding_title_1">NaviTV 브라우저에 오신 것을 환영합니다</string>
-    <string name="onboarding_message_1">리모컨, 키보드, 마우스 또는 터치패드를 사용하여 Android TV에서 웹을 탐색하세요. D-패드를 사용하여 버튼 사이를 이동하고 페이지로 들어갑니다.</string>
+    <string name="onboarding_message_1">리모컨, 키보드 또는 마우스를 사용하여 Android TV에서 웹을 탐색하세요. D-패드를 사용하여 버튼 간 이동 및 페이지 내부를 탐색합니다.</string>
     <string name="onboarding_title_2">마우스 및 포인터 모드</string>
-    <string name="onboarding_message_2">마우스 모드를 켜서 D-패드로 포인터를 이동하고 OK로 클릭하세요. USB 또는 블루투스 마우스를 언제든지 연결할 수 있습니다 - 즉시 작동합니다.</string>
+    <string name="onboarding_message_2">마우스 모드를 켜서 D-패드로 포인터를 이동하고 OK로 클릭하세요. USB 또는 블루투스 마우스를 언제든지 연결하면 즉시 작동합니다.</string>
     <string name="onboarding_title_3">즐겨찾기 저장</string>
-    <string name="onboarding_message_3">별 버튼을 사용하여 페이지를 북마크하세요. 언제든지 도구 모음에서 저장된 북마크와 기록을 엽니다.</string>
-    <string name="onboarding_title_4">준비 완료</string>
-    <string name="onboarding_message_4">기록은 자동으로 저장됩니다. 설정을 방문하여 홈페이지를 변경하거나 웹사이트 광고를 차단하거나 데이터를 삭제하세요.</string>
-
+    <string name="onboarding_message_3">별 버튼을 사용하여 페이지를 북마크하세요. 도구 모음에서 언제든지 저장된 북마크와 기록을 엽니다.</string>
+    <string name="onboarding_title_4">모든 준비가 완료되었습니다</string>
+    <string name="onboarding_message_4">기록은 자동으로 저장됩니다. 설정을 방문하여 홈 페이지를 변경하거나 웹사이트 광고를 차단하거나 데이터를 지울 수 있습니다.</string>
     <string name="rating_title">NaviTV 브라우저가 마음에 드시나요?</string>
-    <string name="rating_message">앱이 마음에 드신다면 평가를 고려해 주세요. 저희가 개선하는 데 도움이 됩니다!</string>
+    <string name="rating_message">앱이 마음에 드신다면 평가를 고려해 주세요. 개선에 도움이 됩니다!</string>
     <string name="rating_rate">평가하기</string>
     <string name="rating_remind_later">나중에 알림</string>
     <string name="rating_no_thanks">아니요</string>
-
-    <string name="settings_homepage_label">홈페이지 URL</string>
+    <string name="settings_homepage_label">홈 페이지 URL</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
-    <string name="settings_save_homepage">홈페이지 저장</string>
+    <string name="settings_save_homepage">홈 페이지 저장</string>
     <string name="settings_block_embedded_ads">웹사이트 광고 차단</string>
-    <string name="settings_block_embedded_ads_summary">웹 페이지 내에 포함된 광고를 자동으로 숨깁니다. 앱 배너 광고에는 영향을 미치지 않습니다.</string>
+    <string name="settings_block_embedded_ads_summary">웹 페이지 내부의 내장 광고를 자동으로 숨깁니다. 앱 배너 광고에는 영향을 미치지 않습니다.</string>
     <string name="settings_block_ads_enabled">웹사이트 광고 차단 활성화됨</string>
     <string name="settings_block_ads_disabled">웹사이트 광고 차단 비활성화됨</string>
-    <string name="settings_homepage_empty">홈페이지 URL을 입력하세요</string>
-    <string name="settings_homepage_saved">홈페이지 저장됨</string>
-    <string name="settings_clear_history">기록 삭제</string>
-    <string name="settings_clear_bookmarks">북마크 삭제</string>
-    <string name="settings_clear_cache">WebView 캐시 삭제</string>
-    <string name="settings_history_cleared">기록 삭제됨</string>
-    <string name="settings_bookmarks_cleared">북마크 삭제됨</string>
-    <string name="settings_cache_cleared">캐시 삭제됨</string>
-    <string name="settings_cache_failed">캐시를 삭제할 수 없습니다</string>
-
+    <string name="settings_homepage_empty">홈 페이지 URL을 입력하세요</string>
+    <string name="settings_homepage_saved">홈 페이지 저장됨</string>
+    <string name="settings_clear_history">기록 지우기</string>
+    <string name="settings_clear_bookmarks">북마크 지우기</string>
+    <string name="settings_clear_cache">WebView 캐시 지우기</string>
+    <string name="settings_history_cleared">기록 지워짐</string>
+    <string name="settings_bookmarks_cleared">북마크 지워짐</string>
+    <string name="settings_cache_cleared">캐시 지워짐</string>
+    <string name="settings_cache_failed">캐시를 지울 수 없습니다</string>
     <string name="settings_force_dark_mode">강제 다크 모드</string>
-    <string name="settings_force_dark_mode_summary">모든 웹사이트에 다크 테마를 자동으로 적용합니다(TV 브라우징에 적합).</string>
+    <string name="settings_force_dark_mode_summary">모든 웹사이트에 다크 테마를 자동으로 적용합니다(TV 브라우징에 이상적).</string>
     <string name="settings_dark_mode_enabled">강제 다크 모드: 활성화됨</string>
     <string name="settings_dark_mode_disabled">강제 다크 모드: 비활성화됨</string>
-
-    <string name="mouse_mode_on">마우스: 켜짐</string>
+    <string name="mouse_mode_on">마우스 켜짐</string>
     <string name="mouse_mode_off">마우스</string>
-
     <string name="nav_back">뒤로</string>
     <string name="nav_forward">앞으로</string>
     <string name="nav_refresh">새로고침</string>
@@ -62,44 +55,35 @@
     <string name="nav_returning_home">대시보드로 돌아가는 중</string>
     <string name="nav_mobile_site_requested">모바일 사이트 요청됨</string>
     <string name="nav_desktop_site_requested">데스크톱 사이트 요청됨</string>
-
     <string name="update_available_title">업데이트 가능</string>
-    <string name="update_available_message">NaviTV 브라우저의 새 버전을 사용할 수 있습니다. 최신 기능과 보안 개선을 위해 지금 업데이트하십시오.</string>
+    <string name="update_available_message">NaviTV 브라우저의 새 버전을 사용할 수 있습니다. 최신 기능과 보안 개선을 위해 지금 업데이트하세요.</string>
     <string name="update_now">지금 업데이트</string>
     <string name="update_later">나중에</string>
-
     <string name="url_hint">검색 또는 URL 입력</string>
     <string name="cursor_content_desc">가상 마우스 포인터</string>
     <string name="input_hint_default">리모컨: D-패드로 탐색 · OK로 선택</string>
-    <string name="input_hint_virtual_mouse">마우스 모드: D-패드로 포인터 이동 · OK로 클릭 · 뒤로가기로 종료</string>
+    <string name="input_hint_virtual_mouse">마우스 모드: D-패드로 포인터 이동 · OK로 클릭 · Back으로 종료</string>
     <string name="input_hint_mouse">마우스 연결됨 · 스크롤 휠 지원됨</string>
-    <string name="input_hint_touch">터치 입력 활성화됨</string>
+    <string name="input_hint_touch">터치 입력 활성</string>
     <string name="list_hint_open">OK를 눌러 열기 · 길게 눌러 삭제</string>
-
     <string name="nav_fullscreen">전체 화면</string>
     <string name="settings_auto_fullscreen">자동 전체 화면</string>
-    <string name="settings_auto_fullscreen_summary">탐색 시 비활성 상태일 때 제어 도구 모음을 자동으로 숨깁니다.</string>
-    <string name="settings_auto_fullscreen_enabled">자동 전체 화면: 사용</string>
-    <string name="settings_auto_fullscreen_disabled">자동 전체 화면: 사용 안 함</string>
-    <string name="mode_virtual_mouse">가상 마우스 활성화됨</string>
-    <string name="mode_dpad">D-패드 모드 활성화됨</string>
-    <string name="error_webview_missing">시스템 WebView가 없거나 비활성화되어 있습니다. 이 앱이 작동하려면 WebView가 필요합니다. 기기 설정을 확인하세요.</string>
+    <string name="settings_auto_fullscreen_summary">브라우징 중 무활동 시 컨트롤 바를 자동으로 숨깁니다.</string>
+    <string name="settings_auto_fullscreen_enabled">자동 전체 화면: 활성화됨</string>
+    <string name="settings_auto_fullscreen_disabled">자동 전체 화면: 비활성화됨</string>
+    <string name="mode_virtual_mouse">가상 마우스 활성</string>
+    <string name="mode_dpad">D-패드 모드 활성</string>
+    <string name="error_webview_missing">시스템 WebView가 없거나 비활성화되어 있습니다. 이 앱은 WebView가 있어야 작동합니다.</string>
+    <string name="error_generic_app">애플리케이션 오류 발생: %1$s</string>
+    <string name="error_voice_search_unsupported">이 기기에서는 음성 검색이 지원되지 않습니다</string>
     <string name="nav_summarize">페이지 요약</string>
-    <string name="ai_summarizing">AI가 페이지를 요약하는 중입니다...</string>
+    <string name="ai_summarizing">AI가 페이지를 요약하는 중...</string>
     <string name="ai_summary_title">페이지 요약 (AI)</string>
-    <string name="ai_error_key_missing">AI 기능을 현재 사용할 수 없습니다 (키 누락).</string>
-    <string name="ai_error_empty">이 페이지에서 요약할 텍스트를 찾을 수 없습니다.</string>
+    <string name="ai_error_key_missing">AI 기능을 현재 사용할 수 없습니다(키 누락).</string>
+    <string name="ai_error_empty">요약할 텍스트를 이 페이지에서 찾을 수 없습니다.</string>
     <string name="ai_error_generic">AI 요약에 실패했습니다. 나중에 다시 시도해 주세요.</string>
-    <string name="settings_ai_section">AI 요약 설정</string>
-    <string name="settings_ai_mode">요약 모드</string>
-    <string name="settings_ai_mode_auto">자동 라우팅 (신뢰할 수 있음)</string>
-    <string name="settings_ai_mode_manual">수동 / BYOK (파워 유저)</string>
-    <string name="settings_ai_engine">AI 엔진</string>
-    <string name="settings_ai_key_label">API 키</string>
-    <string name="settings_ai_endpoint_label">엔드포인트 URL (선택 사항)</string>
-    <string name="settings_ai_model_label">모델 ID (선택 사항)</string>
-    <string name="settings_save_ai_config">AI 구성 저장</string>
-    <string name="settings_ai_config_saved">AI 구성이 저장됨</string>
-    <string name="ai_status_retrying">서비스가 사용 중입니다. %s 시도 중...</string>
-    <string name="ai_local_summary_note">참고: AI 제공업체에 연결할 수 없으므로 오프라인 추출을 표시합니다.</string>
+    <string name="ai_local_summary_note">참고: AI 제공업체에 연결할 수 없어 오프라인 추출 결과를 표시합니다.</string>
+    <string name="share_title">NaviTV 브라우저 공유</string>
+    <string name="share_message">다른 사람들이 Android TV에서 최고의 브라우징 경험을 찾을 수 있도록 도와주세요!</string>
+    <string name="share_scan_hint">공유하려면 휴대폰으로 스캔하세요</string>
 </resources>

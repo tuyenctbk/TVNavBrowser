@@ -1,42 +1,38 @@
 <resources>
     <string name="app_name">Navegador NaviTV</string>
-
     <string name="bookmarks">Marcadores</string>
     <string name="history">Historial</string>
-    <string name="settings">Configuración</string>
+    <string name="settings">Ajustes</string>
     <string name="bookmark_saved">Marcador guardado</string>
     <string name="bookmark_exists">Ya está en marcadores</string>
-    <string name="bookmarks_empty">Sin marcadores. Guarda páginas con el botón ☆.</string>
-    <string name="history_empty">Sin historial de navegación.</string>
+    <string name="bookmarks_empty">Aún no hay marcadores. Guarda páginas con el botón ☆.</string>
+    <string name="history_empty">Aún no hay historial de navegación.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
-
     <string name="onboarding_step">Paso %1$d de %2$d</string>
     <string name="onboarding_next">Siguiente</string>
     <string name="onboarding_skip">Omitir</string>
-    <string name="onboarding_get_started">Comenzar</string>
-    <string name="onboarding_title_1">Bienvenido a Navegador NaviTV</string>
-    <string name="onboarding_message_1">Navega por la web en Android TV con tu control remoto, teclado, mouse o panel táctil. Usa el D-pad para moverte entre botones y dentro de la página.</string>
+    <string name="onboarding_get_started">Empezar</string>
+    <string name="onboarding_title_1">Bienvenido al Navegador NaviTV</string>
+    <string name="onboarding_message_1">Navega por la web en Android TV con tu mando, teclado o ratón. Usa el D-pad para moverte entre botones y dentro de la página.</string>
     <string name="onboarding_title_2">Modo ratón y puntero</string>
     <string name="onboarding_message_2">Activa el modo ratón para mover un puntero con el D-pad y hacer clic con OK. Conecta un ratón USB o Bluetooth en cualquier momento; funciona al instante.</string>
     <string name="onboarding_title_3">Guarda tus favoritos</string>
-    <string name="onboarding_message_3">Usa el botón de estrella para guardar páginas. Abre tus marcadores guardados y el historial desde la barra de herramientas en cualquier momento.</string>
-    <string name="onboarding_title_4">Todo listo</string>
-    <string name="onboarding_message_4">El historial se guarda automáticamente. Visita Configuración para cambiar tu página de inicio, bloquear anuncios o borrar datos.</string>
-
-    <string name="rating_title">¿Te gusta Navegador NaviTV?</string>
-    <string name="rating_message">Si te gusta la aplicación, por favor califícala. ¡Nos ayuda a mejorar!</string>
-    <string name="rating_rate">Calificar</string>
+    <string name="onboarding_message_3">Usa el botón de estrella para marcar páginas. Abre los marcadores guardados y el historial desde la barra de herramientas en cualquier momento.</string>
+    <string name="onboarding_title_4">Ya está todo listo</string>
+    <string name="onboarding_message_4">El historial se guarda automáticamente. Visita los Ajustes para cambiar tu página de inicio, bloquear anuncios o borrar datos.</string>
+    <string name="rating_title">¿Te gusta el Navegador NaviTV?</string>
+    <string name="rating_message">Si te gusta la aplicación, valórala. ¡Nos ayuda a mejorar!</string>
+    <string name="rating_rate">Valorar</string>
     <string name="rating_remind_later">Recordar más tarde</string>
     <string name="rating_no_thanks">No, gracias</string>
-
-    <string name="settings_homepage_label">URL de página de inicio</string>
+    <string name="settings_homepage_label">URL de la página de inicio</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">Guardar página de inicio</string>
-    <string name="settings_block_embedded_ads">Bloquear anuncios web</string>
-    <string name="settings_block_embedded_ads_summary">Oculta automáticamente anuncios en páginas web. No afecta al anuncio de banner de la aplicación.</string>
-    <string name="settings_block_ads_enabled">Bloqueo de anuncios web activado</string>
-    <string name="settings_block_ads_disabled">Bloqueo de anuncios web desactivado</string>
-    <string name="settings_homepage_empty">Ingresa una URL de página de inicio</string>
+    <string name="settings_block_embedded_ads">Bloquear anuncios de sitios</string>
+    <string name="settings_block_embedded_ads_summary">Ocultar automáticamente anuncios incrustados en páginas web. No afecta al banner de la aplicación.</string>
+    <string name="settings_block_ads_enabled">Bloqueo de anuncios activado</string>
+    <string name="settings_block_ads_disabled">Bloqueo de anuncios desactivado</string>
+    <string name="settings_homepage_empty">Introduce una URL de página de inicio</string>
     <string name="settings_homepage_saved">Página de inicio guardada</string>
     <string name="settings_clear_history">Borrar historial</string>
     <string name="settings_clear_bookmarks">Borrar marcadores</string>
@@ -45,61 +41,49 @@
     <string name="settings_bookmarks_cleared">Marcadores borrados</string>
     <string name="settings_cache_cleared">Caché borrada</string>
     <string name="settings_cache_failed">No se pudo borrar la caché</string>
-
     <string name="settings_force_dark_mode">Forzar modo oscuro</string>
-    <string name="settings_force_dark_mode_summary">Aplica automáticamente un tema oscuro a todos los sitios web (ideal para navegar en TV).</string>
+    <string name="settings_force_dark_mode_summary">Aplicar tema oscuro automáticamente a todos los sitios (ideal para TV).</string>
     <string name="settings_dark_mode_enabled">Modo oscuro forzado: Activado</string>
     <string name="settings_dark_mode_disabled">Modo oscuro forzado: Desactivado</string>
-
-    <string name="mouse_mode_on">Ratón ACT</string>
+    <string name="mouse_mode_on">Ratón ACTIVADO</string>
     <string name="mouse_mode_off">Ratón</string>
-
     <string name="nav_back">Atrás</string>
     <string name="nav_forward">Adelante</string>
     <string name="nav_refresh">Recargar</string>
     <string name="nav_bookmark">Guardar</string>
-    <string name="nav_desktop_mode">Cambiar a sitio de escritorio</string>
+    <string name="nav_desktop_mode">Versión para ordenador</string>
     <string name="nav_returning_home">Volviendo al panel</string>
-    <string name="nav_mobile_site_requested">Sitio móvil solicitado</string>
-    <string name="nav_desktop_site_requested">Sitio de escritorio solicitado</string>
-
+    <string name="nav_mobile_site_requested">Versión móvil solicitada</string>
+    <string name="nav_desktop_site_requested">Versión de escritorio solicitada</string>
     <string name="update_available_title">Actualización disponible</string>
-    <string name="update_available_message">Hay una nueva versión de NaviTV Browser disponible. Actualice ahora para obtener las últimas funciones y mejoras de seguridad.</string>
+    <string name="update_available_message">Hay una nueva versión del Navegador NaviTV disponible. Actualiza ahora para obtener las últimas funciones.</string>
     <string name="update_now">Actualizar ahora</string>
     <string name="update_later">Más tarde</string>
-
-    <string name="url_hint">Busca o escribe una URL</string>
+    <string name="url_hint">Busca o introduce una URL</string>
     <string name="cursor_content_desc">Puntero de ratón virtual</string>
-    <string name="input_hint_default">Remoto: D-pad para navegar · OK para seleccionar</string>
-    <string name="input_hint_virtual_mouse">Modo ratón: D-pad mueve puntero · OK hace clic · Atrás sale</string>
-    <string name="input_hint_mouse">Ratón conectado · Rueda de desplazamiento soportada</string>
+    <string name="input_hint_default">Mando: D-pad para navegar · OK para seleccionar</string>
+    <string name="input_hint_virtual_mouse">Modo ratón: D-pad mueve el puntero · OK hace clic · Atrás sale</string>
+    <string name="input_hint_mouse">Ratón conectado · Rueda de desplazamiento compatible</string>
     <string name="input_hint_touch">Entrada táctil activa</string>
-    <string name="list_hint_open">Presiona OK para abrir · Mantén presionado para borrar</string>
-
+    <string name="list_hint_open">Pulsa OK para abrir · Mantén pulsado para eliminar</string>
     <string name="nav_fullscreen">Pantalla completa</string>
     <string name="settings_auto_fullscreen">Pantalla completa automática</string>
-    <string name="settings_auto_fullscreen_summary">Ocultar automáticamente la barra de control por inactividad al navegar.</string>
-    <string name="settings_auto_fullscreen_enabled">Pantalla completa automática: Activada</string>
-    <string name="settings_auto_fullscreen_disabled">Pantalla completa automática: Desactivada</string>
+    <string name="settings_auto_fullscreen_summary">Ocultar automáticamente la barra de control si no hay actividad.</string>
+    <string name="settings_auto_fullscreen_enabled">Auto pantalla completa: Activado</string>
+    <string name="settings_auto_fullscreen_disabled">Auto pantalla completa: Desactivado</string>
     <string name="mode_virtual_mouse">Ratón virtual activo</string>
-    <string name="mode_dpad">Modo D-pad activo</string>
-    <string name="error_webview_missing">System WebView falta o está deshabilitado. Esta aplicación requiere WebView para funcionar. Por favor, verifique la configuración de su dispositivo.</string>
+    <string name="mode_dpad">Modo D-Pad activo</string>
+    <string name="error_webview_missing">Falta el WebView del sistema o está desactivado.</string>
+    <string name="error_generic_app">Error de aplicación: %1$s</string>
+    <string name="error_voice_search_unsupported">La búsqueda por voz no es compatible con este dispositivo</string>
     <string name="nav_summarize">Resumir página</string>
     <string name="ai_summarizing">La IA está resumiendo la página...</string>
     <string name="ai_summary_title">Resumen de la página (IA)</string>
-    <string name="ai_error_key_missing">Las funciones de IA no están disponibles actualmente (falta la clave).</string>
+    <string name="ai_error_key_missing">Las funciones de IA no están disponibles (falta la clave).</string>
     <string name="ai_error_empty">No se encontró texto en esta página para resumir.</string>
-    <string name="ai_error_generic">Error al resumir con IA. Por favor, inténtelo de nuevo más tarde.</string>
-    <string name="settings_ai_section">Ajustes de resumen de IA</string>
-    <string name="settings_ai_mode">Modo de resumen</string>
-    <string name="settings_ai_mode_auto">Enrutamiento automático (Fiable)</string>
-    <string name="settings_ai_mode_manual">Manual / BYOK (Usuario experto)</string>
-    <string name="settings_ai_engine">Motor de IA</string>
-    <string name="settings_ai_key_label">Clave API</string>
-    <string name="settings_ai_endpoint_label">URL del punto final (Opcional)</string>
-    <string name="settings_ai_model_label">ID del modelo (Opcional)</string>
-    <string name="settings_save_ai_config">Guardar configuración de IA</string>
-    <string name="settings_ai_config_saved">Configuración de IA guardada</string>
-    <string name="ai_status_retrying">Servicio ocupado, intentando %s...</string>
-    <string name="ai_local_summary_note">Nota: Se muestra la extracción fuera de línea porque los proveedores de IA no están disponibles.</string>
+    <string name="ai_error_generic">El resumen de IA falló. Inténtalo de nuevo más tarde.</string>
+    <string name="ai_local_summary_note">Nota: Se muestra extracción sin conexión porque los proveedores de IA no están disponibles.</string>
+    <string name="share_title">Compartir Navegador NaviTV</string>
+    <string name="share_message">¡Ayuda a otros a descubrir la mejor experiencia de navegación en Android TV!</string>
+    <string name="share_scan_hint">Escanea con tu móvil para compartir</string>
 </resources>

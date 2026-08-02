@@ -1,39 +1,35 @@
 <resources>
-    <string name="app_name">NaviTV Browser</string>
-
+    <string name="app_name">NaviTV Tarayıcı</string>
     <string name="bookmarks">Yer İşaretleri</string>
     <string name="history">Geçmiş</string>
     <string name="settings">Ayarlar</string>
     <string name="bookmark_saved">Yer işareti kaydedildi</string>
     <string name="bookmark_exists">Zaten yer işaretlerinde</string>
-    <string name="bookmarks_empty">Henüz yer işareti yok. Sayfaları ☆ düğmesiyle kaydedin.</string>
+    <string name="bookmarks_empty">Henüz yer işareti yok. ☆ butonuyla sayfaları kaydedin.</string>
     <string name="history_empty">Henüz tarama geçmişi yok.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
-
     <string name="onboarding_step">Adım %1$d / %2$d</string>
     <string name="onboarding_next">İleri</string>
     <string name="onboarding_skip">Atla</string>
     <string name="onboarding_get_started">Başla</string>
-    <string name="onboarding_title_1">NaviTV Browser\'a Hoş Geldiniz</string>
-    <string name="onboarding_message_1">Kumandanız, klavyeniz, fareniz veya dokunmatik yüzeyinizle Android TV\'de web\'de gezinin. Düğmeler arasında ve sayfa içinde hareket etmek için D-pad\'i kullanın.</string>
-    <string name="onboarding_title_2">Sanal fare modu</string>
-    <string name="onboarding_message_2">D-pad ile bir işaretçiyi hareket ettirmek ve OK ile tıklamak için Fare modunu açın. İstediğiniz zaman bir USB veya Bluetooth fare bağlayın — anında çalışır.</string>
+    <string name="onboarding_title_1">NaviTV Tarayıcı\'ya Hoş Geldiniz</string>
+    <string name="onboarding_message_1">Android TV\'de kumandanız, klavyeniz veya farenizle web\'de gezinin. Butonlar arasında ve sayfa içinde hareket etmek için D-pad\'i kullanın.</string>
+    <string name="onboarding_title_2">Fare ve imleç modu</string>
+    <string name="onboarding_message_2">İmleci D-pad ile hareket ettirmek ve OK ile tıklamak için Fare modunu açın. İstediğiniz zaman bir USB veya Bluetooth fare bağlayın — anında çalışacaktır.</string>
     <string name="onboarding_title_3">Favorilerinizi kaydedin</string>
-    <string name="onboarding_message_3">Sayfaları yer imlerine eklemek için yıldız düğmesini kullanın. Kaydedilen yer imlerini ve geçmişi istediğiniz zaman araç çubuğundan açın.</string>
+    <string name="onboarding_message_3">Sayfaları yer işaretlerine eklemek için yıldız butonunu kullanın. Kayıtlı yer işaretlerini ve geçmişi istediğiniz zaman araç çubuğundan açın.</string>
     <string name="onboarding_title_4">Her şey hazır</string>
-    <string name="onboarding_message_4">Geçmiş otomatik olarak kaydedilir. Ana sayfanızı değiştirmek, web sitesi reklamlarını engellemek veya verileri temizlemek için Ayarlar\'ı ziyaret edin.</string>
-
-    <string name="rating_title">NaviTV Browser\'ı Beğendiniz mi?</string>
-    <string name="rating_message">Uygulamayı beğendiyseniz, lütfen derecelendirmeyi düşünün. Geliştirmemize yardımcı olur!</string>
-    <string name="rating_rate">Derecelendir</string>
+    <string name="onboarding_message_4">Geçmiş otomatik olarak kaydedilir. Ana sayfanızı değiştirmek, reklamları engellemek veya verileri temizlemek için Ayarlar\'ı ziyaret edin.</string>
+    <string name="rating_title">NaviTV Tarayıcı\'dan memnun musunuz?</string>
+    <string name="rating_message">Uygulamayı beğendiyseniz, lütfen puanlamayı düşünün. Bu bize gelişmemizde yardımcı olur!</string>
+    <string name="rating_rate">Puanla</string>
     <string name="rating_remind_later">Daha sonra hatırlat</string>
     <string name="rating_no_thanks">Hayır, teşekkürler</string>
-
     <string name="settings_homepage_label">Ana Sayfa URL\'si</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">Ana Sayfayı Kaydet</string>
     <string name="settings_block_embedded_ads">Web sitesi reklamlarını engelle</string>
-    <string name="settings_block_embedded_ads_summary">Web sayfalarındaki gömülü reklamları otomatik olarak gizle. Uygulama banner reklamını etkilemez.</string>
+    <string name="settings_block_embedded_ads_summary">Web sayfalarındaki gömülü reklamları otomatik olarak gizleyin. Uygulamanın banner reklamını etkilemez.</string>
     <string name="settings_block_ads_enabled">Web sitesi reklam engelleme etkin</string>
     <string name="settings_block_ads_disabled">Web sitesi reklam engelleme devre dışı</string>
     <string name="settings_homepage_empty">Lütfen bir ana sayfa URL\'si girin</string>
@@ -45,62 +41,49 @@
     <string name="settings_bookmarks_cleared">Yer işaretleri temizlendi</string>
     <string name="settings_cache_cleared">Önbellek temizlendi</string>
     <string name="settings_cache_failed">Önbellek temizlenemedi</string>
-
     <string name="settings_force_dark_mode">Karanlık Moda Zorla</string>
-    <string name="settings_force_dark_mode_summary">Tüm web sitelerine otomatik olarak karanlık tema uygula (TV\'de gezinmek için ideal).</string>
-    <string name="settings_dark_mode_enabled">Karanlık Moda Zorla: Etkin</string>
-    <string name="settings_dark_mode_disabled">Karanlık Moda Zorla: Devre Dışı</string>
-
+    <string name="settings_force_dark_mode_summary">Tüm web sitelerine otomatik olarak karanlık tema uygulayın (TV\'de tarama için idealdir).</string>
+    <string name="settings_dark_mode_enabled">Zorunlu Karanlık Mod: Etkin</string>
+    <string name="settings_dark_mode_disabled">Zorunlu Karanlık Mod: Devre Dışı</string>
     <string name="mouse_mode_on">Fare AÇIK</string>
     <string name="mouse_mode_off">Fare</string>
-
     <string name="nav_back">Geri</string>
     <string name="nav_forward">İleri</string>
     <string name="nav_refresh">Yenile</string>
     <string name="nav_bookmark">Kaydet</string>
     <string name="nav_desktop_mode">Masaüstü Sitesi</string>
-    <string name="nav_returning_home">Panoya Dönülüyor</string>
-    <string name="nav_mobile_site_requested">Mobil Site İstendi</string>
-    <string name="nav_desktop_site_requested">Masaüstü Sitesi İstendi</string>
-
+    <string name="nav_returning_home">Panele geri dönülüyor</string>
+    <string name="nav_mobile_site_requested">Mobil site istendi</string>
+    <string name="nav_desktop_site_requested">Masaüstü sitesi istendi</string>
     <string name="update_available_title">Güncelleme Mevcut</string>
-    <string name="update_available_message">NaviTV Browser\'ın yeni bir sürümü mevcut. En son özellikler ve güvenlik iyileştirmeleri için şimdi güncelleyin.</string>
+    <string name="update_available_message">NaviTV Tarayıcı\'nın yeni bir sürümü mevcut. En yeni özellikler ve güvenlik iyileştirmeleri için şimdi güncelleyin.</string>
     <string name="update_now">Şimdi Güncelle</string>
-    <string name="update_later">Daha Sonra</string>
-
-    <string name="url_hint">Ara veya URL girin</string>
-    <string name="cursor_content_desc">Sanal fare işaretçisi</string>
+    <string name="update_later">Daha sonra</string>
+    <string name="url_hint">Ara veya URL gir</string>
+    <string name="cursor_content_desc">Sanal fare imleci</string>
     <string name="input_hint_default">Kumanda: Gezinmek için D-pad · Seçmek için OK</string>
-    <string name="input_hint_virtual_mouse">Fare modu: D-pad işaretçiyi hareket ettirir · OK tıklar · Geri çıkar</string>
+    <string name="input_hint_virtual_mouse">Fare modu: D-pad imleci hareket ettirir · OK tıklar · Geri çıkar</string>
     <string name="input_hint_mouse">Fare bağlandı · Kaydırma tekerleği destekleniyor</string>
     <string name="input_hint_touch">Dokunmatik giriş aktif</string>
-    <string name="list_hint_open">Açmak için OK tuşuna basın · Silmek için uzun basın</string>
-
+    <string name="list_hint_open">Açmak için OK basın · Silmek için uzun basın</string>
     <string name="nav_fullscreen">Tam Ekran</string>
     <string name="settings_auto_fullscreen">Otomatik Tam Ekran</string>
-    <string name="settings_auto_fullscreen_summary">Gezinirken işlem yapılmadığında kontrol çubuğunu otomatik olarak gizle.</string>
+    <string name="settings_auto_fullscreen_summary">Tarama sırasında hareketsizlik durumunda kontrol çubuğunu otomatik gizle.</string>
     <string name="settings_auto_fullscreen_enabled">Otomatik Tam Ekran: Etkin</string>
     <string name="settings_auto_fullscreen_disabled">Otomatik Tam Ekran: Devre Dışı</string>
     <string name="mode_virtual_mouse">Sanal Fare Aktif</string>
-    <string name="mode_dpad">D-pad Modu Aktif</string>
-    <string name="error_webview_missing">Sistem WebView eksik veya devre dışı. Bu uygulamanın çalışması için WebView gereklidir. Lütfen cihaz ayarlarınızı kontrol edin.</string>
+    <string name="mode_dpad">D-Pad Modu Aktif</string>
+    <string name="error_webview_missing">Sistem WebView eksik veya devre dışı.</string>
+    <string name="error_generic_app">Uygulama hatası oluştu: %1$s</string>
+    <string name="error_voice_search_unsupported">Sesli arama bu cihazda desteklenmiyor</string>
     <string name="nav_summarize">Sayfayı Özetle</string>
     <string name="ai_summarizing">Yapay zeka sayfayı özetliyor...</string>
-    <string name="ai_summary_title">Sayfa Özeti (YZ)</string>
-    <string name="ai_error_key_missing">Yapay zeka özellikleri şu anda kullanılamıyor (Anahtar eksik).</string>
+    <string name="ai_summary_title">Sayfa Özeti (AI)</string>
+    <string name="ai_error_key_missing">AI özellikleri şu anda kullanılamıyor (Anahtar eksik).</string>
     <string name="ai_error_empty">Bu sayfada özetlenecek metin bulunamadı.</string>
-    <string name="ai_error_generic">Yapay zeka özetleme hatası. Lütfen daha sonra tekrar deneyin.</string>
-
-    <string name="settings_ai_section">Yapay Zeka Özet Ayarları</string>
-    <string name="settings_ai_mode">Özetleme Modu</string>
-    <string name="settings_ai_mode_auto">Otomatik Yönlendirme (Güvenilir)</string>
-    <string name="settings_ai_mode_manual">Manuel / BYOK (İleri Düzey Kullanıcı)</string>
-    <string name="settings_ai_engine">Yapay Zeka Motoru</string>
-    <string name="settings_ai_key_label">API Anahtarı</string>
-    <string name="settings_ai_endpoint_label">Uç Nokta URL\'si (İsteğe Bağlı)</string>
-    <string name="settings_ai_model_label">Model Kimliği (İsteğe Bağlı)</string>
-    <string name="settings_save_ai_config">AI Yapılandırmasını Kaydet</string>
-    <string name="settings_ai_config_saved">Yapay zeka yapılandırması kaydedildi</string>
-    <string name="ai_status_retrying">Servis meşgul, %s deneniyor...</string>
-    <string name="ai_local_summary_note">Not: Yapay zeka sağlayıcılarına ulaşılamadığı için çevrimdışı çıkarma görüntüleniyor.</string>
+    <string name="ai_error_generic">AI özetleme başarısız oldu. Lütfen daha sonra tekrar deneyin.</string>
+    <string name="ai_local_summary_note">Not: AI sağlayıcılarına ulaşılamadığı için çevrimdışı çıkarma gösteriliyor.</string>
+    <string name="share_title">NaviTV Tarayıcıyı Paylaş</string>
+    <string name="share_message">Başkalarının Android TV\'deki en iyi tarama deneyimini keşfetmesine yardımcı olun!</string>
+    <string name="share_scan_hint">Paylaşmak için telefonunuzla tarayın</string>
 </resources>

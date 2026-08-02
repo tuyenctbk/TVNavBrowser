@@ -1,42 +1,38 @@
 <resources>
     <string name="app_name">NaviTV Browser</string>
-
     <string name="bookmarks">Bookmark</string>
     <string name="history">Riwayat</string>
-    <string name="settings">Pengaturan</string>
+    <string name="settings">Setelan</string>
     <string name="bookmark_saved">Bookmark disimpan</string>
-    <string name="bookmark_exists">Sudah ada di bookmark</string>
+    <string name="bookmark_exists">Sudah dibookmark</string>
     <string name="bookmarks_empty">Belum ada bookmark. Simpan halaman dengan tombol ☆.</string>
     <string name="history_empty">Belum ada riwayat penjelajahan.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
-
     <string name="onboarding_step">Langkah %1$d dari %2$d</string>
-    <string name="onboarding_next">Berikutnya</string>
+    <string name="onboarding_next">Lanjut</string>
     <string name="onboarding_skip">Lewati</string>
     <string name="onboarding_get_started">Mulai</string>
     <string name="onboarding_title_1">Selamat datang di NaviTV Browser</string>
-    <string name="onboarding_message_1">Jelajahi web di Android TV dengan remote, keyboard, mouse, atau touchpad Anda. Gunakan D-pad untuk berpindah antar tombol dan ke dalam halaman.</string>
-    <string name="onboarding_title_2">Mode mouse virtual</string>
-    <string name="onboarding_message_2">Aktifkan mode Mouse untuk menggerakkan penunjuk dengan D-pad dan klik dengan OK. Hubungkan mouse USB atau Bluetooth kapan saja — langsung berfungsi.</string>
+    <string name="onboarding_message_1">Jelajahi web di Android TV dengan remote, keyboard, atau mouse Anda. Gunakan D-pad untuk berpindah antar tombol dan di dalam halaman.</string>
+    <string name="onboarding_title_2">Mode Mouse dan kursor</string>
+    <string name="onboarding_message_2">Aktifkan mode Mouse untuk menggerakkan kursor dengan D-pad dan klik dengan OK. Colokkan mouse USB atau Bluetooth kapan saja — akan langsung berfungsi.</string>
     <string name="onboarding_title_3">Simpan favorit Anda</string>
-    <string name="onboarding_message_3">Gunakan tombol bintang untuk menandai halaman. Buka bookmark yang disimpan dan riwayat dari bilah alat kapan saja.</string>
-    <string name="onboarding_title_4">Semua siap</string>
-    <string name="onboarding_message_4">Riwayat disimpan secara otomatis. Buka Pengaturan untuk mengubah beranda Anda, memblokir iklan situs web, atau menghapus data.</string>
-
-    <string name="rating_title">Menikmati NaviTV Browser?</string>
-    <string name="rating_message">Jika Anda menyukai aplikasi ini, harap pertimbangkan untuk memberikan peringkat. Ini membantu kami berkembang!</string>
-    <string name="rating_rate">Beri Nilai</string>
+    <string name="onboarding_message_3">Gunakan tombol bintang untuk membookmark halaman. Buka bookmark dan riwayat yang disimpan dari toolbar kapan saja.</string>
+    <string name="onboarding_title_4">Semua sudah siap</string>
+    <string name="onboarding_message_4">Riwayat disimpan secara otomatis. Kunjungi Setelan untuk mengubah beranda, memblokir iklan situs, atau menghapus data.</string>
+    <string name="rating_title">Menyukai NaviTV Browser?</string>
+    <string name="rating_message">Jika Anda menyukai aplikasi ini, pertimbangkan untuk memberinya rating. Ini membantu kami meningkatkan layanan!</string>
+    <string name="rating_rate">Beri Rating</string>
     <string name="rating_remind_later">Ingatkan nanti</string>
     <string name="rating_no_thanks">Tidak, terima kasih</string>
-
     <string name="settings_homepage_label">URL Beranda</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">Simpan Beranda</string>
     <string name="settings_block_embedded_ads">Blokir iklan situs web</string>
-    <string name="settings_block_embedded_ads_summary">Sembunyikan iklan tersemat di dalam halaman web secara otomatis. Tidak memengaruhi iklan spanduk aplikasi.</string>
-    <string name="settings_block_ads_enabled">Pemblokiran iklan diaktifkan</string>
-    <string name="settings_block_ads_disabled">Pemblokiran iklan dinonaktifkan</string>
-    <string name="settings_homepage_empty">Silakan masukkan URL beranda</string>
+    <string name="settings_block_embedded_ads_summary">Sembunyikan iklan tersemat di dalam halaman web secara otomatis. Tidak memengaruhi iklan banner aplikasi.</string>
+    <string name="settings_block_ads_enabled">Pemblokiran iklan situs diaktifkan</string>
+    <string name="settings_block_ads_disabled">Pemblokiran iklan situs dinonaktifkan</string>
+    <string name="settings_homepage_empty">Harap masukkan URL beranda</string>
     <string name="settings_homepage_saved">Beranda disimpan</string>
     <string name="settings_clear_history">Hapus Riwayat</string>
     <string name="settings_clear_bookmarks">Hapus Bookmark</string>
@@ -44,62 +40,50 @@
     <string name="settings_history_cleared">Riwayat dihapus</string>
     <string name="settings_bookmarks_cleared">Bookmark dihapus</string>
     <string name="settings_cache_cleared">Cache dihapus</string>
-    <string name="settings_cache_failed">Tidak dapat menghapus cache</string>
-
+    <string name="settings_cache_failed">Gagal menghapus cache</string>
     <string name="settings_force_dark_mode">Paksa Mode Gelap</string>
-    <string name="settings_force_dark_mode_summary">Terapkan tema gelap secara otomatis ke semua situs web (ideal untuk penjelajahan TV).</string>
+    <string name="settings_force_dark_mode_summary">Terapkan tema gelap secara otomatis ke semua situs web (Ideal untuk browsing di TV).</string>
     <string name="settings_dark_mode_enabled">Paksa Mode Gelap: Diaktifkan</string>
     <string name="settings_dark_mode_disabled">Paksa Mode Gelap: Dinonaktifkan</string>
-
     <string name="mouse_mode_on">Mouse AKTIF</string>
     <string name="mouse_mode_off">Mouse</string>
-
     <string name="nav_back">Kembali</string>
     <string name="nav_forward">Maju</string>
-    <string name="nav_refresh">Muat Ulang</string>
+    <string name="nav_refresh">Muat ulang</string>
     <string name="nav_bookmark">Simpan</string>
-    <string name="nav_desktop_mode">Situs Desktop</string>
+    <string name="nav_desktop_mode">Tampilan Desktop</string>
     <string name="nav_returning_home">Kembali ke Dasbor</string>
     <string name="nav_mobile_site_requested">Situs Seluler Diminta</string>
     <string name="nav_desktop_site_requested">Situs Desktop Diminta</string>
-
     <string name="update_available_title">Pembaruan Tersedia</string>
-    <string name="update_available_message">Versi baru NaviTV Browser telah tersedia. Perbarui sekarang untuk fitur terbaru dan peningkatan keamanan.</string>
+    <string name="update_available_message">Versi baru NaviTV Browser tersedia. Perbarui sekarang untuk fitur terbaru dan peningkatan keamanan.</string>
     <string name="update_now">Perbarui Sekarang</string>
     <string name="update_later">Nanti</string>
-
     <string name="url_hint">Cari atau masukkan URL</string>
-    <string name="cursor_content_desc">Penunjuk mouse virtual</string>
+    <string name="cursor_content_desc">Kursor mouse virtual</string>
     <string name="input_hint_default">Remote: D-pad untuk navigasi · OK untuk memilih</string>
-    <string name="input_hint_virtual_mouse">Mode mouse: D-pad gerakkan penunjuk · OK klik · Kembali keluar</string>
-    <string name="input_hint_mouse">Mouse terhubung · Roda gulir didukung</string>
+    <string name="input_hint_virtual_mouse">Mode Mouse: D-pad gerakkan kursor · OK klik · Back keluar</string>
+    <string name="input_hint_mouse">Mouse terhubung · Scroll wheel didukung</string>
     <string name="input_hint_touch">Input sentuh aktif</string>
     <string name="list_hint_open">Tekan OK untuk membuka · Tekan lama untuk menghapus</string>
-
     <string name="nav_fullscreen">Layar Penuh</string>
     <string name="settings_auto_fullscreen">Layar Penuh Otomatis</string>
-    <string name="settings_auto_fullscreen_summary">Sembunyikan bilah kontrol secara otomatis saat tidak ada aktivitas saat berselancar.</string>
+    <string name="settings_auto_fullscreen_summary">Sembunyikan bilah kontrol secara otomatis saat tidak ada aktivitas saat browsing.</string>
     <string name="settings_auto_fullscreen_enabled">Layar Penuh Otomatis: Diaktifkan</string>
     <string name="settings_auto_fullscreen_disabled">Layar Penuh Otomatis: Dinonaktifkan</string>
     <string name="mode_virtual_mouse">Mouse Virtual Aktif</string>
-    <string name="mode_dpad">Mode D-pad Aktif</string>
-    <string name="error_webview_missing">System WebView hilang atau dinonaktifkan. Aplikasi ini memerlukan WebView untuk berfungsi. Silakan periksa pengaturan perangkat Anda.</string>
+    <string name="mode_dpad">Mode D-Pad Aktif</string>
+    <string name="error_webview_missing">System WebView hilang atau dinonaktifkan.</string>
+    <string name="error_generic_app">Terjadi kesalahan aplikasi: %1$s</string>
+    <string name="error_voice_search_unsupported">Pencarian suara tidak didukung di perangkat ini</string>
     <string name="nav_summarize">Ringkas Halaman</string>
     <string name="ai_summarizing">AI sedang meringkas halaman...</string>
     <string name="ai_summary_title">Ringkasan Halaman (AI)</string>
-    <string name="ai_error_key_missing">Fitur AI saat ini tidak tersedia (Kunci hilang).</string>
+    <string name="ai_error_key_missing">Fitur AI saat ini tidak tersedia (Key hilang).</string>
     <string name="ai_error_empty">Tidak ada teks yang ditemukan di halaman ini untuk diringkas.</string>
-    <string name="ai_error_generic">Peringkasan AI gagal. Silakan coba lagi nanti.</string>
-    <string name="settings_ai_section">Pengaturan Ringkasan AI</string>
-    <string name="settings_ai_mode">Mode Peringkasan</string>
-    <string name="settings_ai_mode_auto">Perutean Otomatis (Andal)</string>
-    <string name="settings_ai_mode_manual">Manual / BYOK (Pengguna Mahir)</string>
-    <string name="settings_ai_engine">Mesin AI</string>
-    <string name="settings_ai_key_label">Kunci API</string>
-    <string name="settings_ai_endpoint_label">URL Titik Akhir (Opsional)</string>
-    <string name="settings_ai_model_label">ID Model (Opsional)</string>
-    <string name="settings_save_ai_config">Simpan Konfigurasi AI</string>
-    <string name="settings_ai_config_saved">Konfigurasi AI disimpan</string>
-    <string name="ai_status_retrying">Layanan sibuk, mencoba %s...</string>
+    <string name="ai_error_generic">Peringkasan AI gagal. Harap coba lagi nanti.</string>
     <string name="ai_local_summary_note">Catatan: Menampilkan ekstraksi offline karena penyedia AI tidak dapat dijangkau.</string>
+    <string name="share_title">Bagikan NaviTV Browser</string>
+    <string name="share_message">Bantu orang lain menemukan pengalaman browsing terbaik di Android TV!</string>
+    <string name="share_scan_hint">Scan dengan ponsel Anda untuk berbagi</string>
 </resources>

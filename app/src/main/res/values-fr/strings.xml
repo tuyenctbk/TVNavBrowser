@@ -1,41 +1,37 @@
 <resources>
     <string name="app_name">Navigateur NaviTV</string>
-
     <string name="bookmarks">Favoris</string>
     <string name="history">Historique</string>
     <string name="settings">Paramètres</string>
     <string name="bookmark_saved">Favori enregistré</string>
     <string name="bookmark_exists">Déjà dans les favoris</string>
-    <string name="bookmarks_empty">Aucun favori. Enregistrez des pages avec le bouton ☆.</string>
-    <string name="history_empty">Aucun historique de navigation.</string>
+    <string name="bookmarks_empty">Aucun favori pour le moment. Enregistrez des pages avec le bouton ☆.</string>
+    <string name="history_empty">Aucun historique de navigation pour le moment.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
-
     <string name="onboarding_step">Étape %1$d sur %2$d</string>
     <string name="onboarding_next">Suivant</string>
     <string name="onboarding_skip">Passer</string>
-    <string name="onboarding_get_started">Démarrer</string>
+    <string name="onboarding_get_started">Commencer</string>
     <string name="onboarding_title_1">Bienvenue sur le Navigateur NaviTV</string>
-    <string name="onboarding_message_1">Naviguez sur le Web sur Android TV avec votre télécommande, clavier, souris ou pavé tactile. Utilisez la croix directionnelle pour vous déplacer entre les boutons et dans la page.</string>
-    <string name="onboarding_title_2">Mode souris et pointeur</string>
-    <string name="onboarding_message_2">Activez le mode souris pour déplacer un pointeur avec la croix directionnelle et cliquez avec OK. Connectez une souris USB ou Bluetooth à tout moment, cela fonctionne instantanément.</string>
+    <string name="onboarding_message_1">Naviguez sur le Web sur Android TV avec votre télécommande, votre clavier ou votre souris. Utilisez le pavé directionnel pour vous déplacer entre les boutons et dans la page.</string>
+    <string name="onboarding_title_2">Mode souris et curseur</string>
+    <string name="onboarding_message_2">Activez le mode Souris pour déplacer un curseur avec le pavé directionnel et cliquer avec OK. Branchez une souris USB ou Bluetooth à tout moment, elle fonctionne instantanément.</string>
     <string name="onboarding_title_3">Enregistrez vos favoris</string>
-    <string name="onboarding_message_3">Utilisez le bouton étoile pour enregistrer des pages. Ouvrez vos favoris enregistrés et l\'historique depuis la barre d\'outils à tout moment.</string>
+    <string name="onboarding_message_3">Utilisez le bouton étoile pour marquer des pages. Ouvrez vos favoris et votre historique à tout moment depuis la barre d\'outils.</string>
     <string name="onboarding_title_4">Tout est prêt</string>
-    <string name="onboarding_message_4">L\'historique est enregistré automatiquement. Visitez les Paramètres pour modifier votre page d\'accueil, bloquer les publicités ou effacer les données.</string>
-
+    <string name="onboarding_message_4">L\'historique est enregistré automatiquement. Consultez les Paramètres pour changer votre page d\'accueil, bloquer les publicités ou effacer vos données.</string>
     <string name="rating_title">Vous aimez le Navigateur NaviTV ?</string>
-    <string name="rating_message">Si vous appréciez l\'application, merci de bien vouloir l\'évaluer. Cela nous aide à nous améliorer !</string>
-    <string name="rating_rate">Évaluer</string>
+    <string name="rating_message">Si vous appréciez l\'application, n\'hésitez pas à la noter. Cela nous aide à nous améliorer !</string>
+    <string name="rating_rate">Noter</string>
     <string name="rating_remind_later">Plus tard</string>
     <string name="rating_no_thanks">Non, merci</string>
-
     <string name="settings_homepage_label">URL de la page d\'accueil</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">Enregistrer la page d\'accueil</string>
-    <string name="settings_block_embedded_ads">Bloquer les pubs web</string>
-    <string name="settings_block_embedded_ads_summary">Masquer automatiquement les publicités intégrées dans les pages web. N\'affecte pas la bannière publicitaire de l\'application.</string>
-    <string name="settings_block_ads_enabled">Blocage des publicités web activé</string>
-    <string name="settings_block_ads_disabled">Blocage des publicités web désactivé</string>
+    <string name="settings_block_embedded_ads">Bloquer les publicités web</string>
+    <string name="settings_block_embedded_ads_summary">Masquer automatiquement les publicités intégrées aux pages Web. N\'affecte pas la bannière publicitaire de l\'application.</string>
+    <string name="settings_block_ads_enabled">Blocage des publicités activé</string>
+    <string name="settings_block_ads_disabled">Blocage des publicités désactivé</string>
     <string name="settings_homepage_empty">Veuillez saisir une URL de page d\'accueil</string>
     <string name="settings_homepage_saved">Page d\'accueil enregistrée</string>
     <string name="settings_clear_history">Effacer l\'historique</string>
@@ -45,61 +41,49 @@
     <string name="settings_bookmarks_cleared">Favoris effacés</string>
     <string name="settings_cache_cleared">Cache effacé</string>
     <string name="settings_cache_failed">Impossible d\'effacer le cache</string>
-
     <string name="settings_force_dark_mode">Forcer le mode sombre</string>
-    <string name="settings_force_dark_mode_summary">Appliquer automatiquement un thème sombre à tous les sites Web (idéal pour la navigation TV).</string>
-    <string name="settings_dark_mode_enabled">Mode sombre forcé : activé</string>
-    <string name="settings_dark_mode_disabled">Mode sombre forcé : désactivé</string>
-
-    <string name="mouse_mode_on">Souris ACT</string>
+    <string name="settings_force_dark_mode_summary">Appliquer automatiquement le thème sombre à tous les sites (idéal pour la navigation TV).</string>
+    <string name="settings_dark_mode_enabled">Mode sombre forcé : Activé</string>
+    <string name="settings_dark_mode_disabled">Mode sombre forcé : Désactivé</string>
+    <string name="mouse_mode_on">Souris ACTIVE</string>
     <string name="mouse_mode_off">Souris</string>
-
     <string name="nav_back">Retour</string>
-    <string name="nav_forward">Avant</string>
+    <string name="nav_forward">Avancer</string>
     <string name="nav_refresh">Actualiser</string>
     <string name="nav_bookmark">Enregistrer</string>
-    <string name="nav_desktop_mode">Version pour ordinateur</string>
+    <string name="nav_desktop_mode">Version ordinateur</string>
     <string name="nav_returning_home">Retour au tableau de bord</string>
     <string name="nav_mobile_site_requested">Version mobile demandée</string>
     <string name="nav_desktop_site_requested">Version ordinateur demandée</string>
-
     <string name="update_available_title">Mise à jour disponible</string>
-    <string name="update_available_message">Une nouvelle version de NaviTV Browser est disponible. Mettez à jour maintenant pour profiter des dernières fonctionnalités et améliorations de sécurité.</string>
-    <string name="update_now">Mettre à jour maintenant</string>
+    <string name="update_available_message">Une nouvelle version du Navigateur NaviTV est disponible. Mettez-la à jour pour profiter des dernières fonctionnalités.</string>
+    <string name="update_now">Mettre à jour</string>
     <string name="update_later">Plus tard</string>
-
     <string name="url_hint">Rechercher ou saisir une URL</string>
-    <string name="cursor_content_desc">Pointeur de souris virtuel</string>
-    <string name="input_hint_default">Télécommande : Croix pour naviguer · OK pour sélectionner</string>
-    <string name="input_hint_virtual_mouse">Mode souris : Croix déplace le pointeur · OK clique · Retour quitte</string>
-    <string name="input_hint_mouse">Souris connectée · Molette de défilement prise en charge</string>
+    <string name="cursor_content_desc">Curseur de souris virtuel</string>
+    <string name="input_hint_default">Télécommande : Pavé directionnel pour naviguer · OK pour sélectionner</string>
+    <string name="input_hint_virtual_mouse">Mode souris : Pavé directionnel déplace le curseur · OK clique · Retour quitte</string>
+    <string name="input_hint_mouse">Souris connectée · Molette prise en charge</string>
     <string name="input_hint_touch">Entrée tactile active</string>
     <string name="list_hint_open">Appuyez sur OK pour ouvrir · Appui long pour supprimer</string>
-
     <string name="nav_fullscreen">Plein écran</string>
     <string name="settings_auto_fullscreen">Plein écran automatique</string>
-    <string name="settings_auto_fullscreen_summary">Masquer automatiquement la barre de contrôle en cas d\'inactivité lors de la navigation.</string>
-    <string name="settings_auto_fullscreen_enabled">Plein écran automatique : Activé</string>
-    <string name="settings_auto_fullscreen_disabled">Plein écran automatique : Désactivé</string>
+    <string name="settings_auto_fullscreen_summary">Masquer automatiquement la barre de contrôle en cas d\'inactivité.</string>
+    <string name="settings_auto_fullscreen_enabled">Plein écran auto : Activé</string>
+    <string name="settings_auto_fullscreen_disabled">Plein écran auto : Désactivé</string>
     <string name="mode_virtual_mouse">Souris virtuelle active</string>
-    <string name="mode_dpad">Mode D-pad actif</string>
-    <string name="error_webview_missing">Le système WebView est manquant ou désactivé. Cette application nécessite WebView pour fonctionner. Veuillez vérifier les paramètres de votre appareil.</string>
+    <string name="mode_dpad">Mode pavé directionnel actif</string>
+    <string name="error_webview_missing">Le WebView système est manquant ou désactivé.</string>
+    <string name="error_generic_app">Une erreur est survenue : %1$s</string>
+    <string name="error_voice_search_unsupported">La recherche vocale n\'est pas prise en charge sur cet appareil</string>
     <string name="nav_summarize">Résumer la page</string>
     <string name="ai_summarizing">L\'IA résume la page...</string>
     <string name="ai_summary_title">Résumé de la page (IA)</string>
-    <string name="ai_error_key_missing">Les fonctionnalités d\'IA sont actuellement indisponibles (Clé manquante).</string>
-    <string name="ai_error_empty">Aucun texte trouvé sur cette page pour résumer.</string>
-    <string name="ai_error_generic">L\'IA n\'a pas pu résumer. Veuillez réessayer plus tard.</string>
-    <string name="settings_ai_section">Paramètres du résumé IA</string>
-    <string name="settings_ai_mode">Mode de résumé</string>
-    <string name="settings_ai_mode_auto">Routage automatique (Fiable)</string>
-    <string name="settings_ai_mode_manual">Manuel / BYOK (Utilisateur avancé)</string>
-    <string name="settings_ai_engine">Moteur IA</string>
-    <string name="settings_ai_key_label">Clé API</string>
-    <string name="settings_ai_endpoint_label">URL du point de terminaison (Optionnel)</string>
-    <string name="settings_ai_model_label">ID du modèle (Optionnel)</string>
-    <string name="settings_save_ai_config">Enregistrer la configuration de l\'IA</string>
-    <string name="settings_ai_config_saved">Configuration IA enregistrée</string>
-    <string name="ai_status_retrying">Service occupé, tentative %s...</string>
-    <string name="ai_local_summary_note">Note : affichage de l\'extraction hors ligne car les fournisseurs d\'IA sont inaccessibles.</string>
+    <string name="ai_error_key_missing">Les fonctions IA sont indisponibles (Clé manquante).</string>
+    <string name="ai_error_empty">Aucun texte trouvé sur cette page pour le résumé.</string>
+    <string name="ai_error_generic">Le résumé par l\'IA a échoué. Veuillez réessayer plus tard.</string>
+    <string name="ai_local_summary_note">Note : Affichage de l\'extraction hors ligne car les fournisseurs IA sont injoignables.</string>
+    <string name="share_title">Partager le Navigateur NaviTV</string>
+    <string name="share_message">Aidez les autres à découvrir le meilleur navigateur pour Android TV !</string>
+    <string name="share_scan_hint">Scannez avec votre téléphone pour partager</string>
 </resources>

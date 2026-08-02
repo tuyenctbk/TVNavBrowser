@@ -13,8 +13,9 @@ android {
         applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
         targetSdk = 37
-        versionCode = 14
-        versionName = "1.15.2"
+        versionCode = 15
+        versionName = "1.15.3"
+
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -77,8 +78,8 @@ dependencies {
     // WebView AndroidX support
     implementation(libs.androidx.webkit)
 
-    // Gemini AI
-    implementation(libs.google.generativeai)
+    // Gemini AI via Firebase Vertex AI
+    implementation(libs.firebase.vertexai)
     implementation(libs.okhttp)
 
     // Android TV Leanback
@@ -86,6 +87,9 @@ dependencies {
 
     // Google Play In-App Review
     implementation(libs.play.review)
+
+    // QR code generation
+    implementation(libs.zxing.core)
 
     // Testing
     testImplementation(libs.junit)

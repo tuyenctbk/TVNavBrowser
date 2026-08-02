@@ -43,9 +43,11 @@ import com.tdpham.navitvbrowser.util.AdsHelper
 import com.tdpham.navitvbrowser.util.AiHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
+import com.tdpham.navitvbrowser.util.EngagementHelper
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
 import com.tdpham.navitvbrowser.util.RatingHelper
 import com.tdpham.navitvbrowser.util.RemoteConfigHelper
+import com.tdpham.navitvbrowser.util.SmartPromptHelper
 import com.tdpham.navitvbrowser.util.UpdateHelper
 import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.Dispatchers
@@ -110,7 +112,7 @@ class MainActivity : ComponentActivity() {
                 return
             } else {
                 // If it's not a clear WebView error, show a general error
-                Toast.makeText(this, "Application error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.error_generic_app, e.message), Toast.LENGTH_LONG).show()
                 finish()
                 return
             }
@@ -205,8 +207,8 @@ class MainActivity : ComponentActivity() {
         }
 
         if (AppPreferences.isOnboardingComplete(this)) {
-            RatingHelper.maybeShowRating(this)
-            UpdateHelper.maybeShowUpdateDialog(this)
+            EngagementHelper.recordLaunch(this)
+            SmartPromptHelper.maybeShowNextPrompt(this)
         }
     }
 
@@ -414,6 +416,7 @@ class MainActivity : ComponentActivity() {
                 val title = view?.title
                 val pageUrl = url
                 if (!title.isNullOrBlank() && pageUrl != null) {
+                    EngagementHelper.recordPageLoaded(this@MainActivity)
                     lifecycleScope.launch(Dispatchers.IO) {
                         historyRepo.addToHistory(title = title, url = pageUrl)
                     }
@@ -459,7 +462,10 @@ class MainActivity : ComponentActivity() {
                 }
                 val message = if (added) R.string.bookmark_saved else R.string.bookmark_exists
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-                if (added) FirebaseInitializer.logEvent("bookmark_added", mapOf("url" to url))
+                if (added) {
+                    EngagementHelper.recordBookmarkAdded(this@MainActivity)
+                    FirebaseInitializer.logEvent("bookmark_added", mapOf("url" to url))
+                }
             }
         }
 
@@ -641,11 +647,15 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun resolveHomepage(): String {
-        val homepage = AppPreferences.getHomepage(this)
-        return if (homepage.isEmpty() || homepage == "https://www.google.com") {
-            "file:///android_asset/dashboard.html"
+        if (AppPreferences.hasCustomHomepage(this)) {
+            val custom = AppPreferences.getHomepage(this)
+            if (custom.isNotBlank()) return custom
+        }
+        val remoteUrl = RemoteConfigHelper.getHomepageUrl()
+        return if (remoteUrl.isNotBlank() && remoteUrl != "https://www.google.com") {
+            remoteUrl
         } else {
-            homepage
+            "file:///android_asset/dashboard.html"
         }
     }
 
@@ -805,7 +815,7 @@ class MainActivity : ComponentActivity() {
         try {
             startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE)
         } catch (e: Exception) {
-            Toast.makeText(this, "Voice search is not supported on this device", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_voice_search_unsupported), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -964,15 +974,11 @@ class MainActivity : ComponentActivity() {
             val truncatedText = if (cleanText.length > 4000) cleanText.take(4000) + "..." else cleanText
 
             lifecycleScope.launch {
-                val result = AiHelper.getSummaryWithFailover(this@MainActivity, truncatedText) { engineName ->
-                    runOnUiThread {
-                        progressToast.setText(getString(R.string.ai_status_retrying, engineName))
-                        progressToast.show()
-                    }
-                }
+                val result = AiHelper.getSummaryWithFailover(this@MainActivity, truncatedText)
                 progressToast.cancel()
                 
                 result.onSuccess { summary ->
+                    EngagementHelper.recordAiSummary(this@MainActivity)
                     showSummaryDialog(summary)
                 }.onFailure { error ->
                     val message = when (error.message) {

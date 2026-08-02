@@ -14,8 +14,10 @@ admobVersion = "25.4.0"
 leanbackVersion = "1.2.0"
 webkit = "1.16.0"
 generativeai = "0.9.0"
+firebaseVertexAi = "16.1.0"
 okhttp = "4.12.0"
 playReviewVersion = "2.0.2"
+zxing = "3.5.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +36,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 firebase-remoteconfig = { group = "com.google.firebase", name = "firebase-config-ktx" }
+firebase-vertexai = { group = "com.google.firebase", name = "firebase-vertexai", version.ref = "firebaseVertexAi" }
 google-admob = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "admobVersion" }
 androidx-leanback = { group = "androidx.leanback", name = "leanback", version.ref = "leanbackVersion" }
 androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
@@ -42,6 +45,7 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinVersion" }
 play-review = { group = "com.google.android.play", name = "review", version.ref = "playReviewVersion" }
 play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReviewVersion" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

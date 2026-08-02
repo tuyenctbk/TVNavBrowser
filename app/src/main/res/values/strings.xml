@@ -84,6 +84,8 @@
     <string name="mode_virtual_mouse">Virtual Mouse Active</string>
     <string name="mode_dpad">D-Pad Mode Active</string>
     <string name="error_webview_missing">System WebView is missing or disabled. This app requires WebView to function. Please check your device settings.</string>
+    <string name="error_generic_app">Application error occurred: %1$s</string>
+    <string name="error_voice_search_unsupported">Voice search is not supported on this device</string>
 
     <string name="nav_summarize">Summarize Page</string>
     <string name="ai_summarizing">AI is summarizing page...</string>
@@ -91,17 +93,10 @@
     <string name="ai_error_key_missing">AI features are currently unavailable (Key missing).</string>
     <string name="ai_error_empty">No text found on this page to summarize.</string>
     <string name="ai_error_generic">AI summarization failed. Please try again later.</string>
-
-    <string name="settings_ai_section">AI Summary Settings</string>
-    <string name="settings_ai_mode">Summarization Mode</string>
-    <string name="settings_ai_mode_auto">Auto-Routing (Reliable)</string>
-    <string name="settings_ai_mode_manual">Manual / BYOK (Power User)</string>
-    <string name="settings_ai_engine">AI Engine</string>
-    <string name="settings_ai_key_label">API Key</string>
-    <string name="settings_ai_endpoint_label">Endpoint URL (Optional)</string>
-    <string name="settings_ai_model_label">Model ID (Optional)</string>
-    <string name="settings_save_ai_config">Save AI Configuration</string>
-    <string name="settings_ai_config_saved">AI configuration saved</string>
     <string name="ai_status_retrying">Service busy, trying %s...</string>
     <string name="ai_local_summary_note">Note: Displaying offline extraction because AI providers are unreachable.</string>
+
+    <string name="share_title">Share NaviTV Browser</string>
+    <string name="share_message">Help others discover the best browsing experience on Android TV!</string>
+    <string name="share_scan_hint">Scan with your phone to share</string>
 </resources>

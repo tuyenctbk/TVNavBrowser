@@ -4,7 +4,6 @@ import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.tdpham.navitvbrowser.R
@@ -12,38 +11,46 @@ import com.tdpham.navitvbrowser.R
 object RatingHelper {
 
     private const val PREFS = "tvnav_prefs"
-    private const val KEY_LAUNCH_COUNT = "launch_count"
     private const val KEY_DONT_SHOW_AGAIN = "dont_show_again"
-    private const val LAUNCHES_UNTIL_PROMPT = 5
+    private const val KEY_LAST_REMIND_TIME = "last_rating_remind_time"
 
-    fun maybeShowRating(activity: Activity) {
-        val prefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        if (prefs.getBoolean(KEY_DONT_SHOW_AGAIN, false)) return
-
-        val launches = prefs.getInt(KEY_LAUNCH_COUNT, 0) + 1
-        prefs.edit().putInt(KEY_LAUNCH_COUNT, launches).apply()
-
-        if (launches >= LAUNCHES_UNTIL_PROMPT) {
-            showRatingDialog(activity, prefs)
-        }
+    fun isRatingDismissed(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_DONT_SHOW_AGAIN, false)
     }
 
-    private fun showRatingDialog(activity: Activity, prefs: SharedPreferences) {
+    fun canShowRatingDialog(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_DONT_SHOW_AGAIN, false)) return false
+        val lastRemind = prefs.getLong(KEY_LAST_REMIND_TIME, 0L)
+        val now = System.currentTimeMillis()
+        return (now - lastRemind >= 3 * 24 * 60 * 60 * 1000L)
+    }
+
+    fun showRatingDialog(activity: Activity, onDismissedPermanently: (() -> Unit)? = null) {
+        val prefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_DONT_SHOW_AGAIN, false)) {
+            onDismissedPermanently?.invoke()
+            return
+        }
+
         AlertDialog.Builder(activity, R.style.Theme_TVNavBrowser_Dialog)
             .setTitle(R.string.rating_title)
             .setMessage(R.string.rating_message)
             .setPositiveButton(R.string.rating_rate) { dialog, _ ->
                 dialog.dismiss()
                 prefs.edit().putBoolean(KEY_DONT_SHOW_AGAIN, true).apply()
+                onDismissedPermanently?.invoke()
                 launchInAppReview(activity)
             }
             .setNegativeButton(R.string.rating_remind_later) { dialog, _ ->
                 dialog.dismiss()
-                prefs.edit().putInt(KEY_LAUNCH_COUNT, 0).apply()
+                prefs.edit().putLong(KEY_LAST_REMIND_TIME, System.currentTimeMillis()).apply()
             }
             .setNeutralButton(R.string.rating_no_thanks) { dialog, _ ->
                 dialog.dismiss()
                 prefs.edit().putBoolean(KEY_DONT_SHOW_AGAIN, true).apply()
+                onDismissedPermanently?.invoke()
             }
             .create()
             .show()
