@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.tdpham.navitvbrowser"
-    compileSdk = 37
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
-        targetSdk = 37
+        targetSdk = 35
         versionCode = 15
         versionName = "1.15.3"
 
@@ -40,12 +40,18 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
         buildConfig = true
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 

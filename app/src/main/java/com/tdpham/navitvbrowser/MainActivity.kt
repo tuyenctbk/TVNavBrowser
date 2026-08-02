@@ -807,6 +807,7 @@ class MainActivity : ComponentActivity() {
         return false
     }
 
+    @Suppress("DEPRECATION")
     private fun startVoiceSearch() {
         val intent = Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -819,6 +820,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
