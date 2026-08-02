@@ -17,3 +17,11 @@ local.properties
 # Agent Artifacts
 *.artifact.md
 .artifacts/
+
+*.sh
+*.py
+*.zip.*
+.gradle
+.gradle*
+.artifacts
+kotlin*
