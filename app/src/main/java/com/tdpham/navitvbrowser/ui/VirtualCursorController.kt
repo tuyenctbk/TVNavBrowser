@@ -127,7 +127,7 @@ class VirtualCursorController(
     }
 
     fun move(dx: Float, dy: Float) {
-        val performMove = {
+        val performMove = Runnable {
             val maxX = (container.width - cursor.width).coerceAtLeast(0).toFloat()
             val maxY = (container.height - cursor.height).coerceAtLeast(0).toFloat()
 
@@ -149,21 +149,21 @@ class VirtualCursorController(
         }
 
         if (container.width > 0 && container.height > 0) {
-            performMove()
+            performMove.run()
         } else {
             container.post(performMove)
         }
     }
 
     private fun centerCursor() {
-        val performCenter = {
+        val performCenter = Runnable {
             if (container.width > 0 && container.height > 0) {
                 cursor.x = container.width / 2f - cursor.width / 2f
                 cursor.y = container.height / 2f - cursor.height / 2f
             }
         }
         if (container.width > 0 && container.height > 0) {
-            performCenter()
+            performCenter.run()
         } else {
             container.post(performCenter)
         }
