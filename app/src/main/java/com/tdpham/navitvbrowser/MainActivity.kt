@@ -17,16 +17,20 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import android.content.res.ColorStateList
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import org.json.JSONObject
@@ -58,26 +62,27 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_URL = "extra_url"
+        private const val KEY_SAVED_URL = "saved_url"
         private const val KEY_MOUSE_MODE = "mouse_mode"
         private const val VOICE_SEARCH_REQUEST_CODE = 999
     }
 
     private lateinit var webView: WebView
     private lateinit var urlInput: EditText
-    private lateinit var btnBack: Button
-    private lateinit var btnForward: Button
-    private lateinit var btnRefresh: Button
-    private lateinit var btnBookmark: Button
-    private lateinit var btnDesktopMode: Button
-    private lateinit var btnVoiceSearch: Button
-    private lateinit var btnSummarize: Button
+    private lateinit var btnBack: ImageButton
+    private lateinit var btnForward: ImageButton
+    private lateinit var btnRefresh: ImageButton
+    private lateinit var btnBookmark: ImageButton
+    private lateinit var btnDesktopMode: ImageButton
+    private lateinit var btnVoiceSearch: ImageButton
+    private lateinit var btnSummarize: ImageButton
     private lateinit var ivCursor: ImageView
     private lateinit var webViewContainer: View
     private lateinit var progressBar: ProgressBar
     private lateinit var tvInputHint: TextView
     private lateinit var bookmarkBar: View
     private lateinit var bookmarkBarContainer: LinearLayout
-    private lateinit var btnFullscreen: Button
+    private lateinit var btnFullscreen: ImageButton
     private lateinit var toolbarContainer: View
     private lateinit var rootLayout: View
 
@@ -160,12 +165,7 @@ class MainActivity : ComponentActivity() {
             urlInput.requestFocus()
         }
 
-        urlInput.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-                imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
-            }
-        }
+
 
         webView.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (isSwitchingMode) return@OnFocusChangeListener
@@ -195,7 +195,13 @@ class MainActivity : ComponentActivity() {
         setupBookmarkBarAutoHide()
 
         if (savedInstanceState != null) {
-            webView.restoreState(savedInstanceState)
+            val savedUrl = savedInstanceState.getString(KEY_SAVED_URL)
+            if (!savedUrl.isNullOrBlank()) {
+                webView.loadUrl(savedUrl)
+                urlInput.setText(savedUrl)
+            } else {
+                loadInitialUrl(intent)
+            }
             setMouseMode(savedInstanceState.getBoolean(KEY_MOUSE_MODE, true))
         } else {
             loadInitialUrl(intent)
@@ -228,9 +234,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        @Suppress("DEPRECATION")
-        if (level >= TRIM_MEMORY_MODERATE && ::webView.isInitialized) {
-            webView.clearCache(false) // Clear memory cache but keep disk cache
+        if (::webView.isInitialized) {
+            @Suppress("DEPRECATION")
+            if (level >= TRIM_MEMORY_MODERATE) {
+                webView.clearCache(false) // Clear memory cache but keep disk cache
+            }
+            if (level >= TRIM_MEMORY_RUNNING_CRITICAL) {
+                webView.freeMemory()
+            }
         }
     }
 
@@ -242,7 +253,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (::webView.isInitialized) webView.saveState(outState)
+        if (::webView.isInitialized) {
+            val currentUrl = webView.url
+            if (!currentUrl.isNullOrBlank()) {
+                outState.putString(KEY_SAVED_URL, currentUrl)
+            }
+        }
         outState.putBoolean(KEY_MOUSE_MODE, virtualCursor.isEnabled)
     }
 
@@ -518,14 +534,14 @@ class MainActivity : ComponentActivity() {
             settings.userAgentString = null // Default mobile UA
             settings.useWideViewPort = false
             settings.loadWithOverviewMode = false
-            btnDesktopMode.compoundDrawableTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.text_primary))
+            btnDesktopMode.imageTintList = ColorStateList.valueOf(getColor(R.color.text_primary))
             Toast.makeText(this, getString(R.string.nav_mobile_site_requested), Toast.LENGTH_SHORT).show()
         } else {
             // Switch to Desktop
             settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             settings.useWideViewPort = true
             settings.loadWithOverviewMode = true
-            btnDesktopMode.compoundDrawableTintList = android.content.res.ColorStateList.valueOf(getColor(R.color.accent))
+            btnDesktopMode.imageTintList = ColorStateList.valueOf(getColor(R.color.accent))
             Toast.makeText(this, getString(R.string.nav_desktop_site_requested), Toast.LENGTH_SHORT).show()
         }
         webView.reload()
@@ -572,13 +588,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupToolbarButtons() {
-        findViewById<Button>(R.id.btnShowBookmarks).setOnClickListener {
+        findViewById<ImageButton>(R.id.btnShowBookmarks).setOnClickListener {
             startActivity(Intent(this, BookmarksActivity::class.java))
         }
-        findViewById<Button>(R.id.btnShowHistory).setOnClickListener {
+        findViewById<ImageButton>(R.id.btnShowHistory).setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
-        findViewById<Button>(R.id.btnSettings).setOnClickListener {
+        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
@@ -589,9 +605,14 @@ class MainActivity : ComponentActivity() {
             btnFullscreen, btnDesktopMode, btnVoiceSearch, btnSummarize,
             findViewById(R.id.btnShowBookmarks),
             findViewById(R.id.btnShowHistory),
-            findViewById(R.id.btnSettings),
-            urlInput
+            findViewById(R.id.btnSettings)
         )
+        FocusAnimationHelper.apply(urlInput) { _, hasFocus ->
+            if (!hasFocus) {
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
+            }
+        }
     }
 
     private fun setupBackHandler() {
@@ -719,10 +740,12 @@ class MainActivity : ComponentActivity() {
 
     private fun setupBookmarkBarFlow() {
         lifecycleScope.launch {
-            bookmarkRepo.getAllBookmarks().collectLatest { list ->
-                realBookmarks = list
-                if (urlInput.text.isNullOrBlank()) {
-                    populateBookmarkBar(list)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                bookmarkRepo.getAllBookmarks().collectLatest { list ->
+                    realBookmarks = list
+                    if (urlInput.text.isNullOrBlank()) {
+                        populateBookmarkBar(list)
+                    }
                 }
             }
         }
@@ -897,7 +920,7 @@ class MainActivity : ComponentActivity() {
         updateAdContainerVisibility()
 
         val iconRes = if (enabled) R.drawable.ic_nav_fullscreen_exit else R.drawable.ic_nav_fullscreen
-        btnFullscreen.setCompoundDrawablesWithIntrinsicBounds(iconRes, 0, 0, 0)
+        btnFullscreen.setImageResource(iconRes)
         btnFullscreen.animate()
             .scaleX(if (enabled) 1.08f else 1f)
             .scaleY(if (enabled) 1.08f else 1f)
@@ -995,7 +1018,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showSummaryDialog(summary: String) {
-        androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser)
+        androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
             .setTitle(getString(R.string.ai_summary_title))
             .setMessage(summary)
             .setPositiveButton(android.R.string.ok, null)

@@ -3,11 +3,15 @@ package com.tdpham.navitvbrowser
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.data.entity.BookmarkEntity
@@ -37,8 +41,10 @@ class BookmarksActivity : ComponentActivity() {
         repository = BookmarkRepository(db.bookmarkDao())
 
         lifecycleScope.launch {
-            repository.getAllBookmarks().collectLatest { list ->
-                renderBookmarks(list)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                repository.getAllBookmarks().collectLatest { list ->
+                    renderBookmarks(list)
+                }
             }
         }
     }
@@ -53,25 +59,42 @@ class BookmarksActivity : ComponentActivity() {
             val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
             val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
             val tvRowUrl = row.findViewById<TextView>(R.id.tvRowUrl)
+            val btnDeleteRow = row.findViewById<ImageButton>(R.id.btnDeleteRow)
 
             ivRowIcon.setImageResource(R.drawable.ic_nav_bookmark)
             tvRowTitle.text = bookmark.title
             tvRowUrl.text = bookmark.url
 
             FocusAnimationHelper.apply(row)
+            FocusAnimationHelper.apply(btnDeleteRow)
+
             row.setOnClickListener {
                 FirebaseInitializer.logEvent("bookmark_opened", mapOf("url" to bookmark.url))
                 openUrl(bookmark.url)
             }
             row.setOnLongClickListener {
+                confirmDeleteBookmark(bookmark)
+                true
+            }
+            btnDeleteRow.setOnClickListener {
+                confirmDeleteBookmark(bookmark)
+            }
+            container.addView(row)
+        }
+    }
+
+    private fun confirmDeleteBookmark(bookmark: BookmarkEntity) {
+        AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+            .setTitle(R.string.bookmarks)
+            .setMessage(getString(R.string.url_row_format, bookmark.title, bookmark.url))
+            .setPositiveButton(R.string.settings_clear_bookmarks) { _, _ ->
                 FirebaseInitializer.logEvent("bookmark_deleted", mapOf("url" to bookmark.url))
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) { repository.removeBookmark(bookmark) }
                 }
-                true
             }
-            container.addView(row)
-        }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun openUrl(url: String) {

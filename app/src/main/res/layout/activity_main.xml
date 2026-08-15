@@ -27,160 +27,125 @@
                 android:orientation="horizontal"
                 android:padding="8dp">
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnBack"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_back"
-                    android:drawableTint="@color/text_primary"
+                    style="@style/ToolbarIconButton"
+                    android:src="@drawable/ic_nav_back"
                     android:nextFocusRight="@id/btnForward"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/nav_back" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnForward"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_forward"
-                    android:drawableTint="@color/text_primary"
+                    android:src="@drawable/ic_nav_forward"
+                    android:nextFocusLeft="@id/btnBack"
                     android:nextFocusRight="@id/btnRefresh"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/nav_forward" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnRefresh"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_refresh"
-                    android:drawableTint="@color/text_primary"
+                    android:src="@drawable/ic_nav_refresh"
+                    android:nextFocusLeft="@id/btnForward"
                     android:nextFocusRight="@id/btnBookmark"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/nav_refresh" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnBookmark"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_bookmark"
-                    android:drawableTint="@color/text_primary"
+                    android:src="@drawable/ic_nav_bookmark"
+                    android:nextFocusLeft="@id/btnRefresh"
                     android:nextFocusRight="@id/btnShowBookmarks"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/nav_bookmark" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnShowBookmarks"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_bookmarks_list"
-                    android:drawableTint="@color/text_primary"
+                    android:src="@drawable/ic_nav_bookmarks_list"
+                    android:nextFocusLeft="@id/btnBookmark"
                     android:nextFocusRight="@id/btnShowHistory"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/bookmarks" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnShowHistory"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_history"
-                    android:drawableTint="@color/text_primary"
+                    android:src="@drawable/ic_nav_history"
+                    android:nextFocusLeft="@id/btnShowBookmarks"
                     android:nextFocusRight="@id/btnSettings"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/history" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnSettings"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_settings"
-                    android:drawableTint="@color/text_primary"
+                    android:src="@drawable/ic_nav_settings"
+                    android:nextFocusLeft="@id/btnShowHistory"
                     android:nextFocusRight="@id/btnDesktopMode"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/settings" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnDesktopMode"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_desktop"
-                    android:drawableTint="@color/text_primary"
+                    android:src="@drawable/ic_nav_desktop"
+                    android:nextFocusLeft="@id/btnSettings"
                     android:nextFocusRight="@id/btnFullscreen"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/nav_desktop_mode" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnFullscreen"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_fullscreen"
-                    android:drawableTint="@color/text_primary"
-                    android:nextFocusLeft="@+id/btnDesktopMode"
-                    android:nextFocusRight="@+id/btnVoiceSearch"
+                    android:src="@drawable/ic_nav_fullscreen"
+                    android:nextFocusLeft="@id/btnDesktopMode"
+                    android:nextFocusRight="@id/btnVoiceSearch"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/nav_fullscreen" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnVoiceSearch"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_mic"
-                    android:drawableTint="@color/text_primary"
-                    android:nextFocusLeft="@+id/btnFullscreen"
-                    android:nextFocusRight="@+id/btnSummarize"
+                    android:src="@drawable/ic_nav_mic"
+                    android:nextFocusLeft="@id/btnFullscreen"
+                    android:nextFocusRight="@id/btnSummarize"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="Voice Search" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/btnSummarize"
-                    style="@style/ToolbarButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    style="@style/ToolbarIconButton"
                     android:layout_marginStart="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="0dp"
-                    android:drawableStart="@drawable/ic_nav_summarize"
-                    android:drawableTint="@color/text_primary"
-                    android:nextFocusLeft="@+id/btnVoiceSearch"
+                    android:src="@drawable/ic_nav_summarize"
+                    android:nextFocusLeft="@id/btnVoiceSearch"
                     android:nextFocusRight="@id/urlInput"
+                    android:nextFocusDown="@id/webView"
                     android:contentDescription="@string/nav_summarize" />
 
                 <EditText
                     android:id="@+id/urlInput"
-                    android:layout_width="280dp"
+                    android:layout_width="320dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/bg_url_bar"
                     android:hint="@string/url_hint"
                     android:imeOptions="actionGo"
                     android:inputType="textUri|textNoSuggestions"
+                    android:nextFocusLeft="@id/btnSummarize"
+                    android:nextFocusDown="@id/webView"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
                     android:singleLine="true"

@@ -3,11 +3,15 @@ package com.tdpham.navitvbrowser
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.data.entity.HistoryEntity
@@ -37,8 +41,10 @@ class HistoryActivity : ComponentActivity() {
         repository = HistoryRepository(db.historyDao())
 
         lifecycleScope.launch {
-            repository.getRecentHistory(100).collectLatest { list ->
-                renderHistory(list)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                repository.getRecentHistory(100).collectLatest { list ->
+                    renderHistory(list)
+                }
             }
         }
     }
@@ -53,25 +59,42 @@ class HistoryActivity : ComponentActivity() {
             val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
             val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
             val tvRowUrl = row.findViewById<TextView>(R.id.tvRowUrl)
+            val btnDeleteRow = row.findViewById<ImageButton>(R.id.btnDeleteRow)
 
             ivRowIcon.setImageResource(R.drawable.ic_nav_history)
             tvRowTitle.text = history.title
             tvRowUrl.text = history.url
 
             FocusAnimationHelper.apply(row)
+            FocusAnimationHelper.apply(btnDeleteRow)
+
             row.setOnClickListener {
                 FirebaseInitializer.logEvent("history_opened", mapOf("url" to history.url))
                 openUrl(history.url)
             }
             row.setOnLongClickListener {
+                confirmDeleteHistory(history)
+                true
+            }
+            btnDeleteRow.setOnClickListener {
+                confirmDeleteHistory(history)
+            }
+            container.addView(row)
+        }
+    }
+
+    private fun confirmDeleteHistory(history: HistoryEntity) {
+        AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+            .setTitle(R.string.history)
+            .setMessage(getString(R.string.url_row_format, history.title, history.url))
+            .setPositiveButton(R.string.settings_clear_history) { _, _ ->
                 FirebaseInitializer.logEvent("history_deleted", mapOf("url" to history.url))
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) { repository.removeFromHistory(history) }
                 }
-                true
             }
-            container.addView(row)
-        }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun openUrl(url: String) {

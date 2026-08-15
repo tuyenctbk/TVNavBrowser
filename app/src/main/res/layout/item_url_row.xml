@@ -51,4 +51,16 @@
 
     </LinearLayout>
 
+    <!-- Delete Button for TV remote navigation -->
+    <ImageButton
+        android:id="@+id/btnDeleteRow"
+        style="@style/ToolbarIconButton"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="8dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_nav_delete"
+        app:tint="@color/text_secondary"
+        android:contentDescription="Delete" />
+
 </LinearLayout>

@@ -189,9 +189,6 @@ object EmbeddedAdBlocker {
     (document.head || document.documentElement).appendChild(style);
   }
 
-  if (window.__tvnavAdBlockerApplied) return;
-  window.__tvnavAdBlockerApplied = true;
-
   var selectors = [
     'ins.adsbygoogle',
     '[class*="ad-container"]', '[class*="ad_container"]', '[class*="ad-wrapper"]',
@@ -201,7 +198,6 @@ object EmbeddedAdBlocker {
     'iframe[src*="taboola"]', 'iframe[src*="outbrain"]', '.google-auto-placed'
   ];
 
-  var timeout;
   function hideAds() {
     selectors.forEach(function(selector) {
       try {
@@ -222,22 +218,26 @@ object EmbeddedAdBlocker {
     });
   }
 
+  hideAds();
+
+  if (window.__tvnavAdBlockerObserverAttached) {
+    return;
+  }
+  window.__tvnavAdBlockerObserverAttached = true;
+
+  var timeout;
   function debouncedHideAds() {
     if (timeout) cancelAnimationFrame(timeout);
     timeout = requestAnimationFrame(hideAds);
   }
 
-  hideAds();
-
   if (window.MutationObserver) {
     new MutationObserver(debouncedHideAds)
-      .observe(document.documentElement, { childList: true, subtree: true });
+      .observe(document.documentElement || document.body, { childList: true, subtree: true });
   }
 
-  // Fallback for late loading ads without causing high CPU usage
   setTimeout(hideAds, 1000);
   setTimeout(hideAds, 3000);
-  setTimeout(hideAds, 7000);
 })();
 """
 }

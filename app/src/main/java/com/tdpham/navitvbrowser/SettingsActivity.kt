@@ -74,46 +74,79 @@ class SettingsActivity : ComponentActivity() {
             switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen
         )
 
-        btnSaveHomepage.setOnClickListener {
+        val saveHomepageAction = {
             val url = etHomepage.text.toString().trim()
             if (url.isEmpty()) {
                 Toast.makeText(this, R.string.settings_homepage_empty, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val normalized = if (url.startsWith("http://") || url.startsWith("https://")) {
-                url
             } else {
-                "https://$url"
+                val normalized = if (url.startsWith("http://") || url.startsWith("https://")) {
+                    url
+                } else {
+                    "https://$url"
+                }
+                AppPreferences.setHomepage(this, normalized)
+                FirebaseInitializer.logEvent("settings_homepage_saved", mapOf("url" to normalized))
+                Toast.makeText(this, R.string.settings_homepage_saved, Toast.LENGTH_SHORT).show()
             }
-            AppPreferences.setHomepage(this, normalized)
-            FirebaseInitializer.logEvent("settings_homepage_saved", mapOf("url" to normalized))
-            Toast.makeText(this, R.string.settings_homepage_saved, Toast.LENGTH_SHORT).show()
+        }
+
+        btnSaveHomepage.setOnClickListener { saveHomepageAction() }
+        etHomepage.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE ||
+                actionId == android.view.inputmethod.EditorInfo.IME_ACTION_GO
+            ) {
+                saveHomepageAction()
+                true
+            } else {
+                false
+            }
         }
 
         btnClearHistory.setOnClickListener {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) { db.historyDao().clearAll() }
-                FirebaseInitializer.logEvent("settings_history_cleared")
-                Toast.makeText(this@SettingsActivity, R.string.settings_history_cleared, Toast.LENGTH_SHORT).show()
-            }
+            androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+                .setTitle(R.string.settings_clear_history)
+                .setMessage(R.string.history_empty)
+                .setPositiveButton(R.string.settings_clear_history) { _, _ ->
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) { db.historyDao().clearAll() }
+                        FirebaseInitializer.logEvent("settings_history_cleared")
+                        Toast.makeText(this@SettingsActivity, R.string.settings_history_cleared, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
 
         btnClearBookmarks.setOnClickListener {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) { db.bookmarkDao().clearAll() }
-                FirebaseInitializer.logEvent("settings_bookmarks_cleared")
-                Toast.makeText(this@SettingsActivity, R.string.settings_bookmarks_cleared, Toast.LENGTH_SHORT).show()
-            }
+            androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+                .setTitle(R.string.settings_clear_bookmarks)
+                .setMessage(R.string.bookmarks_empty)
+                .setPositiveButton(R.string.settings_clear_bookmarks) { _, _ ->
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) { db.bookmarkDao().clearAll() }
+                        FirebaseInitializer.logEvent("settings_bookmarks_cleared")
+                        Toast.makeText(this@SettingsActivity, R.string.settings_bookmarks_cleared, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
 
         btnClearCache.setOnClickListener {
-            try {
-                WebView(applicationContext).clearCache(true)
-                FirebaseInitializer.logEvent("settings_cache_cleared")
-                Toast.makeText(this, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()
-            } catch (_: Exception) {
-                Toast.makeText(this, R.string.settings_cache_failed, Toast.LENGTH_SHORT).show()
-            }
+            androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+                .setTitle(R.string.settings_clear_cache)
+                .setMessage(R.string.settings_cache_cleared)
+                .setPositiveButton(R.string.settings_clear_cache) { _, _ ->
+                    try {
+                        WebView(applicationContext).clearCache(true)
+                        FirebaseInitializer.logEvent("settings_cache_cleared")
+                        Toast.makeText(this, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()
+                    } catch (_: Exception) {
+                        Toast.makeText(this, R.string.settings_cache_failed, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
         }
     }
 }
