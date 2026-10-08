@@ -8,21 +8,27 @@ import com.google.firebase.ktx.Firebase
 object FirebaseInitializer {
 
     fun logEvent(eventName: String, params: Map<String, Any>? = null) {
-        val bundle = Bundle().apply {
-            params?.forEach { (key, value) ->
-                when (value) {
-                    is String -> putString(key, value)
-                    is Int -> putInt(key, value)
-                    is Long -> putLong(key, value)
-                    is Double -> putDouble(key, value)
-                    is Boolean -> putBoolean(key, value)
+        try {
+            val bundle = Bundle().apply {
+                params?.forEach { (key, value) ->
+                    when (value) {
+                        is String -> putString(key, value)
+                        is Int -> putInt(key, value)
+                        is Long -> putLong(key, value)
+                        is Double -> putDouble(key, value)
+                        is Boolean -> putBoolean(key, value)
+                    }
                 }
             }
+            Firebase.analytics.logEvent(eventName, bundle)
+        } catch (_: Exception) {
+            // Ignored when Google Play Services / GMS is unavailable
         }
-        Firebase.analytics.logEvent(eventName, bundle)
     }
 
     fun recordException(exception: Exception) {
-        FirebaseCrashlytics.getInstance().recordException(exception)
+        try {
+            FirebaseCrashlytics.getInstance().recordException(exception)
+        } catch (_: Exception) {}
     }
 }

@@ -99,6 +99,12 @@ object EmbeddedAdBlocker {
         ByteArrayInputStream(ByteArray(0))
     )
 
+    private var customRulesSet: Set<String> = emptySet()
+
+    fun updateCustomRules(rules: Set<String>) {
+        customRulesSet = rules.map { it.lowercase().trim() }.filter { it.isNotEmpty() }.toSet()
+    }
+
     fun shouldBlockRequest(request: WebResourceRequest): Boolean {
         if (!request.isForMainFrame) {
             return shouldBlockUrl(request.url.toString())
@@ -109,6 +115,13 @@ object EmbeddedAdBlocker {
     fun shouldBlockUrl(url: String): Boolean {
         val uri = runCatching { Uri.parse(url) }.getOrNull() ?: return false
         val host = uri.host?.lowercase() ?: return false
+        val urlLower = url.lowercase()
+
+        // 0. User-defined custom rules (supports both host suffixes and substring keywords)
+        if (customRulesSet.isNotEmpty()) {
+            if (matchesHostSuffix(host, customRulesSet)) return true
+            if (customRulesSet.any { urlLower.contains(it) || host.contains(it) }) return true
+        }
 
         // 1. Fast Set-lookup for host suffix match (both dynamic & static lists)
         if (isHostBlocked(host)) {

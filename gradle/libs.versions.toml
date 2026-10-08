@@ -1,5 +1,5 @@
 [versions]
-agp = "9.2.1"
+agp = "9.1.1"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -37,6 +37,8 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 firebase-remoteconfig = { group = "com.google.firebase", name = "firebase-config-ktx" }
 firebase-vertexai = { group = "com.google.firebase", name = "firebase-vertexai", version.ref = "firebaseVertexAi" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 google-admob = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "admobVersion" }
 androidx-leanback = { group = "androidx.leanback", name = "leanback", version.ref = "leanbackVersion" }
 androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }

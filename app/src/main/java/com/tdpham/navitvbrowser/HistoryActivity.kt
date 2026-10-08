@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.data.entity.HistoryEntity
 import com.tdpham.navitvbrowser.data.repository.HistoryRepository
@@ -29,9 +30,12 @@ class HistoryActivity : ComponentActivity() {
     private lateinit var repository: HistoryRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
         overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+
+        ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
         FirebaseInitializer.logEvent("history_screen_opened")
 
@@ -84,7 +88,7 @@ class HistoryActivity : ComponentActivity() {
     }
 
     private fun confirmDeleteHistory(history: HistoryEntity) {
-        AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+        AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
             .setTitle(R.string.history)
             .setMessage(getString(R.string.url_row_format, history.title, history.url))
             .setPositiveButton(R.string.settings_clear_history) { _, _ ->

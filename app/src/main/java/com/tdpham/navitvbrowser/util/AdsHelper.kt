@@ -33,15 +33,15 @@ object AdsHelper {
     private const val TEST_NATIVE_AD_UNIT = "ca-app-pub-3940256099942544/2247696110"
     private const val TEST_BANNER_AD_UNIT = "ca-app-pub-3940256099942544/9214589741"
 
-    private val TIPS = arrayOf(
-        "Plug in a USB or Bluetooth mouse for easy web navigation!",
-        "Click the Mic button and speak to search or dictate URLs!",
-        "Long-press OK on dashboard shortcuts to remove them!",
-        "Enable Web Ad Blocker in Settings to speed up page loads!",
-        "Press Back on remote to clear focus and dismiss keypads."
+    private val TIP_STRING_RES = intArrayOf(
+        R.string.ad_tip_1,
+        R.string.ad_tip_2,
+        R.string.ad_tip_3,
+        R.string.ad_tip_4,
+        R.string.ad_tip_5
     )
 
-    private val TIP_ICONS = arrayOf(
+    private val TIP_ICONS = intArrayOf(
         R.drawable.ic_nav_mouse,
         R.drawable.ic_nav_mic,
         R.drawable.ic_nav_bookmark,
@@ -288,8 +288,8 @@ object AdsHelper {
         val tvAdTip = placeholder.findViewById<TextView>(R.id.tvAdTip)
         val ivTipIcon = placeholder.findViewById<ImageView>(R.id.ivTipIcon)
 
-        val randomIndex = Random.nextInt(TIPS.size)
-        tvAdTip.text = TIPS[randomIndex]
+        val randomIndex = Random.nextInt(TIP_STRING_RES.size)
+        tvAdTip.setText(TIP_STRING_RES[randomIndex])
         ivTipIcon.setImageResource(TIP_ICONS[randomIndex])
         container.addView(placeholder)
         return placeholder

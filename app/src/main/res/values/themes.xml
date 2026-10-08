@@ -18,6 +18,31 @@
         <item name="android:buttonBarButtonStyle">@style/DialogButton</item>
     </style>
 
+    <style name="Theme.TVNavBrowser.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/light_bg_toolbar</item>
+        <item name="colorPrimaryVariant">@color/light_bg_url_bar</item>
+        <item name="colorOnPrimary">@color/light_text_primary</item>
+        <item name="colorSecondary">@color/light_accent</item>
+        <item name="colorSecondaryVariant">@color/light_accent_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@color/light_bg</item>
+    </style>
+
+    <style name="Theme.TVNavBrowser.Light.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@color/light_bg_card</item>
+        <item name="colorAccent">@color/light_accent</item>
+        <item name="android:textColorPrimary">@color/light_text_primary</item>
+        <item name="android:textColorSecondary">@color/light_text_secondary</item>
+        <item name="android:buttonBarButtonStyle">@style/DialogButton.Light</item>
+    </style>
+
+    <style name="DialogButton.Light" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/light_accent</item>
+        <item name="android:focusable">true</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
     <style name="DialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/accent</item>
         <item name="android:focusable">true</item>

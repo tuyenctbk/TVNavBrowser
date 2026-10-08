@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.tdpham.navitvbrowser.R
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 
 object RatingHelper {
 
@@ -34,7 +35,7 @@ object RatingHelper {
             return
         }
 
-        AlertDialog.Builder(activity, R.style.Theme_TVNavBrowser_Dialog)
+        AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
             .setTitle(R.string.rating_title)
             .setMessage(R.string.rating_message)
             .setPositiveButton(R.string.rating_rate) { dialog, _ ->

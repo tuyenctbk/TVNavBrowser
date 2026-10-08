@@ -90,7 +90,7 @@
             android:layout_weight="1"
             android:padding="32dp"
             app:srcCompat="@drawable/ic_launcher"
-            android:contentDescription="App Logo" />
+            android:contentDescription="@string/app_logo_desc" />
     </LinearLayout>
 
 </LinearLayout>

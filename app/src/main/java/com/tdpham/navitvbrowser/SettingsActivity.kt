@@ -11,12 +11,15 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
+import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,11 +28,42 @@ import kotlinx.coroutines.withContext
 class SettingsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
 
+        ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
+
         FirebaseInitializer.logEvent("settings_screen_opened")
+
+        // Interface Theme Selection (Light / Dark)
+        val cardThemeDark: View = findViewById(R.id.cardThemeDark)
+        val cardThemeLight: View = findViewById(R.id.cardThemeLight)
+        val tvThemeDarkBadge: TextView = findViewById(R.id.tvThemeDarkBadge)
+        val tvThemeLightBadge: TextView = findViewById(R.id.tvThemeLightBadge)
+
+        fun updateThemeSelectionUi() {
+            val isLight = AppPreferences.isLightTheme(this)
+            tvThemeDarkBadge.visibility = if (!isLight) View.VISIBLE else View.GONE
+            tvThemeLightBadge.visibility = if (isLight) View.VISIBLE else View.GONE
+            cardThemeDark.alpha = if (!isLight) 1.0f else 0.75f
+            cardThemeLight.alpha = if (isLight) 1.0f else 0.75f
+        }
+
+        fun onThemeSelected(theme: String) {
+            if (AppPreferences.getAppTheme(this) == theme) return
+            AppPreferences.setAppTheme(this, theme)
+            updateThemeSelectionUi()
+            val themeName = if (theme == AppPreferences.THEME_LIGHT) getString(R.string.settings_theme_light) else getString(R.string.settings_theme_dark)
+            Toast.makeText(this, getString(R.string.settings_theme_changed, themeName), Toast.LENGTH_SHORT).show()
+            FirebaseInitializer.logEvent("settings_theme_changed", mapOf("theme" to theme))
+            recreate()
+        }
+
+        cardThemeDark.setOnClickListener { onThemeSelected(AppPreferences.THEME_DARK) }
+        cardThemeLight.setOnClickListener { onThemeSelected(AppPreferences.THEME_LIGHT) }
+        updateThemeSelectionUi()
 
         val etHomepage: EditText = findViewById(R.id.etHomepage)
         val btnSaveHomepage: Button = findViewById(R.id.btnSaveHomepage)
@@ -39,6 +73,112 @@ class SettingsActivity : ComponentActivity() {
         val switchBlockEmbeddedAds: Switch = findViewById(R.id.switchBlockEmbeddedAds)
         val switchForceDarkMode: Switch = findViewById(R.id.switchForceDarkMode)
         val switchAutoFullscreen: Switch = findViewById(R.id.switchAutoFullscreen)
+
+        // Custom Ad Blocker Rules
+        val etCustomAdRule: EditText = findViewById(R.id.etCustomAdRule)
+        val btnAddAdRule: Button = findViewById(R.id.btnAddAdRule)
+        val customRulesContainer: LinearLayout = findViewById(R.id.customRulesContainer)
+
+        fun refreshCustomRules() {
+            customRulesContainer.removeAllViews()
+            val rules = AppPreferences.getCustomAdRules(this)
+            EmbeddedAdBlocker.updateCustomRules(rules)
+
+            if (rules.isEmpty()) {
+                val tvEmpty = android.widget.TextView(this).apply {
+                    text = getString(R.string.settings_no_custom_rules)
+                    setTextColor(getColor(R.color.text_secondary))
+                    textSize = 13f
+                    setPadding(0, 8, 0, 8)
+                }
+                customRulesContainer.addView(tvEmpty)
+                return
+            }
+
+            for (rule in rules) {
+                val row = LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply { setMargins(0, 4, 0, 4) }
+                    setBackgroundResource(R.drawable.bg_url_bar)
+                    setPadding(12, 6, 12, 6)
+                    gravity = android.view.Gravity.CENTER_VERTICAL
+                }
+
+                val tvRule = android.widget.TextView(this).apply {
+                    text = rule
+                    setTextColor(getColor(R.color.text_primary))
+                    textSize = 14f
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                }
+
+                val btnRemove = android.widget.ImageButton(this).apply {
+                    setImageResource(R.drawable.ic_nav_delete)
+                    setBackgroundResource(R.drawable.bg_toolbar_btn)
+                    contentDescription = getString(R.string.settings_remove_rule)
+                    setOnClickListener {
+                        AppPreferences.removeCustomAdRule(this@SettingsActivity, rule)
+                        Toast.makeText(this@SettingsActivity, getString(R.string.settings_adblock_rule_removed, rule), Toast.LENGTH_SHORT).show()
+                        refreshCustomRules()
+                    }
+                }
+                FocusAnimationHelper.apply(btnRemove)
+
+                row.addView(tvRule)
+                row.addView(btnRemove)
+                customRulesContainer.addView(row)
+            }
+        }
+
+        refreshCustomRules()
+
+        val addRuleAction = {
+            val rule = etCustomAdRule.text.toString().trim()
+            if (rule.isNotEmpty()) {
+                AppPreferences.addCustomAdRule(this, rule)
+                etCustomAdRule.setText("")
+                Toast.makeText(this, getString(R.string.settings_adblock_rule_added, rule), Toast.LENGTH_SHORT).show()
+                refreshCustomRules()
+            }
+        }
+        btnAddAdRule.setOnClickListener { addRuleAction() }
+        etCustomAdRule.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                addRuleAction()
+                true
+            } else false
+        }
+
+        // Firestore Cloud Sync
+        val etSyncUserId: EditText = findViewById(R.id.etSyncUserId)
+        val btnSaveSyncId: Button = findViewById(R.id.btnSaveSyncId)
+        val btnTriggerCloudSync: Button = findViewById(R.id.btnTriggerCloudSync)
+
+        etSyncUserId.setText(AppPreferences.getSyncUserId(this))
+        btnSaveSyncId.setOnClickListener {
+            val id = etSyncUserId.text.toString().trim()
+            if (id.isNotEmpty()) {
+                AppPreferences.setSyncUserId(this, id)
+                Toast.makeText(this, R.string.sync_user_id_saved, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        val db = BrowserDatabase.getInstance(applicationContext)
+        val bookmarkRepo = com.tdpham.navitvbrowser.data.repository.BookmarkRepository(db.bookmarkDao())
+
+        btnTriggerCloudSync.setOnClickListener {
+            Toast.makeText(this, R.string.sync_bookmarks_syncing, Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                val result = com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@SettingsActivity, bookmarkRepo)
+                result.onSuccess { count ->
+                    Toast.makeText(this@SettingsActivity, getString(R.string.sync_bookmarks_success, count), Toast.LENGTH_LONG).show()
+                }.onFailure {
+                    Toast.makeText(this@SettingsActivity, R.string.sync_bookmarks_error, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
         etHomepage.setText(AppPreferences.getHomepage(this))
         switchBlockEmbeddedAds.isChecked = AppPreferences.isBlockEmbeddedAdsEnabled(this)
@@ -67,9 +207,8 @@ class SettingsActivity : ComponentActivity() {
             Toast.makeText(this, msgRes, Toast.LENGTH_SHORT).show()
         }
 
-        val db = BrowserDatabase.getInstance(applicationContext)
-
         FocusAnimationHelper.applyAll(
+            cardThemeDark, cardThemeLight,
             btnSaveHomepage, btnClearHistory, btnClearBookmarks, btnClearCache, etHomepage,
             switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen
         )
@@ -103,7 +242,7 @@ class SettingsActivity : ComponentActivity() {
         }
 
         btnClearHistory.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+            androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.settings_clear_history)
                 .setMessage(R.string.history_empty)
                 .setPositiveButton(R.string.settings_clear_history) { _, _ ->
@@ -118,7 +257,7 @@ class SettingsActivity : ComponentActivity() {
         }
 
         btnClearBookmarks.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+            androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.settings_clear_bookmarks)
                 .setMessage(R.string.bookmarks_empty)
                 .setPositiveButton(R.string.settings_clear_bookmarks) { _, _ ->
@@ -133,16 +272,19 @@ class SettingsActivity : ComponentActivity() {
         }
 
         btnClearCache.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+            androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.settings_clear_cache)
                 .setMessage(R.string.settings_cache_cleared)
                 .setPositiveButton(R.string.settings_clear_cache) { _, _ ->
-                    try {
-                        WebView(applicationContext).clearCache(true)
-                        FirebaseInitializer.logEvent("settings_cache_cleared")
-                        Toast.makeText(this, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()
-                    } catch (_: Exception) {
-                        Toast.makeText(this, R.string.settings_cache_failed, Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        try {
+                            WebView(applicationContext).clearCache(true)
+                            com.tdpham.navitvbrowser.util.WebViewCacheManager.clearEntireCache(applicationContext)
+                            FirebaseInitializer.logEvent("settings_cache_cleared")
+                            Toast.makeText(this@SettingsActivity, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()
+                        } catch (_: Exception) {
+                            Toast.makeText(this@SettingsActivity, R.string.settings_cache_failed, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 .setNegativeButton(android.R.string.cancel, null)

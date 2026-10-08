@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="36dp"
     android:layout_marginStart="4dp"
@@ -12,15 +13,16 @@
     android:paddingStart="12dp"
     android:paddingEnd="12dp">
 
-    <!-- Mini Star Icon -->
+    <!-- Mini Star / History Icon -->
     <ImageView
+        android:id="@+id/ivChipIcon"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginEnd="6dp"
-        android:contentDescription="Bookmark Chip Icon"
+        android:contentDescription="@string/chip_icon"
         android:scaleType="centerInside"
         android:src="@drawable/ic_nav_bookmark"
-        android:tint="@color/accent" />
+        app:tint="@color/accent" />
 
     <!-- Bookmark Title -->
     <TextView

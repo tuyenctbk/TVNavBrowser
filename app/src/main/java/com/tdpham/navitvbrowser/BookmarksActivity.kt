@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.data.entity.BookmarkEntity
 import com.tdpham.navitvbrowser.data.repository.BookmarkRepository
@@ -29,16 +30,38 @@ class BookmarksActivity : ComponentActivity() {
     private lateinit var repository: BookmarkRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bookmarks)
         overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+
+        ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
         FirebaseInitializer.logEvent("bookmarks_screen_opened")
 
         container = findViewById(R.id.bookmarksContainer)
         emptyView = findViewById(R.id.tvEmpty)
+        val btnSyncBookmarks: android.widget.Button = findViewById(R.id.btnSyncBookmarks)
         val db = BrowserDatabase.getInstance(applicationContext)
         repository = BookmarkRepository(db.bookmarkDao())
+
+        FocusAnimationHelper.apply(btnSyncBookmarks)
+        btnSyncBookmarks.setOnClickListener {
+            android.widget.Toast.makeText(this, R.string.sync_bookmarks_syncing, android.widget.Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                val result = com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@BookmarksActivity, repository)
+                result.onSuccess { count ->
+                    android.widget.Toast.makeText(this@BookmarksActivity, getString(R.string.sync_bookmarks_success, count), android.widget.Toast.LENGTH_LONG).show()
+                }.onFailure {
+                    android.widget.Toast.makeText(this@BookmarksActivity, R.string.sync_bookmarks_error, android.widget.Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            // Auto-sync from cloud on launch if enabled
+            com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@BookmarksActivity, repository)
+        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -84,13 +107,16 @@ class BookmarksActivity : ComponentActivity() {
     }
 
     private fun confirmDeleteBookmark(bookmark: BookmarkEntity) {
-        AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
+        AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
             .setTitle(R.string.bookmarks)
             .setMessage(getString(R.string.url_row_format, bookmark.title, bookmark.url))
             .setPositiveButton(R.string.settings_clear_bookmarks) { _, _ ->
                 FirebaseInitializer.logEvent("bookmark_deleted", mapOf("url" to bookmark.url))
                 lifecycleScope.launch {
-                    withContext(Dispatchers.IO) { repository.removeBookmark(bookmark) }
+                    withContext(Dispatchers.IO) {
+                        repository.removeBookmark(bookmark)
+                        com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.deleteBookmark(this@BookmarksActivity, bookmark)
+                    }
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)

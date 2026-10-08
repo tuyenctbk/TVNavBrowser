@@ -17,10 +17,10 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="14dp"
-        android:contentDescription="List Item Icon"
+        android:contentDescription="@string/list_item_icon"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/ic_nav_bookmark"
-        android:tint="@color/accent" />
+        app:tint="@color/accent" />
 
     <!-- Text Group (Vertical) -->
     <LinearLayout
@@ -61,6 +61,6 @@
         android:padding="8dp"
         android:src="@drawable/ic_nav_delete"
         app:tint="@color/text_secondary"
-        android:contentDescription="Delete" />
+        android:contentDescription="@string/action_delete" />
 
 </LinearLayout>

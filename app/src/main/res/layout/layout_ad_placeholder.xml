@@ -13,10 +13,10 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         app:srcCompat="@drawable/ic_nav_settings"
-        android:contentDescription="Tip"
+        android:contentDescription="@string/tip_icon_desc"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="12dp"
-        android:tint="@color/accent" />
+        app:tint="@color/accent" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NaviTV Tips"
+            android:text="@string/ad_tip_header"
             android:textColor="@color/accent"
             android:textStyle="bold"
             android:textSize="11sp" />
@@ -36,7 +36,7 @@
             android:id="@+id/tvAdTip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Plug in a USB or Bluetooth mouse for easy web navigation!"
+            android:text="@string/ad_tip_1"
             android:textColor="@color/text_primary"
             android:textSize="13sp"
             android:ellipsize="end"
@@ -52,7 +52,7 @@
         android:paddingTop="2dp"
         android:paddingEnd="6dp"
         android:paddingBottom="2dp"
-        android:text="GUIDE"
+        android:text="@string/guide_badge"
         android:textColor="@color/accent"
         android:textSize="9sp"
         android:textStyle="bold" />

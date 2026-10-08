@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
 
@@ -47,9 +48,12 @@ class OnboardingActivity : ComponentActivity() {
     private lateinit var btnSkip: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
         overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+
+        ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
         FirebaseInitializer.logEvent("onboarding_started")
 

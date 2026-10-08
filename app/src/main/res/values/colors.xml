@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!-- Dark Theme Palette -->
     <color name="bg_dark">#FF0B1020</color>
     <color name="bg_toolbar">#FF151D33</color>
     <color name="bg_card">#FF1C2640</color>
@@ -17,4 +18,17 @@
     <color name="text_primary">#FFFFFFFF</color>
     <color name="text_secondary">#B3FFFFFF</color>
     <color name="divider">#33FFFFFF</color>
+
+    <!-- Light Theme Palette (Optimized for High TV Visibility) -->
+    <color name="light_bg">#FFF1F5F9</color>
+    <color name="light_bg_toolbar">#FFFFFFFF</color>
+    <color name="light_bg_card">#FFFFFFFF</color>
+    <color name="light_bg_url_bar">#FFE2E8F0</color>
+    <color name="light_bg_toolbar_btn">#FFE2E8F0</color>
+    <color name="light_accent">#FFD97706</color>
+    <color name="light_accent_dark">#FFB45309</color>
+    <color name="light_accent_soft">#33F59E0B</color>
+    <color name="light_text_primary">#FF0F172A</color>
+    <color name="light_text_secondary">#FF475569</color>
+    <color name="light_divider">#CBD5E1</color>
 </resources>

@@ -1,0 +1,6 @@
+{
+  "name": "NaviTV Browser",
+  "description": "Android TV web browser with D-pad navigation, virtual cursor, bookmarks, history, ad blocking, and AI page summarization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

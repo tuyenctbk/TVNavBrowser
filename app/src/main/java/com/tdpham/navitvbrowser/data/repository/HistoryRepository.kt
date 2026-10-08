@@ -12,6 +12,15 @@ class HistoryRepository(private val historyDao: HistoryDao) {
     fun getRecentHistory(limit: Int = 50): Flow<List<HistoryEntity>> =
         historyDao.getRecentHistory(limit)
 
+    suspend fun searchHistory(query: String, limit: Int = 15): List<HistoryEntity> =
+        historyDao.searchHistory(query, limit)
+
+    suspend fun searchFrequentSites(query: String, limit: Int = 10): List<HistoryEntity> =
+        historyDao.searchFrequentSites(query, limit)
+
+    suspend fun getRecentHistoryList(limit: Int = 20): List<HistoryEntity> =
+        historyDao.getRecentHistoryList(limit)
+
     suspend fun addToHistory(title: String, url: String) {
         if (!UrlUtils.isBrowsableUrl(url)) return
         historyDao.deleteByUrl(url)

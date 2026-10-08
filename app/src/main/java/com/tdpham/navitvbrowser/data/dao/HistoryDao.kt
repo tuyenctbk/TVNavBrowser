@@ -19,6 +19,15 @@ interface HistoryDao {
     @Query("SELECT * FROM history ORDER BY timestamp DESC LIMIT :limit")
     fun getRecentHistory(limit: Int = 50): Flow<List<HistoryEntity>>
 
+    @Query("SELECT * FROM history WHERE title LIKE '%' || :query || '%' OR url LIKE '%' || :query || '%' ORDER BY timestamp DESC LIMIT :limit")
+    suspend fun searchHistory(query: String, limit: Int = 15): List<HistoryEntity>
+
+    @Query("SELECT * FROM history WHERE title LIKE '%' || :query || '%' OR url LIKE '%' || :query || '%' GROUP BY url ORDER BY COUNT(*) DESC, MAX(timestamp) DESC LIMIT :limit")
+    suspend fun searchFrequentSites(query: String, limit: Int = 10): List<HistoryEntity>
+
+    @Query("SELECT * FROM history ORDER BY timestamp DESC LIMIT :limit")
+    suspend fun getRecentHistoryList(limit: Int = 20): List<HistoryEntity>
+
     @Delete
     suspend fun deleteHistory(history: HistoryEntity)
 

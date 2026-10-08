@@ -18,5 +18,6 @@ class TVNavBrowserApp : Application() {
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         Firebase.analytics.logEvent("app_open", null)
         RemoteConfigHelper.fetchAndActivate()
+        com.tdpham.navitvbrowser.util.WebViewCacheManager.initialize(this)
     }
 }

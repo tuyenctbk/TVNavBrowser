@@ -1,8 +1,17 @@
 package com.tdpham.navitvbrowser
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -25,25 +34,33 @@ import android.widget.Toast
 import android.content.res.ColorStateList
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import org.json.JSONObject
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.data.entity.BookmarkEntity
 import kotlinx.coroutines.flow.collectLatest
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.data.repository.BookmarkRepository
 import com.tdpham.navitvbrowser.data.repository.HistoryRepository
+import com.tdpham.navitvbrowser.data.repository.ReadLaterRepository
+import com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
 import com.tdpham.navitvbrowser.ui.InputHelper
 import com.tdpham.navitvbrowser.ui.VirtualCursorController
 import com.tdpham.navitvbrowser.util.AdsHelper
+import com.tdpham.navitvbrowser.util.WebViewMemoryManager
 import com.tdpham.navitvbrowser.util.AiHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
@@ -55,6 +72,8 @@ import com.tdpham.navitvbrowser.util.SmartPromptHelper
 import com.tdpham.navitvbrowser.util.UpdateHelper
 import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -65,6 +84,7 @@ class MainActivity : ComponentActivity() {
         private const val KEY_SAVED_URL = "saved_url"
         private const val KEY_MOUSE_MODE = "mouse_mode"
         private const val VOICE_SEARCH_REQUEST_CODE = 999
+        private const val RECORD_AUDIO_PERMISSION_CODE = 1001
     }
 
     private lateinit var webView: WebView
@@ -72,8 +92,11 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnBack: ImageButton
     private lateinit var btnForward: ImageButton
     private lateinit var btnRefresh: ImageButton
+    private lateinit var btnHome: ImageButton
     private lateinit var btnBookmark: ImageButton
+    private lateinit var btnReadLater: ImageButton
     private lateinit var btnDesktopMode: ImageButton
+    private lateinit var btnDarkMode: ImageButton
     private lateinit var btnVoiceSearch: ImageButton
     private lateinit var btnSummarize: ImageButton
     private lateinit var ivCursor: ImageView
@@ -85,15 +108,40 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnFullscreen: ImageButton
     private lateinit var toolbarContainer: View
     private lateinit var rootLayout: View
+    private lateinit var customViewContainer: FrameLayout
+
+    // Dedicated AI Summary Overlay Views
+    private lateinit var summaryOverlayContainer: FrameLayout
+    private lateinit var tvSummaryTitle: TextView
+    private lateinit var tvSummaryContent: TextView
+    private lateinit var btnCopySummary: Button
+    private lateinit var btnCloseSummary: Button
+    private lateinit var btnCloseSummaryIcon: ImageButton
+
+    // Voice Overlay Views
+    private lateinit var voiceOverlay: FrameLayout
+    private lateinit var tvVoiceStatus: TextView
+    private var speechRecognizer: SpeechRecognizer? = null
+
+    private var customView: View? = null
+    private var customViewCallback: WebChromeClient.CustomViewCallback? = null
 
     private var realBookmarks: List<BookmarkEntity> = emptyList()
     private lateinit var virtualCursor: VirtualCursorController
     private lateinit var historyRepo: HistoryRepository
     private lateinit var bookmarkRepo: BookmarkRepository
+    private lateinit var readLaterRepo: ReadLaterRepository
+    private lateinit var webViewMemoryManager: WebViewMemoryManager
     private var isWebViewInputFocused = false
     private var isFullscreenMode = false
-    private val autoFullscreenRunnable = Runnable { toggleFullscreen(enabled = true) }
-    private val autoFullscreenDelayMs = 4000L
+    private var isDarkModeActive = false
+    private var currentAppliedTheme: String = ""
+    private val autoFullscreenRunnable = Runnable {
+        if (!isFinishing && !isDestroyed && !isFullscreenMode && !urlInput.hasFocus() && summaryOverlayContainer.visibility != View.VISIBLE) {
+            toggleFullscreen(enabled = true)
+        }
+    }
+    private val autoFullscreenDelayMs = 4500L
     private var modeToast: Toast? = null
     private var isSwitchingMode = false
 
@@ -105,6 +153,8 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applyTheme(this)
+        currentAppliedTheme = AppPreferences.getAppTheme(this)
         super.onCreate(savedInstanceState)
         try {
             setContentView(R.layout.activity_main)
@@ -132,14 +182,19 @@ class MainActivity : ComponentActivity() {
         val db = BrowserDatabase.getInstance(applicationContext)
         historyRepo = HistoryRepository(db.historyDao())
         bookmarkRepo = BookmarkRepository(db.bookmarkDao())
+        readLaterRepo = ReadLaterRepository(db.readLaterDao())
 
         webView = findViewById(R.id.webView)
+        webViewMemoryManager = WebViewMemoryManager(this, webView)
         urlInput = findViewById(R.id.urlInput)
         btnBack = findViewById(R.id.btnBack)
         btnForward = findViewById(R.id.btnForward)
         btnRefresh = findViewById(R.id.btnRefresh)
+        btnHome = findViewById(R.id.btnHome)
         btnBookmark = findViewById(R.id.btnBookmark)
+        btnReadLater = findViewById(R.id.btnReadLater)
         btnDesktopMode = findViewById(R.id.btnDesktopMode)
+        btnDarkMode = findViewById(R.id.btnDarkMode)
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
         btnSummarize = findViewById(R.id.btnSummarize)
         ivCursor = findViewById(R.id.ivCursor)
@@ -151,21 +206,56 @@ class MainActivity : ComponentActivity() {
         btnFullscreen = findViewById(R.id.btnFullscreen)
         toolbarContainer = findViewById(R.id.toolbarContainer)
         rootLayout = findViewById(R.id.rootLayout)
+        customViewContainer = findViewById(R.id.customViewContainer)
+
+        // Summary Overlay
+        summaryOverlayContainer = findViewById(R.id.summaryOverlayContainer)
+        tvSummaryTitle = findViewById(R.id.tvSummaryTitle)
+        tvSummaryContent = findViewById(R.id.tvSummaryContent)
+        btnCopySummary = findViewById(R.id.btnCopySummary)
+        btnCloseSummary = findViewById(R.id.btnCloseSummary)
+        btnCloseSummaryIcon = findViewById(R.id.btnCloseSummaryIcon)
+
+        btnCopySummary.setOnClickListener {
+            val text = tvSummaryContent.text.toString()
+            if (text.isNotBlank()) {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText("AI Summary", text))
+                Toast.makeText(this, R.string.ai_summary_copied, Toast.LENGTH_SHORT).show()
+            }
+        }
+        val closeOverlayAction = {
+            summaryOverlayContainer.visibility = View.GONE
+            webView.requestFocus()
+        }
+        btnCloseSummary.setOnClickListener { closeOverlayAction() }
+        btnCloseSummaryIcon.setOnClickListener { closeOverlayAction() }
+
+        // Voice Overlay
+        voiceOverlay = findViewById(R.id.voiceOverlay)
+        tvVoiceStatus = findViewById(R.id.tvVoiceStatus)
+
+        // Initial setup for custom ad rules and background bookmark sync
+        EmbeddedAdBlocker.updateCustomRules(AppPreferences.getCustomAdRules(this))
+        lifecycleScope.launch(Dispatchers.IO) {
+            BookmarkSyncManager.syncBookmarks(this@MainActivity, bookmarkRepo)
+        }
 
         virtualCursor = VirtualCursorController(rootLayout, ivCursor, webView)
         virtualCursor.onCursorActivity = {
             if (isFullscreenMode) {
-                if (ivCursor.y <= 0f) {
+                if (ivCursor.y <= 10f) {
                     toggleFullscreen(false)
                 }
             }
             resetInactivityTimer()
         }
         virtualCursor.onExitUp = {
+            if (isFullscreenMode) {
+                toggleFullscreen(false)
+            }
             urlInput.requestFocus()
         }
-
-
 
         webView.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (isSwitchingMode) return@OnFocusChangeListener
@@ -194,6 +284,10 @@ class MainActivity : ComponentActivity() {
         setupBookmarkBarFlow()
         setupBookmarkBarAutoHide()
 
+        // Init Dark Mode from preferences
+        isDarkModeActive = AppPreferences.isForceDarkModeEnabled(this)
+        applyDarkMode(isDarkModeActive)
+
         if (savedInstanceState != null) {
             val savedUrl = savedInstanceState.getString(KEY_SAVED_URL)
             if (!savedUrl.isNullOrBlank()) {
@@ -216,17 +310,62 @@ class MainActivity : ComponentActivity() {
             EngagementHelper.recordLaunch(this)
             SmartPromptHelper.maybeShowNextPrompt(this)
         }
+
+        applyInterfaceTheme()
+    }
+
+    private fun applyInterfaceTheme() {
+        val isLight = ThemeHelper.isLightTheme(this)
+        rootLayout.setBackgroundResource(ThemeHelper.getScreenBackground(this))
+        toolbarContainer.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
+        bookmarkBarContainer.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
+        urlInput.setBackgroundResource(ThemeHelper.getUrlBarBackground(this))
+        urlInput.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        urlInput.setHintTextColor(ThemeHelper.getTextSecondaryColor(this))
+        tvInputHint.setTextColor(ThemeHelper.getTextSecondaryColor(this))
+
+        val btnBg = ThemeHelper.getToolbarButtonBackground(this)
+        btnBack.setBackgroundResource(btnBg)
+        btnForward.setBackgroundResource(btnBg)
+        btnRefresh.setBackgroundResource(btnBg)
+        btnHome.setBackgroundResource(btnBg)
+        btnBookmark.setBackgroundResource(btnBg)
+        btnReadLater.setBackgroundResource(btnBg)
+        btnDesktopMode.setBackgroundResource(btnBg)
+        btnDarkMode.setBackgroundResource(btnBg)
+        btnVoiceSearch.setBackgroundResource(btnBg)
+        btnSummarize.setBackgroundResource(btnBg)
+        btnFullscreen.setBackgroundResource(btnBg)
+
+        summaryOverlayContainer.findViewById<View>(R.id.cardSummary)?.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
+        tvSummaryTitle.setTextColor(ThemeHelper.getAccentColor(this))
+        tvSummaryContent.setTextColor(ThemeHelper.getTextPrimaryColor(this))
     }
 
     override fun onResume() {
         super.onResume()
-        if (::webView.isInitialized) webView.onResume()
+        val latestTheme = AppPreferences.getAppTheme(this)
+        if (currentAppliedTheme.isNotEmpty() && latestTheme != currentAppliedTheme) {
+            currentAppliedTheme = latestTheme
+            recreate()
+            return
+        }
+        applyInterfaceTheme()
+        if (::webViewMemoryManager.isInitialized) {
+            webViewMemoryManager.onResume()
+        } else if (::webView.isInitialized) {
+            webView.onResume()
+        }
         resetInactivityTimer()
         AdsHelper.onResume()
     }
 
     override fun onPause() {
-        if (::webView.isInitialized) webView.onPause()
+        if (::webViewMemoryManager.isInitialized) {
+            webViewMemoryManager.onPause()
+        } else if (::webView.isInitialized) {
+            webView.onPause()
+        }
         handler.removeCallbacks(autoFullscreenRunnable)
         AdsHelper.onPause()
         super.onPause()
@@ -234,14 +373,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        if (::webView.isInitialized) {
-            @Suppress("DEPRECATION")
-            if (level >= TRIM_MEMORY_MODERATE) {
-                webView.clearCache(false) // Clear memory cache but keep disk cache
-            }
-            if (level >= TRIM_MEMORY_RUNNING_CRITICAL) {
-                webView.freeMemory()
-            }
+        if (::webViewMemoryManager.isInitialized) {
+            webViewMemoryManager.onTrimMemory(level)
         }
     }
 
@@ -263,7 +396,14 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        if (::webView.isInitialized) {
+        try {
+            speechRecognizer?.destroy()
+            speechRecognizer = null
+        } catch (_: Exception) {}
+
+        if (::webViewMemoryManager.isInitialized) {
+            webViewMemoryManager.destroy()
+        } else if (::webView.isInitialized) {
             webView.loadUrl("about:blank")
             webView.stopLoading()
             webView.webChromeClient = null
@@ -280,6 +420,13 @@ class MainActivity : ComponentActivity() {
         
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> {
+                    if (isFullscreenMode && (webView.scrollY <= 10 || !virtualCursor.isEnabled)) {
+                        toggleFullscreen(false)
+                        urlInput.requestFocus()
+                        return true
+                    }
+                }
                 KeyEvent.KEYCODE_MENU -> {
                     if (isFullscreenMode) {
                         toggleFullscreen(false)
@@ -295,10 +442,21 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        if (event.action == KeyEvent.ACTION_DOWN && webView.hasFocus() && virtualCursor.isEnabled && !isKeyboardVisible()) {
-            if (virtualCursor.handleKey(event)) {
-                updateInputHint()
-                return true
+        if (event.action == KeyEvent.ACTION_DOWN && webView.hasFocus() && !isKeyboardVisible()) {
+            if (virtualCursor.isEnabled) {
+                if (virtualCursor.handleKey(event)) {
+                    updateInputHint()
+                    return true
+                }
+            } else if (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                // Smooth accelerated scrolling when holding D-pad in spatial navigation mode
+                val holdDurationMs = (event.eventTime - event.downTime).coerceAtLeast(0)
+                if (event.repeatCount > 1 || holdDurationMs > 280L) {
+                    val scrollMultiplier = (1.5f + (holdDurationMs / 250f)).coerceIn(1.5f, 6.0f)
+                    val deltaY = (if (event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) 45f else -45f) * scrollMultiplier
+                    webView.scrollBy(0, deltaY.toInt())
+                    return true
+                }
             }
         }
         return super.dispatchKeyEvent(event)
@@ -355,6 +513,9 @@ class MainActivity : ComponentActivity() {
         settings.domStorageEnabled = true
         @Suppress("DEPRECATION")
         settings.databaseEnabled = true
+        settings.allowFileAccess = true
+        settings.allowContentAccess = true
+        settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
@@ -370,8 +531,24 @@ class MainActivity : ComponentActivity() {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean =
-                false
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val uri = request?.url ?: return false
+                val scheme = uri.scheme?.lowercase() ?: return false
+                if (scheme != "http" && scheme != "https" && scheme != "file" && scheme != "about") {
+                    try {
+                        val intent = Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME)
+                        if (intent != null) {
+                            intent.addCategory(Intent.CATEGORY_BROWSABLE)
+                            intent.component = null
+                            startActivity(intent)
+                            return true
+                        }
+                    } catch (_: Exception) {
+                        return true
+                    }
+                }
+                return false
+            }
 
             override fun shouldInterceptRequest(
                 view: WebView?,
@@ -443,6 +620,35 @@ class MainActivity : ComponentActivity() {
         }
 
         webView.webChromeClient = object : WebChromeClient() {
+            override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                if (customView != null) {
+                    onHideCustomView()
+                    return
+                }
+                customView = view
+                customViewCallback = callback
+                if (view != null) {
+                    customViewContainer.addView(view)
+                }
+                customViewContainer.visibility = View.VISIBLE
+                toolbarContainer.visibility = View.GONE
+                bookmarkBar.visibility = View.GONE
+                webViewContainer.visibility = View.GONE
+                ivCursor.visibility = View.GONE
+            }
+
+            override fun onHideCustomView() {
+                if (customView == null) return
+                customViewContainer.removeView(customView)
+                customView = null
+                customViewContainer.visibility = View.GONE
+                toolbarContainer.visibility = if (isFullscreenMode) View.GONE else View.VISIBLE
+                webViewContainer.visibility = View.VISIBLE
+                customViewCallback?.onCustomViewHidden()
+                customViewCallback = null
+                virtualCursor.showIfEnabled()
+            }
+
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 progressBar.progress = newProgress
                 progressBar.isVisible = newProgress in 1..99
@@ -457,9 +663,10 @@ class MainActivity : ComponentActivity() {
 
     private fun setupNavigationButtons() {
         btnFullscreen.setOnClickListener { toggleFullscreen(!isFullscreenMode) }
-        btnVoiceSearch.setOnClickListener { startVoiceSearch() }
+        btnVoiceSearch.setOnClickListener { startVoiceControl() }
         btnSummarize.setOnClickListener { onSummarizeClicked() }
         btnDesktopMode.setOnClickListener { toggleDesktopMode() }
+        btnDarkMode.setOnClickListener { applyDarkMode(!isDarkModeActive) }
 
         btnBack.setOnClickListener {
             if (webView.canGoBack()) webView.goBack()
@@ -468,6 +675,18 @@ class MainActivity : ComponentActivity() {
             if (webView.canGoForward()) webView.goForward()
         }
         btnRefresh.setOnClickListener { webView.reload() }
+        btnHome.setOnClickListener {
+            val home = resolveHomepage()
+            webView.loadUrl(home)
+            urlInput.setText(home)
+        }
+        btnReadLater.setOnClickListener {
+            startActivity(Intent(this, ReadLaterActivity::class.java))
+        }
+        btnReadLater.setOnLongClickListener {
+            saveCurrentPageForOfflineReading()
+            true
+        }
         btnBookmark.setOnClickListener {
             val title = webView.title ?: ""
             val url = webView.url ?: urlInput.text.toString()
@@ -479,10 +698,15 @@ class MainActivity : ComponentActivity() {
                 val message = if (added) R.string.bookmark_saved else R.string.bookmark_exists
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
                 if (added) {
+                    BookmarkSyncManager.pushBookmark(this@MainActivity, BookmarkEntity(title = title, url = url))
                     EngagementHelper.recordBookmarkAdded(this@MainActivity)
                     FirebaseInitializer.logEvent("bookmark_added", mapOf("url" to url))
                 }
             }
+        }
+        btnBookmark.setOnLongClickListener {
+            saveCurrentPageForOfflineReading()
+            true
         }
 
         urlInput.setOnEditorActionListener { _, actionId, event ->
@@ -505,24 +729,184 @@ class MainActivity : ComponentActivity() {
         })
     }
 
+    private fun saveCurrentPageForOfflineReading() {
+        val url = webView.url ?: urlInput.text.toString()
+        if (!UrlUtils.isBrowsableUrl(url)) return
+
+        webView.evaluateJavascript(
+            "(function() { return JSON.stringify({title: document.title || '', text: document.body ? document.body.innerText : ''}); })();"
+        ) { jsonResult ->
+            lifecycleScope.launch {
+                var title = webView.title.orEmpty().ifBlank { url }
+                var excerpt = ""
+
+                try {
+                    if (!jsonResult.isNullOrBlank() && jsonResult != "null") {
+                        val obj = if (jsonResult.startsWith("\"") && jsonResult.endsWith("\"")) {
+                            JSONObject(jsonResult.substring(1, jsonResult.length - 1).replace("\\\"", "\""))
+                        } else {
+                            JSONObject(jsonResult)
+                        }
+                        if (obj.has("title") && obj.getString("title").isNotBlank()) {
+                            title = obj.getString("title")
+                        }
+                        if (obj.has("text")) {
+                            val rawText = obj.getString("text")
+                            excerpt = rawText.take(250).replace("\\s+".toRegex(), " ").trim()
+                        }
+                    }
+                } catch (_: Exception) {
+                    excerpt = title
+                }
+
+                if (excerpt.isBlank()) excerpt = title
+
+                val savedId = withContext(Dispatchers.IO) {
+                    readLaterRepo.saveArticle(title, url, "", excerpt)
+                }
+                if (savedId > 0) {
+                    Toast.makeText(this@MainActivity, R.string.read_later_saved, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private enum class SuggestionType {
+        BOOKMARK,
+        HISTORY,
+        FREQUENT,
+        WEB
+    }
+
+    private data class SearchSuggestion(
+        val title: String,
+        val url: String,
+        val type: SuggestionType
+    )
+
     private val SUGGESTED_SITES = listOf(
         "google.com", "youtube.com", "facebook.com", "netflix.com", 
         "amazon.com", "twitter.com", "instagram.com", "wikipedia.org",
-        "reddit.com", "twitch.tv", "pluto.tv", "disneyplus.com"
+        "reddit.com", "twitch.tv", "pluto.tv", "disneyplus.com",
+        "github.com", "yahoo.com", "bing.com", "spotify.com"
     )
 
+    private var autocompleteJob: Job? = null
+
     private fun updateSuggestions(input: String) {
-        if (input.isBlank() || input.startsWith("http") || input.startsWith("file")) {
+        val query = input.trim()
+        autocompleteJob?.cancel()
+
+        if (query.isBlank() || query.startsWith("file://")) {
             populateBookmarkBar(realBookmarks)
             return
         }
 
-        val filtered = SUGGESTED_SITES.filter { it.contains(input.lowercase()) }
-        if (filtered.isNotEmpty()) {
-            val suggestions = filtered.map { BookmarkEntity(title = it, url = "https://$it") }
-            populateBookmarkBar(suggestions)
-            showBookmarkBar()
+        autocompleteJob = lifecycleScope.launch {
+            delay(120) // Debounce typing
+
+            val suggestions = withContext(Dispatchers.IO) {
+                val results = mutableListOf<SearchSuggestion>()
+                val seenUrls = mutableSetOf<String>()
+
+                fun normalize(url: String): String =
+                    url.lowercase()
+                        .removePrefix("https://")
+                        .removePrefix("http://")
+                        .removePrefix("www.")
+                        .removeSuffix("/")
+
+                // 1. Frequently visited sites from History database
+                val frequentHistory = historyRepo.searchFrequentSites(query, 6)
+                frequentHistory.forEach { h ->
+                    val norm = normalize(h.url)
+                    if (seenUrls.add(norm)) {
+                        results.add(SearchSuggestion(h.title.ifBlank { h.url }, h.url, SuggestionType.FREQUENT))
+                    }
+                }
+
+                // 2. Bookmarks from database
+                val matchingBookmarks = bookmarkRepo.searchBookmarks(query, 6)
+                matchingBookmarks.forEach { b ->
+                    val norm = normalize(b.url)
+                    if (seenUrls.add(norm)) {
+                        results.add(SearchSuggestion(b.title.ifBlank { b.url }, b.url, SuggestionType.BOOKMARK))
+                    }
+                }
+
+                // 3. Search history from database
+                val matchingHistory = historyRepo.searchHistory(query, 8)
+                matchingHistory.forEach { h ->
+                    val norm = normalize(h.url)
+                    if (seenUrls.add(norm)) {
+                        results.add(SearchSuggestion(h.title.ifBlank { h.url }, h.url, SuggestionType.HISTORY))
+                    }
+                }
+
+                // 4. Fallback matching web domains
+                if (results.size < 6) {
+                    val matchingSites = SUGGESTED_SITES.filter { it.contains(query.lowercase()) }
+                    matchingSites.forEach { site ->
+                        val url = "https://$site"
+                        val norm = normalize(url)
+                        if (seenUrls.add(norm)) {
+                            results.add(SearchSuggestion(site, url, SuggestionType.WEB))
+                        }
+                    }
+                }
+
+                results.take(12)
+            }
+
+            if (suggestions.isNotEmpty()) {
+                populateSuggestionChips(suggestions)
+            } else {
+                populateBookmarkBar(realBookmarks)
+            }
         }
+    }
+
+    private fun populateSuggestionChips(suggestions: List<SearchSuggestion>) {
+        bookmarkBarContainer.removeAllViews()
+        if (suggestions.isEmpty()) {
+            bookmarkBar.visibility = View.GONE
+            return
+        }
+
+        val inflater = LayoutInflater.from(this)
+        suggestions.forEach { item ->
+            val chip = inflater.inflate(R.layout.item_bookmark_chip, bookmarkBarContainer, false)
+            val tvChipTitle = chip.findViewById<TextView>(R.id.tvChipTitle)
+            val ivChipIcon = chip.findViewById<ImageView>(R.id.ivChipIcon)
+            tvChipTitle.text = item.title
+
+            when (item.type) {
+                SuggestionType.BOOKMARK -> {
+                    ivChipIcon?.setImageResource(R.drawable.ic_nav_bookmark)
+                    ivChipIcon?.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accent))
+                }
+                SuggestionType.HISTORY, SuggestionType.FREQUENT -> {
+                    ivChipIcon?.setImageResource(R.drawable.ic_nav_history)
+                    ivChipIcon?.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accent))
+                }
+                SuggestionType.WEB -> {
+                    ivChipIcon?.setImageResource(R.drawable.ic_nav_search)
+                    ivChipIcon?.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.text_secondary))
+                }
+            }
+
+            FocusAnimationHelper.apply(chip)
+            chip.setOnClickListener {
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
+                urlInput.clearFocus()
+                urlInput.setText(item.url)
+                loadTypedUrl(item.url)
+            }
+            bookmarkBarContainer.addView(chip)
+        }
+
+        showBookmarkBar()
     }
 
     private fun toggleDesktopMode() {
@@ -601,11 +985,12 @@ class MainActivity : ComponentActivity() {
 
     private fun setupFocusAnimations() {
         FocusAnimationHelper.applyAll(
-            btnBack, btnForward, btnRefresh, btnBookmark,
-            btnFullscreen, btnDesktopMode, btnVoiceSearch, btnSummarize,
+            btnBack, btnForward, btnRefresh, btnHome, btnBookmark, btnReadLater,
+            btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize,
             findViewById(R.id.btnShowBookmarks),
             findViewById(R.id.btnShowHistory),
-            findViewById(R.id.btnSettings)
+            findViewById(R.id.btnSettings),
+            btnCopySummary, btnCloseSummary, btnCloseSummaryIcon
         )
         FocusAnimationHelper.apply(urlInput) { _, hasFocus ->
             if (!hasFocus) {
@@ -618,6 +1003,21 @@ class MainActivity : ComponentActivity() {
     private fun setupBackHandler() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (summaryOverlayContainer.visibility == View.VISIBLE) {
+                    summaryOverlayContainer.visibility = View.GONE
+                    webView.requestFocus()
+                    return
+                }
+                if (voiceOverlay.visibility == View.VISIBLE) {
+                    speechRecognizer?.stopListening()
+                    voiceOverlay.visibility = View.GONE
+                    webView.requestFocus()
+                    return
+                }
+                if (customView != null) {
+                    webView.webChromeClient?.onHideCustomView()
+                    return
+                }
                 if (isFullscreenMode) {
                     toggleFullscreen(false)
                     resetInactivityTimer()
@@ -695,7 +1095,16 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun injectFocusStyle(view: WebView?) {
-        val css = "*:focus { outline: 3px solid #FFC857 !important; outline-offset: 2px !important; }"
+        val css = """
+            *:focus, a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus, [role="button"]:focus {
+                outline: 3px solid #FFC857 !important;
+                outline-offset: 3px !important;
+                box-shadow: 0 0 16px rgba(255, 200, 87, 0.9), 0 0 28px rgba(255, 200, 87, 0.4) !important;
+                transform: scale(1.04) !important;
+                transition: transform 0.16s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.16s ease !important;
+                z-index: 99999 !important;
+            }
+        """.trimIndent().replace("\n", " ")
         val js = "(function() {" +
             "var style = document.getElementById('tvnav-focus-style');" +
             "if (!style) {" +
@@ -821,7 +1230,7 @@ class MainActivity : ComponentActivity() {
     private fun isViewInToolbarOrBookmarkBar(view: View?): Boolean {
         var current: View? = view
         while (current != null) {
-            if (current.id == R.id.toolbar || current.id == R.id.bookmarkBar) {
+            if (current.id == R.id.toolbarContainer || current.id == R.id.bookmarkBar) {
                 return true
             }
             val parent = current.parent
@@ -830,16 +1239,181 @@ class MainActivity : ComponentActivity() {
         return false
     }
 
-    @Suppress("DEPRECATION")
-    private fun startVoiceSearch() {
-        val intent = Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Speak a website URL or search query...")
+    private fun applyDarkMode(enabled: Boolean) {
+        isDarkModeActive = enabled
+        AppPreferences.setForceDarkModeEnabled(this, enabled)
+        btnDarkMode.imageTintList = ColorStateList.valueOf(
+            if (enabled) ContextCompat.getColor(this, R.color.accent)
+            else ContextCompat.getColor(this, R.color.text_primary)
+        )
+
+        // WebSettingsCompat Force Dark if supported
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            try {
+                WebSettingsCompat.setForceDark(
+                    webView.settings,
+                    if (enabled) WebSettingsCompat.FORCE_DARK_ON else WebSettingsCompat.FORCE_DARK_OFF
+                )
+            } catch (_: Exception) {}
         }
+
+        // Comprehensive TV-friendly Dark Mode CSS injection
+        val js = if (enabled) {
+            """
+            (function() {
+                var style = document.getElementById('__tvnav_dark_style__');
+                if (!style) {
+                    style = document.createElement('style');
+                    style.id = '__tvnav_dark_style__';
+                    style.innerHTML = 'html, body { background-color: #121212 !important; color: #e6e6e6 !important; } * { border-color: #2e2e2e !important; } p, span, h1, h2, h3, h4, h5, h6, li, td, th { color: #e6e6e6 !important; } a { color: #82b1ff !important; } input, textarea, select { background: #242424 !important; color: #ffffff !important; } img, video { filter: brightness(0.88) contrast(1.05) !important; }';
+                    document.head.appendChild(style);
+                }
+            })();
+            """.trimIndent()
+        } else {
+            """
+            (function() {
+                var style = document.getElementById('__tvnav_dark_style__');
+                if (style) style.remove();
+            })();
+            """.trimIndent()
+        }
+        webView.evaluateJavascript(js, null)
+    }
+
+    private fun startVoiceControl() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                RECORD_AUDIO_PERMISSION_CODE
+            )
+            return
+        }
+
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            // Fallback to standard recognizer intent
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_search_prompt))
+            }
+            try {
+                @Suppress("DEPRECATION")
+                startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE)
+            } catch (e: Exception) {
+                Toast.makeText(this, getString(R.string.error_voice_search_unsupported), Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        voiceOverlay.visibility = View.VISIBLE
+        tvVoiceStatus.text = getString(R.string.voice_search_prompt)
+
         try {
-            startActivityForResult(intent, VOICE_SEARCH_REQUEST_CODE)
+            speechRecognizer?.destroy()
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
+                setRecognitionListener(object : RecognitionListener {
+                    override fun onReadyForSpeech(params: Bundle?) {
+                        tvVoiceStatus.text = getString(R.string.voice_status_listening)
+                    }
+                    override fun onBeginningOfSpeech() {}
+                    override fun onRmsChanged(rmsdB: Float) {}
+                    override fun onBufferReceived(buffer: ByteArray?) {}
+                    override fun onEndOfSpeech() {
+                        tvVoiceStatus.text = getString(R.string.voice_status_processing)
+                    }
+                    override fun onError(error: Int) {
+                        voiceOverlay.visibility = View.GONE
+                        val errorMsg = when (error) {
+                            SpeechRecognizer.ERROR_NO_MATCH -> getString(R.string.voice_error_no_match)
+                            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> getString(R.string.voice_error_timeout)
+                            else -> getString(R.string.voice_error_generic)
+                        }
+                        Toast.makeText(this@MainActivity, errorMsg, Toast.LENGTH_SHORT).show()
+                    }
+                    override fun onResults(results: Bundle?) {
+                        voiceOverlay.visibility = View.GONE
+                        val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        val spokenText = matches?.firstOrNull()?.trim()
+                        if (!spokenText.isNullOrBlank()) {
+                            handleVoiceCommandOrSearch(spokenText)
+                        }
+                    }
+                    override fun onPartialResults(partialResults: Bundle?) {}
+                    override fun onEvent(eventType: Int, params: Bundle?) {}
+                })
+            }
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+            }
+            speechRecognizer?.startListening(intent)
         } catch (e: Exception) {
-            Toast.makeText(this, getString(R.string.error_voice_search_unsupported), Toast.LENGTH_SHORT).show()
+            voiceOverlay.visibility = View.GONE
+            Toast.makeText(this, getString(R.string.voice_error_speech, e.message.orEmpty()), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun handleVoiceCommandOrSearch(command: String) {
+        val lower = command.lowercase().trim()
+        when {
+            lower == "back" || lower == "go back" -> {
+                Toast.makeText(this, getString(R.string.voice_command_executed, getString(R.string.nav_back)), Toast.LENGTH_SHORT).show()
+                if (webView.canGoBack()) webView.goBack()
+            }
+            lower == "forward" || lower == "go forward" -> {
+                Toast.makeText(this, getString(R.string.voice_command_executed, getString(R.string.nav_forward)), Toast.LENGTH_SHORT).show()
+                if (webView.canGoForward()) webView.goForward()
+            }
+            lower == "refresh" || lower == "reload" -> {
+                Toast.makeText(this, getString(R.string.voice_command_executed, getString(R.string.nav_refresh)), Toast.LENGTH_SHORT).show()
+                webView.reload()
+            }
+            lower == "home" || lower == "go home" -> {
+                Toast.makeText(this, getString(R.string.voice_command_executed, getString(R.string.nav_home)), Toast.LENGTH_SHORT).show()
+                val home = resolveHomepage()
+                webView.loadUrl(home)
+                urlInput.setText(home)
+            }
+            lower == "dark mode" || lower == "night mode" || lower == "toggle dark mode" -> {
+                applyDarkMode(!isDarkModeActive)
+                Toast.makeText(this, getString(R.string.voice_command_executed, getString(R.string.nav_dark_mode)), Toast.LENGTH_SHORT).show()
+            }
+            lower == "fullscreen" || lower == "toggle fullscreen" -> {
+                toggleFullscreen(!isFullscreenMode)
+                Toast.makeText(this, getString(R.string.voice_command_executed, getString(R.string.nav_fullscreen)), Toast.LENGTH_SHORT).show()
+            }
+            lower == "bookmarks" || lower == "open bookmarks" || lower == "show bookmarks" -> {
+                startActivity(Intent(this, BookmarksActivity::class.java))
+            }
+            lower == "history" || lower == "open history" || lower == "show history" -> {
+                startActivity(Intent(this, HistoryActivity::class.java))
+            }
+            lower == "settings" || lower == "open settings" -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
+            lower == "summarize" || lower == "summarize page" || lower == "ai summary" -> {
+                onSummarizeClicked()
+            }
+            else -> {
+                urlInput.setText(command)
+                loadTypedUrl(command)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == RECORD_AUDIO_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startVoiceControl()
+            } else {
+                Toast.makeText(this, R.string.voice_perm_required, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -847,11 +1421,10 @@ class MainActivity : ComponentActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            val results = data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)
+            val results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             if (!results.isNullOrEmpty()) {
                 val query = results[0].trim()
-                urlInput.setText(query)
-                loadTypedUrl(query)
+                handleVoiceCommandOrSearch(query)
             }
         }
     }
@@ -936,9 +1509,12 @@ class MainActivity : ComponentActivity() {
     private fun resetInactivityTimer() {
         handler.removeCallbacks(autoFullscreenRunnable)
         if (AppPreferences.isAutoFullscreenEnabled(this)) {
-            // Only exit fullscreen if we are in it and want to show UI for active navigation.
-            // But don't do it for every small move to avoid flickering UI.
-            handler.postDelayed(autoFullscreenRunnable, autoFullscreenDelayMs)
+            val isEditing = urlInput.hasFocus()
+            val isSummaryOpen = ::summaryOverlayContainer.isInitialized && summaryOverlayContainer.visibility == View.VISIBLE
+            val isVoiceOpen = ::voiceOverlay.isInitialized && voiceOverlay.visibility == View.VISIBLE
+            if (!isFullscreenMode && !isEditing && !isSummaryOpen && !isVoiceOpen) {
+                handler.postDelayed(autoFullscreenRunnable, autoFullscreenDelayMs)
+            }
         }
     }
 
@@ -956,6 +1532,41 @@ class MainActivity : ComponentActivity() {
                 isWebViewInputFocused = false
             }
         }
+
+        @android.webkit.JavascriptInterface
+        fun openBookmarks() {
+            runOnUiThread {
+                startActivity(Intent(this@MainActivity, BookmarksActivity::class.java))
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun openReadLater() {
+            runOnUiThread {
+                startActivity(Intent(this@MainActivity, ReadLaterActivity::class.java))
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun openHistory() {
+            runOnUiThread {
+                startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun openSettings() {
+            runOnUiThread {
+                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun openUrl(url: String) {
+            runOnUiThread {
+                loadTypedUrl(url)
+            }
+        }
     }
 
     private fun onSummarizeClicked() {
@@ -965,7 +1576,6 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        // JS to extract text from common elements, avoiding scripts/styles/nav
         val js = """
             (function() {
                 var text = "";
@@ -981,7 +1591,6 @@ class MainActivity : ComponentActivity() {
         progressToast.show()
 
         webView.evaluateJavascript(js) { extractedText ->
-            // evaluateJavascript returns a JSON-encoded string (wrapped in quotes and escaped)
             val cleanText = try {
                 if (extractedText == null || extractedText == "null") null
                 else JSONObject("{\"text\":$extractedText}").getString("text")
@@ -995,7 +1604,6 @@ class MainActivity : ComponentActivity() {
                 return@evaluateJavascript
             }
 
-            // Truncate to avoid token limits (approx 4000 chars is safe for most mini models)
             val truncatedText = if (cleanText.length > 4000) cleanText.take(4000) + "..." else cleanText
 
             lifecycleScope.launch {
@@ -1018,10 +1626,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showSummaryDialog(summary: String) {
-        androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_TVNavBrowser_Dialog)
-            .setTitle(getString(R.string.ai_summary_title))
-            .setMessage(summary)
-            .setPositiveButton(android.R.string.ok, null)
-            .show()
+        tvSummaryContent.text = summary
+        summaryOverlayContainer.visibility = View.VISIBLE
+        btnCopySummary.requestFocus()
     }
 }

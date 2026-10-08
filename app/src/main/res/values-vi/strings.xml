@@ -1,89 +1,111 @@
 <resources>
-    <string name="app_name">Trình duyệt NaviTV</string>
+    <string name="app_name">Trình Duyệt NaviTV</string>
+
     <string name="bookmarks">Dấu trang</string>
     <string name="history">Lịch sử</string>
     <string name="settings">Cài đặt</string>
     <string name="bookmark_saved">Đã lưu dấu trang</string>
     <string name="bookmark_exists">Đã có trong dấu trang</string>
-    <string name="bookmarks_empty">Chưa có dấu trang nào. Lưu trang bằng nút ☆.</string>
+    <string name="bookmarks_empty">Chưa có dấu trang. Nút ☆ để lưu trang.</string>
     <string name="history_empty">Chưa có lịch sử duyệt web.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
+
     <string name="onboarding_step">Bước %1$d / %2$d</string>
-    <string name="onboarding_next">Tiếp theo</string>
+    <string name="onboarding_next">Tiếp tục</string>
     <string name="onboarding_skip">Bỏ qua</string>
     <string name="onboarding_get_started">Bắt đầu</string>
-    <string name="onboarding_title_1">Chào mừng đến với NaviTV Browser</string>
-    <string name="onboarding_message_1">Duyệt web trên Android TV bằng điều khiển từ xa, bàn phím hoặc chuột. Sử dụng D-pad để di chuyển giữa các nút và bên trong trang.</string>
-    <string name="onboarding_title_2">Chế độ chuột và con trỏ</string>
-    <string name="onboarding_message_2">Bật chế độ Chuột để di chuyển con trỏ bằng D-pad và nhấp bằng nút OK. Cắm chuột USB hoặc Bluetooth bất cứ lúc nào — nó sẽ hoạt động ngay lập tức.</string>
-    <string name="onboarding_title_3">Lưu các trang yêu thích</string>
-    <string name="onboarding_message_3">Sử dụng nút sao để đánh dấu trang. Mở các dấu trang và lịch sử đã lưu từ thanh công cụ bất cứ lúc nào.</string>
-    <string name="onboarding_title_4">Bạn đã sẵn sàng</string>
-    <string name="onboarding_message_4">Lịch sử được lưu tự động. Truy cập Cài đặt để thay đổi trang chủ, chặn quảng cáo trang web hoặc xóa dữ liệu.</string>
-    <string name="rating_title">Bạn thích Trình duyệt NaviTV chứ?</string>
-    <string name="rating_message">Nếu bạn thích ứng dụng này, vui lòng đánh giá nó. Điều đó giúp chúng tôi cải thiện!</string>
+    <string name="onboarding_title_1">Chào mừng đến với Trình Duyệt NaviTV</string>
+    <string name="onboarding_message_1">Duyệt web trên Android TV bằng điều khiển, bàn phím hoặc chuột. Dùng phím điều hướng D-pad để di chuyển.</string>
+    <string name="onboarding_title_2">Chế độ chuột ảo</string>
+    <string name="onboarding_message_2">Bật chế độ Chuột để di chuyển con trỏ bằng D-pad và nhấn OK để chọn. Hoặc cắm chuột USB/Bluetooth bất cứ lúc nào.</string>
+    <string name="onboarding_title_3">Lưu trang yêu thích</string>
+    <string name="onboarding_message_3">Sử dụng nút ngôi sao để lưu dấu trang. Mở dấu trang và lịch sử từ thanh công cụ bất kỳ lúc nào.</string>
+    <string name="onboarding_title_4">Hoàn tất thiết lập</string>
+    <string name="onboarding_message_4">Lịch sử tự động lưu. Vào Cài đặt để thay đổi trang chủ, chặn quảng cáo trang web hoặc xóa dữ liệu.</string>
+
+    <string name="rating_title">Bạn yêu thích Trình Duyệt NaviTV?</string>
+    <string name="rating_message">Nếu bạn thích ứng dụng, hãy đánh giá giúp chúng tôi nâng cấp trải nghiệm tốt hơn!</string>
     <string name="rating_rate">Đánh giá</string>
     <string name="rating_remind_later">Nhắc tôi sau</string>
     <string name="rating_no_thanks">Không, cảm ơn</string>
-    <string name="settings_homepage_label">URL Trang chủ</string>
+
+    <string name="settings_homepage_label">Địa chỉ trang chủ</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
-    <string name="settings_save_homepage">Lưu Trang chủ</string>
+    <string name="settings_save_homepage">Lưu trang chủ</string>
     <string name="settings_block_embedded_ads">Chặn quảng cáo trang web</string>
-    <string name="settings_block_embedded_ads_summary">Tự động ẩn quảng cáo nhúng bên trong các trang web. Không ảnh hưởng đến quảng cáo banner của ứng dụng.</string>
-    <string name="settings_block_ads_enabled">Đã bật chặn quảng cáo trang web</string>
-    <string name="settings_block_ads_disabled">Đã tắt chặn quảng cáo trang web</string>
+    <string name="settings_block_embedded_ads_summary">Tự động ẩn quảng cáo nhúng trong trang web.</string>
+    <string name="settings_block_ads_enabled">Đã bật chặn quảng cáo</string>
+    <string name="settings_block_ads_disabled">Đã tắt chặn quảng cáo</string>
     <string name="settings_homepage_empty">Vui lòng nhập URL trang chủ</string>
     <string name="settings_homepage_saved">Đã lưu trang chủ</string>
-    <string name="settings_clear_history">Xóa Lịch sử</string>
-    <string name="settings_clear_bookmarks">Xóa Dấu trang</string>
-    <string name="settings_clear_cache">Xóa Bộ nhớ đệm WebView</string>
+    <string name="settings_clear_history">Xóa lịch sử</string>
+    <string name="settings_clear_bookmarks">Xóa dấu trang</string>
+    <string name="settings_clear_cache">Xóa bộ nhớ đệm WebView</string>
     <string name="settings_history_cleared">Đã xóa lịch sử</string>
     <string name="settings_bookmarks_cleared">Đã xóa dấu trang</string>
     <string name="settings_cache_cleared">Đã xóa bộ nhớ đệm</string>
     <string name="settings_cache_failed">Không thể xóa bộ nhớ đệm</string>
-    <string name="settings_force_dark_mode">Bắt buộc Chế độ tối</string>
-    <string name="settings_force_dark_mode_summary">Tự động áp dụng giao diện tối cho tất cả các trang web (Lý tưởng để duyệt web trên TV).</string>
-    <string name="settings_dark_mode_enabled">Bắt buộc Chế độ tối: Đã bật</string>
-    <string name="settings_dark_mode_disabled">Bắt buộc Chế độ tối: Đã tắt</string>
-    <string name="mouse_mode_on">Chuột BẬT</string>
+
+    <string name="settings_force_dark_mode">Chế độ tối bắt buộc</string>
+    <string name="settings_force_dark_mode_summary">Tự động áp dụng giao diện tối cho tất cả trang web (Tốt nhất cho TV).</string>
+    <string name="settings_dark_mode_enabled">Chế độ tối: Bật</string>
+    <string name="settings_dark_mode_disabled">Chế độ tối: Tắt</string>
+
+    <string name="mouse_mode_on">Bật Chuột</string>
     <string name="mouse_mode_off">Chuột</string>
+
     <string name="nav_back">Quay lại</string>
-    <string name="nav_forward">Tiếp theo</string>
+    <string name="nav_forward">Tiến tới</string>
     <string name="nav_refresh">Tải lại</string>
     <string name="nav_bookmark">Lưu</string>
-    <string name="nav_desktop_mode">Chế độ máy tính</string>
-    <string name="nav_returning_home">Quay lại bảng điều khiển</string>
-    <string name="nav_mobile_site_requested">Đã yêu cầu trang di động</string>
-    <string name="nav_desktop_site_requested">Đã yêu cầu trang máy tính</string>
-    <string name="update_available_title">Có bản cập nhật mới</string>
-    <string name="update_available_message">Đã có phiên bản mới của Trình duyệt NaviTV. Cập nhật ngay để nhận các tính năng mới nhất và cải thiện bảo mật.</string>
-    <string name="update_now">Cập nhật ngay</string>
-    <string name="update_later">Để sau</string>
+    <string name="nav_desktop_mode">Chuyển trang cho máy tính</string>
+    <string name="nav_returning_home">Về trang chủ</string>
+    <string name="nav_mobile_site_requested">Trang di động</string>
+    <string name="nav_desktop_site_requested">Trang máy tính</string>
+
     <string name="url_hint">Tìm kiếm hoặc nhập URL</string>
     <string name="cursor_content_desc">Con trỏ chuột ảo</string>
-    <string name="input_hint_default">Điều khiển: D-pad để điều hướng · OK để chọn</string>
-    <string name="input_hint_virtual_mouse">Chế độ chuột: D-pad di chuyển con trỏ · OK để nhấp · Back để thoát</string>
+    <string name="input_hint_default">Điều khiển: D-pad di chuyển · OK để chọn</string>
+    <string name="input_hint_virtual_mouse">Chế độ chuột: D-pad di con trỏ · OK nhấp · Quay lại để thoát</string>
     <string name="input_hint_mouse">Đã kết nối chuột · Hỗ trợ con lăn</string>
-    <string name="input_hint_touch">Đầu vào cảm ứng đang hoạt động</string>
-    <string name="list_hint_open">Nhấn OK để mở · Nhấn giữ để xóa</string>
+    <string name="list_hint_open">Bấm OK để mở · Giữ lâu để xóa</string>
+
     <string name="nav_fullscreen">Toàn màn hình</string>
-    <string name="settings_auto_fullscreen">Tự động Toàn màn hình</string>
-    <string name="settings_auto_fullscreen_summary">Tự động ẩn thanh điều khiển khi không hoạt động lúc duyệt web.</string>
-    <string name="settings_auto_fullscreen_enabled">Tự động Toàn màn hình: Đã bật</string>
-    <string name="settings_auto_fullscreen_disabled">Tự động Toàn màn hình: Đã tắt</string>
-    <string name="mode_virtual_mouse">Đang hoạt động chuột ảo</string>
-    <string name="mode_dpad">Đang hoạt động chế độ D-Pad</string>
-    <string name="error_webview_missing">Hệ thống WebView bị thiếu hoặc bị vô hiệu hóa.</string>
-    <string name="error_generic_app">Lỗi ứng dụng xảy ra: %1$s</string>
-    <string name="error_voice_search_unsupported">Tìm kiếm bằng giọng nói không được hỗ trợ trên thiết bị này</string>
+    <string name="settings_auto_fullscreen">Tự động toàn màn hình</string>
+    <string name="settings_auto_fullscreen_summary">Tự động ẩn thanh công cụ khi không thao tác.</string>
+    <string name="mode_virtual_mouse">Chuột ảo đang hoạt động</string>
+    <string name="mode_dpad">Chế độ D-Pad đang hoạt động</string>
+
     <string name="nav_summarize">Tóm tắt trang</string>
-    <string name="ai_summarizing">AI đang tóm tắt trang...</string>
+    <string name="ai_summarizing">AI đang tóm tắt nội dung...</string>
     <string name="ai_summary_title">Tóm tắt trang (AI)</string>
-    <string name="ai_error_key_missing">Các tính năng AI hiện không khả dụng (Thiếu Key).</string>
-    <string name="ai_error_empty">Không tìm thấy nội dung trên trang này để tóm tắt.</string>
-    <string name="ai_error_generic">Tóm tắt AI thất bại. Vui lòng thử lại sau.</string>
-    <string name="ai_local_summary_note">Lưu ý: Đang hiển thị kết quả trích xuất ngoại tuyến vì không thể kết nối với nhà cung cấp AI.</string>
-    <string name="share_title">Chia sẻ Trình duyệt NaviTV</string>
-    <string name="share_message">Giúp người khác khám phá trải nghiệm duyệt web tốt nhất trên Android TV!</string>
-    <string name="share_scan_hint">Quét bằng điện thoại để chia sẻ</string>
+
+    <string name="nav_dark_mode">Chế độ ban đêm</string>
+    <string name="dark_mode_active">Chế độ đêm: Bật</string>
+    <string name="dark_mode_inactive">Chế độ đêm: Tắt</string>
+
+    <string name="ai_summary_heading">Tóm tắt trang bằng AI Gemini</string>
+    <string name="ai_summary_copy">Sao chép vào bộ nhớ tạm</string>
+    <string name="ai_summary_copied">Đã sao chép tóm tắt!</string>
+    <string name="ai_summary_close">Đóng</string>
+
+    <string name="read_later_title">Đọc sau</string>
+    <string name="read_later_empty">Chưa có bài viết nào được lưu để đọc ngoại tuyến.</string>
+    <string name="read_later_saved">Đã lưu bài viết để đọc ngoại tuyến</string>
+    <string name="read_later_removed">Đã xóa bài viết khỏi Đọc sau</string>
+    <string name="read_later_btn">Đọc sau</string>
+    <string name="read_later_save_btn">Lưu ngoại tuyến</string>
+    <string name="read_later_clear_all">Xóa tất cả bài viết</string>
+    <string name="read_later_cleared">Đã xóa danh sách Đọc sau</string>
+    <string name="read_later_unread">Chưa đọc</string>
+    <string name="read_later_read">Đã đọc</string>
+    <string name="read_later_mark_read">Đánh dấu đã đọc</string>
+    <string name="read_later_mark_unread">Đánh dấu chưa đọc</string>
+    <string name="read_later_open_online">Mở trên trình duyệt</string>
+    <string name="read_later_reading_mode">Chế độ đọc ngoại tuyến</string>
+    <string name="read_later_confirm_delete">Xóa bài viết</string>
+    <string name="read_later_delete_msg">Bạn có chắc muốn xóa \"%1$s\" khỏi Đọc sau?</string>
+
+    <string name="nav_home">Trang chủ</string>
+    <string name="memory_warning_low_ram">Tối ưu bộ nhớ: Đã giải phóng bộ nhớ đệm WebView</string>
 </resources>

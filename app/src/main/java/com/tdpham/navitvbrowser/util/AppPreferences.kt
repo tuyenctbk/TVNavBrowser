@@ -11,7 +11,80 @@ object AppPreferences {
     private const val KEY_BLOCK_EMBEDDED_ADS = "block_embedded_ads"
     private const val KEY_FORCE_DARK_MODE = "force_dark_mode"
     private const val KEY_AUTO_FULLSCREEN = "auto_fullscreen"
+    private const val KEY_APP_THEME = "app_interface_theme"
+    private const val KEY_CUSTOM_AD_RULES = "custom_ad_rules"
+    private const val KEY_FIRESTORE_SYNC_ENABLED = "firestore_sync_enabled"
+    private const val KEY_SYNC_USER_ID = "sync_user_id"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
+
+    const val THEME_DARK = "dark"
+    const val THEME_LIGHT = "light"
+
+    fun getAppTheme(context: Context): String =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getString(KEY_APP_THEME, THEME_DARK) ?: THEME_DARK
+
+    fun setAppTheme(context: Context, theme: String) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putString(KEY_APP_THEME, theme)
+            .apply()
+    }
+
+    fun isLightTheme(context: Context): Boolean = getAppTheme(context) == THEME_LIGHT
+
+    fun getCustomAdRules(context: Context): Set<String> =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getStringSet(KEY_CUSTOM_AD_RULES, emptySet()) ?: emptySet()
+
+    fun addCustomAdRule(context: Context, rule: String) {
+        val trimmed = rule.trim().lowercase()
+        if (trimmed.isEmpty()) return
+        val current = getCustomAdRules(context).toMutableSet()
+        current.add(trimmed)
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putStringSet(KEY_CUSTOM_AD_RULES, current)
+            .apply()
+    }
+
+    fun removeCustomAdRule(context: Context, rule: String) {
+        val current = getCustomAdRules(context).toMutableSet()
+        if (current.remove(rule.trim().lowercase())) {
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit()
+                .putStringSet(KEY_CUSTOM_AD_RULES, current)
+                .apply()
+        }
+    }
+
+    fun isFirestoreSyncEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getBoolean(KEY_FIRESTORE_SYNC_ENABLED, true)
+
+    fun setFirestoreSyncEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_FIRESTORE_SYNC_ENABLED, enabled)
+            .apply()
+    }
+
+    fun getSyncUserId(context: Context): String {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        var userId = prefs.getString(KEY_SYNC_USER_ID, null)
+        if (userId.isNullOrBlank()) {
+            userId = "tv_user_" + java.util.UUID.randomUUID().toString().take(8)
+            prefs.edit().putString(KEY_SYNC_USER_ID, userId).apply()
+        }
+        return userId
+    }
+
+    fun setSyncUserId(context: Context, userId: String) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putString(KEY_SYNC_USER_ID, userId.trim())
+            .apply()
+    }
 
     fun isOnboardingComplete(context: Context): Boolean =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)

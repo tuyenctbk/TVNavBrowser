@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.tdpham.navitvbrowser.R
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 
 object UpdateHelper {
 
@@ -32,7 +33,7 @@ object UpdateHelper {
     }
 
     private fun showDialog(activity: Activity, latestVersion: Int) {
-        AlertDialog.Builder(activity, R.style.Theme_TVNavBrowser_Dialog)
+        AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
             .setTitle(R.string.update_available_title)
             .setMessage(R.string.update_available_message)
             .setPositiveButton(R.string.update_now) { _, _ ->

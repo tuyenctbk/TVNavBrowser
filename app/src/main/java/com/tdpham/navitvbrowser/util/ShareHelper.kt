@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import com.tdpham.navitvbrowser.R
+import com.tdpham.navitvbrowser.ui.ThemeHelper
 
 object ShareHelper {
 
@@ -19,7 +20,7 @@ object ShareHelper {
         val ivQr = dialogView.findViewById<ImageView>(R.id.ivQrCode)
         ivQr.setImageBitmap(generateQrBitmap(playStoreUrl, 500))
 
-        AlertDialog.Builder(activity, R.style.Theme_TVNavBrowser_Dialog)
+        AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
             .setTitle(R.string.share_title)
             .setMessage(R.string.share_message)
             .setView(dialogView)

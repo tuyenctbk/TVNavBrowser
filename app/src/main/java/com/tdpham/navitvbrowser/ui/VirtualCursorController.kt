@@ -45,26 +45,29 @@ class VirtualCursorController(
         
         val keyCode = event.keyCode
         val repeatCount = event.repeatCount
+        val holdDurationMs = (event.eventTime - event.downTime).coerceAtLeast(0)
         
-        // Acceleration: ramp up speed by 25% per repeat, capping at 3.5x
-        val accel = (1f + (repeatCount * 0.25f)).coerceAtMost(3.5f)
+        // Acceleration: ramp up speed based on hold duration and key repeat count
+        val durationBoost = (holdDurationMs / 250f).coerceIn(0f, 4.5f)
+        val repeatBoost = (repeatCount * 0.25f).coerceIn(0f, 3.5f)
+        val accel = (1f + durationBoost + repeatBoost).coerceAtMost(6.5f)
         val currentSpeed = speed * accel
 
         return when (keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
-                move(0f, -currentSpeed)
+                move(0f, -currentSpeed, holdDurationMs)
                 true
             }
             KeyEvent.KEYCODE_DPAD_DOWN -> {
-                move(0f, currentSpeed)
+                move(0f, currentSpeed, holdDurationMs)
                 true
             }
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                move(-currentSpeed, 0f)
+                move(-currentSpeed, 0f, holdDurationMs)
                 true
             }
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                move(currentSpeed, 0f)
+                move(currentSpeed, 0f, holdDurationMs)
                 true
             }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER,
@@ -97,8 +100,8 @@ class VirtualCursorController(
     }
 
     fun simulateClick() {
-        val x = cursor.x
-        val y = cursor.y
+        val x = cursor.x + 4f
+        val y = cursor.y + 4f
         val downTime = SystemClock.uptimeMillis()
 
         val wasVisible = cursor.visibility == View.VISIBLE
@@ -126,7 +129,7 @@ class VirtualCursorController(
         onCursorActivity?.invoke()
     }
 
-    fun move(dx: Float, dy: Float) {
+    fun move(dx: Float, dy: Float, holdDurationMs: Long = 0L) {
         val performMove = Runnable {
             val maxX = (container.width - cursor.width).coerceAtLeast(0).toFloat()
             val maxY = (container.height - cursor.height).coerceAtLeast(0).toFloat()
@@ -134,15 +137,26 @@ class VirtualCursorController(
             cursor.x = (cursor.x + dx).coerceIn(0f, maxX)
             cursor.y = (cursor.y + dy).coerceIn(0f, maxY)
 
-            // Edge Scrolling: If cursor is at top/bottom limit, scroll the webpage
+            // Smooth Edge Scrolling: Accelerate scrolling progressively as D-pad is held
+            val scrollMultiplier = (1.5f + (holdDurationMs / 300f)).coerceIn(1.5f, 6.0f)
+            val scrollDeltaY = (dy * scrollMultiplier).toInt()
+            val scrollDeltaX = (dx * scrollMultiplier).toInt()
+
             if (cursor.y <= 0f && dy < 0) {
                 if (webView.canScrollVertically(-1)) {
-                    webView.scrollBy(0, dy.toInt() * 2)
+                    webView.scrollBy(0, scrollDeltaY)
                 } else {
                     onExitUp?.invoke()
                 }
             } else if (cursor.y >= maxY && dy > 0) {
-                webView.scrollBy(0, dy.toInt() * 2)
+                webView.scrollBy(0, scrollDeltaY)
+            }
+
+            // Horizontal Edge Scrolling
+            if (cursor.x <= 0f && dx < 0 && webView.canScrollHorizontally(-1)) {
+                webView.scrollBy(scrollDeltaX, 0)
+            } else if (cursor.x >= maxX && dx > 0 && webView.canScrollHorizontally(1)) {
+                webView.scrollBy(scrollDeltaX, 0)
             }
 
             onCursorActivity?.invoke()
