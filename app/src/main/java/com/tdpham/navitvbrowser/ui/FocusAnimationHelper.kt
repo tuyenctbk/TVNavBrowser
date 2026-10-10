@@ -43,11 +43,13 @@ object FocusAnimationHelper {
                             repeatCount = ValueAnimator.INFINITE
                             interpolator = AccelerateDecelerateInterpolator()
                             addUpdateListener { anim ->
-                                if (v.hasFocus()) {
-                                    val s = anim.animatedValue as Float
-                                    v.scaleX = s
-                                    v.scaleY = s
+                                if (!v.isAttachedToWindow || !v.hasFocus()) {
+                                    anim.cancel()
+                                    return@addUpdateListener
                                 }
+                                val s = anim.animatedValue as Float
+                                v.scaleX = s
+                                v.scaleY = s
                             }
                         }
                         v.setTag(R.id.tag_glow_animator, pulse)

@@ -18,6 +18,7 @@ import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.data.entity.BookmarkEntity
 import com.tdpham.navitvbrowser.data.repository.BookmarkRepository
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
+import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -92,7 +93,7 @@ class BookmarksActivity : ComponentActivity() {
             FocusAnimationHelper.apply(btnDeleteRow)
 
             row.setOnClickListener {
-                FirebaseInitializer.logEvent("bookmark_opened", mapOf("url" to bookmark.url))
+                FirebaseInitializer.logEvent("bookmark_opened", mapOf("host" to UrlUtils.hostOf(bookmark.url)))
                 openUrl(bookmark.url)
             }
             row.setOnLongClickListener {
@@ -110,8 +111,8 @@ class BookmarksActivity : ComponentActivity() {
         AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
             .setTitle(R.string.bookmarks)
             .setMessage(getString(R.string.url_row_format, bookmark.title, bookmark.url))
-            .setPositiveButton(R.string.settings_clear_bookmarks) { _, _ ->
-                FirebaseInitializer.logEvent("bookmark_deleted", mapOf("url" to bookmark.url))
+            .setPositiveButton(R.string.action_delete) { _, _ ->
+                FirebaseInitializer.logEvent("bookmark_deleted", mapOf("host" to UrlUtils.hostOf(bookmark.url)))
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         repository.removeBookmark(bookmark)

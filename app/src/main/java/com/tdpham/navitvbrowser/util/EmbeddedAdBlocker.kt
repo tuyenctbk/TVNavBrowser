@@ -70,7 +70,6 @@ object EmbeddedAdBlocker {
         "adtech",
         "advert",
         "banner-ads",
-        "sponsor",
         "tracking",
         "tracker",
         "analytics",
@@ -83,22 +82,14 @@ object EmbeddedAdBlocker {
         "/ads?",
         "/ad?",
         "/advert",
-        "/banner",
-        "/sponsor",
         "/tracking",
-        "/pixel",
         "adsystem",
         "adservice",
         "pagead",
         "show_ads"
     )
 
-    private val emptyResponse = WebResourceResponse(
-        "text/plain",
-        "utf-8",
-        ByteArrayInputStream(ByteArray(0))
-    )
-
+    @Volatile
     private var customRulesSet: Set<String> = emptySet()
 
     fun updateCustomRules(rules: Set<String>) {
@@ -167,7 +158,12 @@ object EmbeddedAdBlocker {
         return false
     }
 
-    fun blockedResponse(): WebResourceResponse = emptyResponse
+    // A WebResourceResponse wraps a one-shot stream, so never share one instance between requests.
+    fun blockedResponse(): WebResourceResponse = WebResourceResponse(
+        "text/plain",
+        "utf-8",
+        ByteArrayInputStream(ByteArray(0))
+    )
 
     fun applyDomCleanup(webView: WebView) {
         webView.evaluateJavascript(DOM_CLEANUP_SCRIPT, null)
@@ -177,11 +173,11 @@ object EmbeddedAdBlocker {
 (function() {
   var css = [
     'ins.adsbygoogle,',
-    '[class*="ad-container"], [class*="ad_container"], [class*="ad-wrapper"],',
-    '[class*="ad_banner"], [class*="ad-banner"], [class*="adsbox"],',
-    '[class*="advert"], [class*="sponsored"], [class*="promo-ad"],',
-    '[id*="ad-container"], [id*="ad_container"], [id*="ad-slot"], [id*="ad_slot"],',
-    '[id*="google_ads"], [id*="div-gpt-ad"],',
+    '[class~="ad-container"], [class~="ad_container"], [class~="ad-wrapper"],',
+    '[class~="ad_banner"], [class~="ad-banner"], [class~="adsbox"],',
+    '[class~="advert"], [class~="sponsored"], [class~="promo-ad"],',
+    '[id="ad-container"], [id="ad_container"], [id^="ad-slot"], [id^="ad_slot"],',
+    '[id^="google_ads"], [id^="div-gpt-ad"],',
     '[data-ad], [data-ad-slot], [data-ad-client], [data-google-query-id],',
     'iframe[src*="doubleclick"], iframe[src*="googlesyndication"],',
     'iframe[src*="adnxs"], iframe[src*="taboola"], iframe[src*="outbrain"],',
@@ -204,9 +200,9 @@ object EmbeddedAdBlocker {
 
   var selectors = [
     'ins.adsbygoogle',
-    '[class*="ad-container"]', '[class*="ad_container"]', '[class*="ad-wrapper"]',
-    '[class*="advert"]', '[class*="sponsored"]', '[id*="ad-slot"]', '[id*="ad_slot"]',
-    '[id*="google_ads"]', '[id*="div-gpt-ad"]', '[data-ad]', '[data-ad-slot]',
+    '[class~="ad-container"]', '[class~="ad_container"]', '[class~="ad-wrapper"]',
+    '[class~="advert"]', '[class~="sponsored"]', '[id^="ad-slot"]', '[id^="ad_slot"]',
+    '[id^="google_ads"]', '[id^="div-gpt-ad"]', '[data-ad]', '[data-ad-slot]',
     'iframe[src*="doubleclick"]', 'iframe[src*="googlesyndication"]',
     'iframe[src*="taboola"]', 'iframe[src*="outbrain"]', '.google-auto-placed'
   ];

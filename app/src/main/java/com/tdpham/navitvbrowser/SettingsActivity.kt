@@ -21,6 +21,7 @@ import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
+import com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -224,7 +225,7 @@ class SettingsActivity : ComponentActivity() {
                     "https://$url"
                 }
                 AppPreferences.setHomepage(this, normalized)
-                FirebaseInitializer.logEvent("settings_homepage_saved", mapOf("url" to normalized))
+                FirebaseInitializer.logEvent("settings_homepage_saved", mapOf("host" to com.tdpham.navitvbrowser.util.UrlUtils.hostOf(normalized)))
                 Toast.makeText(this, R.string.settings_homepage_saved, Toast.LENGTH_SHORT).show()
             }
         }
@@ -244,7 +245,7 @@ class SettingsActivity : ComponentActivity() {
         btnClearHistory.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.settings_clear_history)
-                .setMessage(R.string.history_empty)
+                .setMessage(R.string.settings_clear_history_confirm)
                 .setPositiveButton(R.string.settings_clear_history) { _, _ ->
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) { db.historyDao().clearAll() }
@@ -259,10 +260,14 @@ class SettingsActivity : ComponentActivity() {
         btnClearBookmarks.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.settings_clear_bookmarks)
-                .setMessage(R.string.bookmarks_empty)
+                .setMessage(R.string.settings_clear_bookmarks_confirm)
                 .setPositiveButton(R.string.settings_clear_bookmarks) { _, _ ->
                     lifecycleScope.launch {
-                        withContext(Dispatchers.IO) { db.bookmarkDao().clearAll() }
+                        withContext(Dispatchers.IO) {
+                            db.bookmarkDao().clearAll()
+                            // Otherwise the next sync would restore them from the cloud
+                            BookmarkSyncManager.clearRemoteBookmarks(applicationContext)
+                        }
                         FirebaseInitializer.logEvent("settings_bookmarks_cleared")
                         Toast.makeText(this@SettingsActivity, R.string.settings_bookmarks_cleared, Toast.LENGTH_SHORT).show()
                     }
@@ -274,11 +279,14 @@ class SettingsActivity : ComponentActivity() {
         btnClearCache.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.settings_clear_cache)
-                .setMessage(R.string.settings_cache_cleared)
+                .setMessage(R.string.settings_clear_cache_confirm)
                 .setPositiveButton(R.string.settings_clear_cache) { _, _ ->
                     lifecycleScope.launch {
                         try {
-                            WebView(applicationContext).clearCache(true)
+                            WebView(applicationContext).apply {
+                                clearCache(true)
+                                destroy()
+                            }
                             com.tdpham.navitvbrowser.util.WebViewCacheManager.clearEntireCache(applicationContext)
                             FirebaseInitializer.logEvent("settings_cache_cleared")
                             Toast.makeText(this@SettingsActivity, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()

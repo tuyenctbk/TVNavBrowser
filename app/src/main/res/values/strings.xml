@@ -183,4 +183,9 @@
     <string name="ad_tip_3">Long-press OK on dashboard shortcuts to remove them!</string>
     <string name="ad_tip_4">Enable Web Ad Blocker in Settings to speed up page loads!</string>
     <string name="ad_tip_5">Press Back on remote to clear focus and dismiss keypads.</string>
+    <string name="settings_clear_history_confirm">Are you sure you want to clear all browsing history?</string>
+    <string name="settings_clear_bookmarks_confirm">Are you sure you want to clear all bookmarks?</string>
+    <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
+    <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
+    <string name="ai_local_summary_prefix">Quick summary:</string>
 </resources>

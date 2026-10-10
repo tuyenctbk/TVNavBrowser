@@ -18,6 +18,7 @@ import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.data.entity.HistoryEntity
 import com.tdpham.navitvbrowser.data.repository.HistoryRepository
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
+import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -73,7 +74,7 @@ class HistoryActivity : ComponentActivity() {
             FocusAnimationHelper.apply(btnDeleteRow)
 
             row.setOnClickListener {
-                FirebaseInitializer.logEvent("history_opened", mapOf("url" to history.url))
+                FirebaseInitializer.logEvent("history_opened", mapOf("host" to UrlUtils.hostOf(history.url)))
                 openUrl(history.url)
             }
             row.setOnLongClickListener {
@@ -91,8 +92,8 @@ class HistoryActivity : ComponentActivity() {
         AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
             .setTitle(R.string.history)
             .setMessage(getString(R.string.url_row_format, history.title, history.url))
-            .setPositiveButton(R.string.settings_clear_history) { _, _ ->
-                FirebaseInitializer.logEvent("history_deleted", mapOf("url" to history.url))
+            .setPositiveButton(R.string.action_delete) { _, _ ->
+                FirebaseInitializer.logEvent("history_deleted", mapOf("host" to UrlUtils.hostOf(history.url)))
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) { repository.removeFromHistory(history) }
                 }

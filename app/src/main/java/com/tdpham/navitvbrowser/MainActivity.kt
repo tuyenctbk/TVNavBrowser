@@ -3,12 +3,17 @@ package com.tdpham.navitvbrowser
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ClipData
+import android.text.TextUtils
+import android.webkit.RenderProcessGoneDetail
+import androidx.annotation.RequiresApi
+import org.json.JSONTokener
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.SystemClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -85,6 +90,15 @@ class MainActivity : ComponentActivity() {
         private const val KEY_MOUSE_MODE = "mouse_mode"
         private const val VOICE_SEARCH_REQUEST_CODE = 999
         private const val RECORD_AUDIO_PERMISSION_CODE = 1001
+        private const val MAX_OFFLINE_TEXT_CHARS = 100_000
+        private const val TRUSTED_ASSET_PREFIX = "file:///android_asset/"
+
+        /**
+         * Set when the WebView renderer dies so the recreated Activity starts on the homepage
+         * instead of reloading the page that just crashed (which would cause a crash loop).
+         */
+        @Volatile
+        private var recoverToHomepage = false
     }
 
     private lateinit var webView: WebView
@@ -220,7 +234,7 @@ class MainActivity : ComponentActivity() {
             val text = tvSummaryContent.text.toString()
             if (text.isNotBlank()) {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText("AI Summary", text))
+                clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.ai_summary_heading), text))
                 Toast.makeText(this, R.string.ai_summary_copied, Toast.LENGTH_SHORT).show()
             }
         }
@@ -250,25 +264,13 @@ class MainActivity : ComponentActivity() {
             }
             resetInactivityTimer()
         }
-        virtualCursor.onExitUp = {
-            if (isFullscreenMode) {
-                toggleFullscreen(false)
-            }
-            urlInput.requestFocus()
-        }
 
         webView.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (isSwitchingMode) return@OnFocusChangeListener
             if (hasFocus) {
                 setMouseMode(true)
-                showModeNotice(getString(R.string.mode_virtual_mouse))
-                ivCursor.post {
-                    ivCursor.x = rootLayout.width / 2f - ivCursor.width / 2f
-                    ivCursor.y = webViewContainer.y + 10f
-                }
             } else {
                 setMouseMode(false)
-                showModeNotice(getString(R.string.mode_dpad))
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(webView.windowToken, 0)
             }
@@ -288,18 +290,27 @@ class MainActivity : ComponentActivity() {
         isDarkModeActive = AppPreferences.isForceDarkModeEnabled(this)
         applyDarkMode(isDarkModeActive)
 
-        if (savedInstanceState != null) {
-            val savedUrl = savedInstanceState.getString(KEY_SAVED_URL)
-            if (!savedUrl.isNullOrBlank()) {
-                webView.loadUrl(savedUrl)
-                urlInput.setText(savedUrl)
-            } else {
-                loadInitialUrl(intent)
+        val recovering = recoverToHomepage
+        recoverToHomepage = false
+        val restoreUrl = savedInstanceState?.getString(KEY_SAVED_URL)
+        when {
+            recovering -> {
+                val home = resolveHomepage()
+                webView.loadUrl(home)
+                urlInput.setText(home)
             }
-            setMouseMode(savedInstanceState.getBoolean(KEY_MOUSE_MODE, true))
-        } else {
-            loadInitialUrl(intent)
-            setMouseMode(true)
+            !restoreUrl.isNullOrBlank() -> {
+                webView.loadUrl(restoreUrl)
+                urlInput.setText(restoreUrl)
+            }
+            else -> loadInitialUrl(intent)
+        }
+        setMouseMode(savedInstanceState?.getBoolean(KEY_MOUSE_MODE, true) ?: true)
+
+        webView.post {
+            if (virtualCursor.isEnabled && !urlInput.hasFocus()) {
+                webView.requestFocus()
+            }
         }
 
         findViewById<FrameLayout>(R.id.adContainer)?.let {
@@ -351,6 +362,13 @@ class MainActivity : ComponentActivity() {
             return
         }
         applyInterfaceTheme()
+        // Keep the toolbar toggle in sync with the Settings switch (both write the same preference).
+        if (::webView.isInitialized) {
+            val darkPref = AppPreferences.isForceDarkModeEnabled(this)
+            if (darkPref != isDarkModeActive) {
+                applyDarkMode(darkPref)
+            }
+        }
         if (::webViewMemoryManager.isInitialized) {
             webViewMemoryManager.onResume()
         } else if (::webView.isInitialized) {
@@ -392,7 +410,9 @@ class MainActivity : ComponentActivity() {
                 outState.putString(KEY_SAVED_URL, currentUrl)
             }
         }
-        outState.putBoolean(KEY_MOUSE_MODE, virtualCursor.isEnabled)
+        if (::virtualCursor.isInitialized) {
+            outState.putBoolean(KEY_MOUSE_MODE, virtualCursor.isEnabled)
+        }
     }
 
     override fun onDestroy() {
@@ -435,28 +455,31 @@ class MainActivity : ComponentActivity() {
                     urlInput.selectAll()
                     return true
                 }
-                KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_MEDIA_PLAY -> {
-                    webView.reload()
-                    return true
-                }
             }
         }
 
-        if (event.action == KeyEvent.ACTION_DOWN && webView.hasFocus() && !isKeyboardVisible()) {
-            if (virtualCursor.isEnabled) {
-                if (virtualCursor.handleKey(event)) {
-                    updateInputHint()
-                    return true
-                }
-            } else if (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                // Smooth accelerated scrolling when holding D-pad in spatial navigation mode
-                val holdDurationMs = (event.eventTime - event.downTime).coerceAtLeast(0)
-                if (event.repeatCount > 1 || holdDurationMs > 280L) {
-                    val scrollMultiplier = (1.5f + (holdDurationMs / 250f)).coerceIn(1.5f, 6.0f)
-                    val deltaY = (if (event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) 45f else -45f) * scrollMultiplier
-                    webView.scrollBy(0, deltaY.toInt())
-                    return true
-                }
+        val isOverlayActive = (summaryOverlayContainer.visibility == View.VISIBLE) || (voiceOverlay.visibility == View.VISIBLE)
+        val isEditingUrl = urlInput.hasFocus()
+        val isFocusedOnToolbar = isViewInToolbarOrBookmarkBar(currentFocus) && !webView.hasFocus()
+
+        // While a page video is shown fullscreen, keys must reach the player controls, not the pointer.
+        val isCustomViewShown = customView != null
+
+        if (virtualCursor.isEnabled && !isOverlayActive && !isEditingUrl && !isFocusedOnToolbar && !isCustomViewShown) {
+            if (!webView.hasFocus()) {
+                webView.requestFocus()
+            }
+            if (virtualCursor.handleKey(event)) {
+                return true
+            }
+        } else if (event.action == KeyEvent.ACTION_DOWN && (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN)) {
+            // Smooth accelerated scrolling when holding D-pad in spatial navigation mode
+            val holdDurationMs = (event.eventTime - event.downTime).coerceAtLeast(0)
+            if (event.repeatCount > 1 || holdDurationMs > 280L) {
+                val scrollMultiplier = (1.5f + (holdDurationMs / 250f)).coerceIn(1.5f, 6.0f)
+                val deltaY = (if (event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) 45f else -45f) * scrollMultiplier
+                webView.scrollBy(0, deltaY.toInt())
+                return true
             }
         }
         return super.dispatchKeyEvent(event)
@@ -540,6 +563,7 @@ class MainActivity : ComponentActivity() {
                         if (intent != null) {
                             intent.addCategory(Intent.CATEGORY_BROWSABLE)
                             intent.component = null
+                            intent.selector = null
                             startActivity(intent)
                             return true
                         }
@@ -560,6 +584,19 @@ class MainActivity : ComponentActivity() {
                     return EmbeddedAdBlocker.blockedResponse()
                 }
                 return super.shouldInterceptRequest(view, request)
+            }
+
+            @RequiresApi(android.os.Build.VERSION_CODES.O)
+            override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
+                // Without this override a renderer crash/OOM-kill (common on low-RAM TVs) takes down the whole app.
+                FirebaseCrashlytics.getInstance().log(
+                    "WebView renderer gone (didCrash=${detail?.didCrash()}, priority=${detail?.rendererPriorityAtExit()})"
+                )
+                recoverToHomepage = true
+                runOnUiThread {
+                    if (!isFinishing && !isDestroyed) recreate()
+                }
+                return true
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
@@ -613,7 +650,7 @@ class MainActivity : ComponentActivity() {
                     lifecycleScope.launch(Dispatchers.IO) {
                         historyRepo.addToHistory(title = title, url = pageUrl)
                     }
-                    FirebaseInitializer.logEvent("page_view", mapOf("url" to pageUrl))
+                    FirebaseInitializer.logEvent("page_view", mapOf("host" to UrlUtils.hostOf(pageUrl)))
                 }
                 updateNavButtonsState()
             }
@@ -700,7 +737,7 @@ class MainActivity : ComponentActivity() {
                 if (added) {
                     BookmarkSyncManager.pushBookmark(this@MainActivity, BookmarkEntity(title = title, url = url))
                     EngagementHelper.recordBookmarkAdded(this@MainActivity)
-                    FirebaseInitializer.logEvent("bookmark_added", mapOf("url" to url))
+                    FirebaseInitializer.logEvent("bookmark_added", mapOf("host" to UrlUtils.hostOf(url)))
                 }
             }
         }
@@ -738,31 +775,37 @@ class MainActivity : ComponentActivity() {
         ) { jsonResult ->
             lifecycleScope.launch {
                 var title = webView.title.orEmpty().ifBlank { url }
-                var excerpt = ""
+                var fullText = ""
 
                 try {
                     if (!jsonResult.isNullOrBlank() && jsonResult != "null") {
-                        val obj = if (jsonResult.startsWith("\"") && jsonResult.endsWith("\"")) {
-                            JSONObject(jsonResult.substring(1, jsonResult.length - 1).replace("\\\"", "\""))
-                        } else {
-                            JSONObject(jsonResult)
+                        // evaluateJavascript() JSON-encodes the script result. Because the script already returns a
+                        // JSON string, the value arrives as an escaped string literal that must be decoded once
+                        // (handling escaped quotes, backslashes and \uXXXX correctly) before parsing it as an object.
+                        val obj = when (val decoded = JSONTokener(jsonResult).nextValue()) {
+                            is String -> JSONObject(decoded)
+                            is JSONObject -> decoded
+                            else -> null
                         }
-                        if (obj.has("title") && obj.getString("title").isNotBlank()) {
-                            title = obj.getString("title")
-                        }
-                        if (obj.has("text")) {
-                            val rawText = obj.getString("text")
-                            excerpt = rawText.take(250).replace("\\s+".toRegex(), " ").trim()
+                        if (obj != null) {
+                            val pageTitle = obj.optString("title")
+                            if (pageTitle.isNotBlank()) title = pageTitle
+                            fullText = obj.optString("text")
+                                .replace("\\n{3,}".toRegex(), "\n\n")
+                                .trim()
+                                .take(MAX_OFFLINE_TEXT_CHARS)
                         }
                     }
                 } catch (_: Exception) {
-                    excerpt = title
+                    fullText = ""
                 }
 
-                if (excerpt.isBlank()) excerpt = title
+                val excerpt = fullText.take(250).replace("\\s+".toRegex(), " ").trim().ifBlank { title }
+                // The reader renders this through Html.fromHtml(), so plain text must be escaped.
+                val contentHtml = if (fullText.isBlank()) "" else TextUtils.htmlEncode(fullText).replace("\n", "<br>")
 
                 val savedId = withContext(Dispatchers.IO) {
-                    readLaterRepo.saveArticle(title, url, "", excerpt)
+                    readLaterRepo.saveArticle(title, url, contentHtml, excerpt)
                 }
                 if (savedId > 0) {
                     Toast.makeText(this@MainActivity, R.string.read_later_saved, Toast.LENGTH_SHORT).show()
@@ -797,7 +840,9 @@ class MainActivity : ComponentActivity() {
         val query = input.trim()
         autocompleteJob?.cancel()
 
-        if (query.isBlank() || query.startsWith("file://")) {
+        // Only suggest while the user is actually typing; programmatic updates (page loads, voice,
+        // intents) must not run DB queries or replace the bookmark chips with URL look-alikes.
+        if (!urlInput.hasFocus() || query.isBlank() || query.startsWith("file://")) {
             populateBookmarkBar(realBookmarks)
             return
         }
@@ -933,6 +978,7 @@ class MainActivity : ComponentActivity() {
 
     private fun setMouseMode(enabled: Boolean) {
         if (isSwitchingMode) return
+        if (virtualCursor.isEnabled == enabled) return
         isSwitchingMode = true
         try {
             virtualCursor.setEnabled(enabled)
@@ -954,21 +1000,37 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val hideInputHintRunnable = Runnable { tvInputHint.isVisible = virtualCursor.isEnabled }
+
     private fun updateInputHint() {
+        tvInputHint.removeCallbacks(hideInputHintRunnable)
         tvInputHint.text = when {
             virtualCursor.isEnabled -> getString(R.string.input_hint_virtual_mouse)
             hasConnectedMouse() -> getString(R.string.input_hint_mouse)
             else -> getString(R.string.input_hint_default)
         }
         tvInputHint.isVisible = true
-        tvInputHint.postDelayed({ tvInputHint.isVisible = virtualCursor.isEnabled }, 3500)
+        tvInputHint.postDelayed(hideInputHintRunnable, 3500)
     }
 
+    private var lastMouseCheckTime = 0L
+    private var cachedMouseConnected = false
+
     private fun hasConnectedMouse(): Boolean {
-        return InputDevice.getDeviceIds().any { id ->
-            val device = InputDevice.getDevice(id) ?: return@any false
-            device.sources and InputDevice.SOURCE_MOUSE == InputDevice.SOURCE_MOUSE
+        val now = SystemClock.uptimeMillis()
+        if (now - lastMouseCheckTime < 4000L) {
+            return cachedMouseConnected
         }
+        lastMouseCheckTime = now
+        cachedMouseConnected = try {
+            InputDevice.getDeviceIds().any { id ->
+                val device = InputDevice.getDevice(id) ?: return@any false
+                device.sources and InputDevice.SOURCE_MOUSE == InputDevice.SOURCE_MOUSE
+            }
+        } catch (_: Exception) {
+            false
+        }
+        return cachedMouseConnected
     }
 
     private fun setupToolbarButtons() {
@@ -1039,12 +1101,15 @@ class MainActivity : ComponentActivity() {
                     webView.requestFocus()
                     return
                 }
-                if (webView.hasFocus() && virtualCursor.isEnabled) {
-                    urlInput.requestFocus()
-                    return
-                }
                 if (webView.canGoBack()) {
                     webView.goBack()
+                    return
+                }
+                val homepage = resolveHomepage()
+                val currentUrl = webView.url.orEmpty()
+                if (currentUrl.isNotBlank() && currentUrl != homepage && !currentUrl.endsWith("dashboard.html")) {
+                    webView.loadUrl(homepage)
+                    Toast.makeText(this@MainActivity, getString(R.string.nav_returning_home), Toast.LENGTH_SHORT).show()
                     return
                 }
                 finish()
@@ -1081,17 +1146,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun loadTypedUrl(input: String) {
-        if (input.isEmpty()) return
-        var url = input
-        if (!url.startsWith("http://") && !url.startsWith("https://")) {
-            url = "https://www.google.com/search?q=" + java.net.URLEncoder.encode(input, "UTF-8")
-        }
+        if (input.isBlank()) return
+        val url = UrlUtils.resolveInput(input)
         val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
         urlInput.clearFocus()
         webView.loadUrl(url)
         webView.requestFocus()
-        FirebaseInitializer.logEvent("search", mapOf("query" to input))
+        FirebaseInitializer.logEvent("search", mapOf("query_length" to input.length))
     }
 
     private fun injectFocusStyle(view: WebView?) {
@@ -1118,23 +1180,37 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun injectDarkMode(view: WebView?) {
-        val js = """
-            (function() {
-                var style = document.getElementById('tvnav-dark-mode');
-                if (style) return;
+        view?.evaluateJavascript(darkModeScript(true), null)
+    }
+
+    /**
+     * Single source of truth for the injected dark stylesheet. Page loads and the toolbar toggle
+     * previously injected two different stylesheets with different ids, so turning dark mode off
+     * only removed one of them and the page stayed dark.
+     */
+    private fun darkModeScript(enabled: Boolean): String = if (enabled) {
+        """
+        (function() {
+            var legacy = document.getElementById('tvnav-dark-mode');
+            if (legacy) legacy.remove();
+            var style = document.getElementById('__tvnav_dark_style__');
+            if (!style) {
                 style = document.createElement('style');
-                style.id = 'tvnav-dark-mode';
-                style.innerHTML = 'html, body { background-color: #0b1020 !important; color: #ffffff !important; } ' +
-                                  '* { border-color: #333 !important; } ' +
-                                  'a { color: #8ab4f8 !important; } ' +
-                                  'input, textarea { background-color: #1c2640 !important; color: #fff !important; }';
-                document.head.appendChild(style);
-                
-                // Intelligent inversion for images if they are too bright (optional/complex)
-                // document.documentElement.style.filter = 'invert(1) hue-rotate(180deg)';
-            })();
+                style.id = '__tvnav_dark_style__';
+                style.innerHTML = 'html, body { background-color: #121212 !important; color: #e6e6e6 !important; } * { border-color: #2e2e2e !important; } p, span, h1, h2, h3, h4, h5, h6, li, td, th { color: #e6e6e6 !important; } a { color: #82b1ff !important; } input, textarea, select { background: #242424 !important; color: #ffffff !important; } img, video { filter: brightness(0.88) contrast(1.05) !important; }';
+                (document.head || document.documentElement).appendChild(style);
+            }
+        })();
         """.trimIndent()
-        view?.evaluateJavascript(js, null)
+    } else {
+        """
+        (function() {
+            ['__tvnav_dark_style__', 'tvnav-dark-mode'].forEach(function(id) {
+                var style = document.getElementById(id);
+                if (style) style.remove();
+            });
+        })();
+        """.trimIndent()
     }
 
     private fun updateNavButtonsState() {
@@ -1152,7 +1228,7 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 bookmarkRepo.getAllBookmarks().collectLatest { list ->
                     realBookmarks = list
-                    if (urlInput.text.isNullOrBlank()) {
+                    if (urlInput.text.isNullOrBlank() || !urlInput.hasFocus()) {
                         populateBookmarkBar(list)
                     }
                 }
@@ -1257,28 +1333,8 @@ class MainActivity : ComponentActivity() {
             } catch (_: Exception) {}
         }
 
-        // Comprehensive TV-friendly Dark Mode CSS injection
-        val js = if (enabled) {
-            """
-            (function() {
-                var style = document.getElementById('__tvnav_dark_style__');
-                if (!style) {
-                    style = document.createElement('style');
-                    style.id = '__tvnav_dark_style__';
-                    style.innerHTML = 'html, body { background-color: #121212 !important; color: #e6e6e6 !important; } * { border-color: #2e2e2e !important; } p, span, h1, h2, h3, h4, h5, h6, li, td, th { color: #e6e6e6 !important; } a { color: #82b1ff !important; } input, textarea, select { background: #242424 !important; color: #ffffff !important; } img, video { filter: brightness(0.88) contrast(1.05) !important; }';
-                    document.head.appendChild(style);
-                }
-            })();
-            """.trimIndent()
-        } else {
-            """
-            (function() {
-                var style = document.getElementById('__tvnav_dark_style__');
-                if (style) style.remove();
-            })();
-            """.trimIndent()
-        }
-        webView.evaluateJavascript(js, null)
+        // Comprehensive TV-friendly Dark Mode CSS injection / removal
+        webView.evaluateJavascript(darkModeScript(enabled), null)
     }
 
     private fun startVoiceControl() {
@@ -1402,6 +1458,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -1430,15 +1487,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun isKeyboardVisible(): Boolean {
-        val insets = ViewCompat.getRootWindowInsets(window.decorView)
-        if (insets != null) {
-            return insets.isVisible(WindowInsetsCompat.Type.ime())
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            val insets = ViewCompat.getRootWindowInsets(window.decorView)
+            if (insets != null) {
+                return insets.isVisible(WindowInsetsCompat.Type.ime())
+            }
         }
-        val rect = android.graphics.Rect()
-        window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenHeight = window.decorView.rootView.height
-        val keypadHeight = screenHeight - rect.bottom
-        return keypadHeight > screenHeight * 0.15
+        return urlInput.hasFocus() || isWebViewInputFocused
     }
 
     private fun injectInputFocusListeners(view: WebView?) {
@@ -1533,37 +1588,47 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        /**
+         * The bridge is registered for every page, so any website could call the navigation methods.
+         * Only the bundled dashboard (loaded from app assets) is allowed to trigger them.
+         */
+        private fun runIfTrustedPage(action: () -> Unit) {
+            runOnUiThread {
+                if (webView.url.orEmpty().startsWith(TRUSTED_ASSET_PREFIX)) action()
+            }
+        }
+
         @android.webkit.JavascriptInterface
         fun openBookmarks() {
-            runOnUiThread {
+            runIfTrustedPage {
                 startActivity(Intent(this@MainActivity, BookmarksActivity::class.java))
             }
         }
 
         @android.webkit.JavascriptInterface
         fun openReadLater() {
-            runOnUiThread {
+            runIfTrustedPage {
                 startActivity(Intent(this@MainActivity, ReadLaterActivity::class.java))
             }
         }
 
         @android.webkit.JavascriptInterface
         fun openHistory() {
-            runOnUiThread {
+            runIfTrustedPage {
                 startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
             }
         }
 
         @android.webkit.JavascriptInterface
         fun openSettings() {
-            runOnUiThread {
+            runIfTrustedPage {
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             }
         }
 
         @android.webkit.JavascriptInterface
         fun openUrl(url: String) {
-            runOnUiThread {
+            runIfTrustedPage {
                 loadTypedUrl(url)
             }
         }

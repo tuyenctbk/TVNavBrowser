@@ -14,7 +14,9 @@ object RemoteConfigHelper {
     private const val KEY_ADS_MIN_DAYS = "ads_min_days"
     private const val KEY_ADS_MIN_OPENS = "ads_min_opens"
     private const val KEY_SAFE_BROWSING = "safe_browsing_enabled"
+    private const val KEY_AI_MODEL_NAME = "ai_model_name"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
+    private const val DEFAULT_AI_MODEL = "gemini-2.5-flash"
 
     @Volatile
     private var cachedAdBlockSet: Set<String>? = null
@@ -32,7 +34,8 @@ object RemoteConfigHelper {
             KEY_ADS_ENABLED to true,
             KEY_ADS_MIN_DAYS to 15L,
             KEY_ADS_MIN_OPENS to 3L,
-            KEY_SAFE_BROWSING to false
+            KEY_SAFE_BROWSING to true,
+            KEY_AI_MODEL_NAME to DEFAULT_AI_MODEL
         ))
         remoteConfig.fetchAndActivate().addOnCompleteListener {
             synchronized(this) {
@@ -79,5 +82,10 @@ object RemoteConfigHelper {
 
     fun isSafeBrowsingEnabled(): Boolean {
         return Firebase.remoteConfig.getBoolean(KEY_SAFE_BROWSING)
+    }
+
+    fun getAiModelName(): String {
+        val model = Firebase.remoteConfig.getString(KEY_AI_MODEL_NAME)
+        return model.ifBlank { DEFAULT_AI_MODEL }
     }
 }

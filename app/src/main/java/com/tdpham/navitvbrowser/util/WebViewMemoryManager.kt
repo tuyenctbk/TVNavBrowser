@@ -74,10 +74,10 @@ class WebViewMemoryManager(
     override fun onTrimMemory(level: Int) {
         Log.w(TAG, "onTrimMemory received level: $level")
         when (level) {
-            ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL,
-            ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
                 forceTrimMemory(isCritical = true)
             }
+            ComponentCallbacks2.TRIM_MEMORY_COMPLETE,
             ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
             ComponentCallbacks2.TRIM_MEMORY_MODERATE,
             ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> {
@@ -106,6 +106,7 @@ class WebViewMemoryManager(
     fun destroy() {
         try {
             context.unregisterComponentCallbacks(this)
+            (webView.parent as? android.view.ViewGroup)?.removeView(webView)
             webView.stopLoading()
             webView.clearHistory()
             webView.clearCache(true)

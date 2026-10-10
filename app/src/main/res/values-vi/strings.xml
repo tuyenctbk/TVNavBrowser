@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Trình Duyệt NaviTV</string>
-
     <string name="bookmarks">Dấu trang</string>
     <string name="history">Lịch sử</string>
     <string name="settings">Cài đặt</string>
@@ -9,7 +8,6 @@
     <string name="bookmarks_empty">Chưa có dấu trang. Nút ☆ để lưu trang.</string>
     <string name="history_empty">Chưa có lịch sử duyệt web.</string>
     <string name="url_row_format">%1$s\n%2$s</string>
-
     <string name="onboarding_step">Bước %1$d / %2$d</string>
     <string name="onboarding_next">Tiếp tục</string>
     <string name="onboarding_skip">Bỏ qua</string>
@@ -22,13 +20,11 @@
     <string name="onboarding_message_3">Sử dụng nút ngôi sao để lưu dấu trang. Mở dấu trang và lịch sử từ thanh công cụ bất kỳ lúc nào.</string>
     <string name="onboarding_title_4">Hoàn tất thiết lập</string>
     <string name="onboarding_message_4">Lịch sử tự động lưu. Vào Cài đặt để thay đổi trang chủ, chặn quảng cáo trang web hoặc xóa dữ liệu.</string>
-
     <string name="rating_title">Bạn yêu thích Trình Duyệt NaviTV?</string>
     <string name="rating_message">Nếu bạn thích ứng dụng, hãy đánh giá giúp chúng tôi nâng cấp trải nghiệm tốt hơn!</string>
     <string name="rating_rate">Đánh giá</string>
     <string name="rating_remind_later">Nhắc tôi sau</string>
     <string name="rating_no_thanks">Không, cảm ơn</string>
-
     <string name="settings_homepage_label">Địa chỉ trang chủ</string>
     <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">Lưu trang chủ</string>
@@ -45,15 +41,20 @@
     <string name="settings_bookmarks_cleared">Đã xóa dấu trang</string>
     <string name="settings_cache_cleared">Đã xóa bộ nhớ đệm</string>
     <string name="settings_cache_failed">Không thể xóa bộ nhớ đệm</string>
-
     <string name="settings_force_dark_mode">Chế độ tối bắt buộc</string>
     <string name="settings_force_dark_mode_summary">Tự động áp dụng giao diện tối cho tất cả trang web (Tốt nhất cho TV).</string>
     <string name="settings_dark_mode_enabled">Chế độ tối: Bật</string>
     <string name="settings_dark_mode_disabled">Chế độ tối: Tắt</string>
-
+    <string name="settings_theme_title">Giao diện ứng dụng</string>
+    <string name="settings_theme_summary">Chuyển đổi giữa chế độ Sáng và Tối cho thanh điều khiển và menu trên TV.</string>
+    <string name="settings_theme_dark">Giao diện Tối</string>
+    <string name="settings_theme_dark_desc">Chế độ đêm OLED · Tối ưu cho phòng ít ánh sáng</string>
+    <string name="settings_theme_light">Giao diện Sáng</string>
+    <string name="settings_theme_light_desc">Độ tương phản cao · Rõ nét dưới ánh sáng ban ngày</string>
+    <string name="settings_theme_changed">Đã đổi giao diện sang %1$s</string>
+    <string name="theme_active_indicator">Đang dùng</string>
     <string name="mouse_mode_on">Bật Chuột</string>
     <string name="mouse_mode_off">Chuột</string>
-
     <string name="nav_back">Quay lại</string>
     <string name="nav_forward">Tiến tới</string>
     <string name="nav_refresh">Tải lại</string>
@@ -62,33 +63,72 @@
     <string name="nav_returning_home">Về trang chủ</string>
     <string name="nav_mobile_site_requested">Trang di động</string>
     <string name="nav_desktop_site_requested">Trang máy tính</string>
-
+    <string name="update_available_title">Có bản cập nhật mới</string>
+    <string name="update_available_message">Đã có phiên bản mới của Trình Duyệt NaviTV. Hãy cập nhật để trải nghiệm tính năng mới nhất và bảo mật tốt hơn.</string>
+    <string name="update_now">Cập nhật ngay</string>
+    <string name="update_later">Để sau</string>
     <string name="url_hint">Tìm kiếm hoặc nhập URL</string>
     <string name="cursor_content_desc">Con trỏ chuột ảo</string>
     <string name="input_hint_default">Điều khiển: D-pad di chuyển · OK để chọn</string>
     <string name="input_hint_virtual_mouse">Chế độ chuột: D-pad di con trỏ · OK nhấp · Quay lại để thoát</string>
     <string name="input_hint_mouse">Đã kết nối chuột · Hỗ trợ con lăn</string>
+    <string name="input_hint_touch">Cảm ứng đang hoạt động</string>
     <string name="list_hint_open">Bấm OK để mở · Giữ lâu để xóa</string>
-
     <string name="nav_fullscreen">Toàn màn hình</string>
     <string name="settings_auto_fullscreen">Tự động toàn màn hình</string>
     <string name="settings_auto_fullscreen_summary">Tự động ẩn thanh công cụ khi không thao tác.</string>
+    <string name="settings_auto_fullscreen_enabled">Tự động toàn màn hình: Đã bật</string>
+    <string name="settings_auto_fullscreen_disabled">Tự động toàn màn hình: Đã tắt</string>
     <string name="mode_virtual_mouse">Chuột ảo đang hoạt động</string>
     <string name="mode_dpad">Chế độ D-Pad đang hoạt động</string>
-
+    <string name="error_webview_missing">System WebView bị thiếu hoặc bị vô hiệu hóa. Ứng dụng này cần WebView để hoạt động. Vui lòng kiểm tra cài đặt thiết bị.</string>
+    <string name="error_generic_app">Lỗi ứng dụng: %1$s</string>
+    <string name="error_voice_search_unsupported">Tìm kiếm bằng giọng nói không được hỗ trợ trên thiết bị này</string>
     <string name="nav_summarize">Tóm tắt trang</string>
     <string name="ai_summarizing">AI đang tóm tắt nội dung...</string>
     <string name="ai_summary_title">Tóm tắt trang (AI)</string>
-
+    <string name="ai_error_key_missing">Tính năng AI hiện không khả dụng (thiếu khóa API).</string>
+    <string name="ai_error_empty">Không tìm thấy văn bản nào trên trang này để tóm tắt.</string>
+    <string name="ai_error_generic">Tóm tắt bằng AI không thành công. Vui lòng thử lại sau.</string>
+    <string name="ai_status_retrying">Dịch vụ đang bận, thử lại với %s...</string>
+    <string name="ai_local_summary_note">Lưu ý: Hiển thị trích xuất ngoại tuyến do máy chủ AI không thể truy cập.</string>
+    <string name="share_title">Chia sẻ Trình Duyệt NaviTV</string>
+    <string name="share_message">Giúp mọi người khám phá trải nghiệm duyệt web tuyệt vời trên Android TV!</string>
+    <string name="share_scan_hint">Quét bằng điện thoại để chia sẻ</string>
     <string name="nav_dark_mode">Chế độ ban đêm</string>
     <string name="dark_mode_active">Chế độ đêm: Bật</string>
     <string name="dark_mode_inactive">Chế độ đêm: Tắt</string>
-
     <string name="ai_summary_heading">Tóm tắt trang bằng AI Gemini</string>
     <string name="ai_summary_copy">Sao chép vào bộ nhớ tạm</string>
     <string name="ai_summary_copied">Đã sao chép tóm tắt!</string>
     <string name="ai_summary_close">Đóng</string>
-
+    <string name="sync_bookmarks_title">Đồng bộ hóa đám mây</string>
+    <string name="sync_bookmarks_btn">Đồng bộ dấu trang đám mây</string>
+    <string name="sync_bookmarks_success">Đồng bộ dấu trang thành công (%1$d dấu trang mới từ đám mây)</string>
+    <string name="sync_bookmarks_error">Lỗi khi đồng bộ dấu trang. Vui lòng kiểm tra kết nối mạng.</string>
+    <string name="sync_bookmarks_syncing">Đang đồng bộ dấu trang với đám mây...</string>
+    <string name="sync_user_id_label">ID tài khoản đồng bộ thiết bị</string>
+    <string name="sync_user_id_hint">Nhập ID tài khoản hoặc ID thiết bị để chia sẻ dấu trang</string>
+    <string name="sync_user_id_desc">Sử dụng cùng ID tài khoản trên các TV khác để đồng bộ dấu trang trên mọi màn hình của bạn.</string>
+    <string name="sync_save_user_id">Lưu ID tài khoản</string>
+    <string name="sync_user_id_saved">Đã lưu ID tài khoản!</string>
+    <string name="settings_custom_adblock_title">Quy tắc chặn quảng cáo tùy chỉnh</string>
+    <string name="settings_custom_adblock_summary">Thêm tên miền hoặc từ khóa URL để chặn (ví dụ: adserver.com, popunder).</string>
+    <string name="settings_custom_adblock_hint">Nhập tên miền hoặc mẫu URL cần chặn</string>
+    <string name="settings_add_adblock_rule">Thêm quy tắc chặn</string>
+    <string name="settings_adblock_rule_added">Đã thêm quy tắc chặn: %1$s</string>
+    <string name="settings_adblock_rule_removed">Đã xóa quy tắc chặn: %1$s</string>
+    <string name="settings_no_custom_rules">Chưa có quy tắc tùy chỉnh nào.</string>
+    <string name="voice_search_prompt">Nói tên trang web, từ khóa tìm kiếm hoặc lệnh…</string>
+    <string name="voice_perm_required">Quyền micro là bắt buộc để sử dụng tính năng điều khiển bằng giọng nói.</string>
+    <string name="voice_command_executed">Lệnh giọng nói: %1$s</string>
+    <string name="voice_status_listening">Đang lắng nghe… Hãy nói câu lệnh hoặc nội dung tìm kiếm</string>
+    <string name="voice_status_processing">Đang xử lý giọng nói…</string>
+    <string name="voice_error_no_match">Không nhận dạng được giọng nói</string>
+    <string name="voice_error_timeout">Hết thời gian nhận giọng nói</string>
+    <string name="voice_error_generic">Lỗi nhận dạng giọng nói</string>
+    <string name="voice_error_speech">Lỗi giọng nói: %1$s</string>
+    <string name="settings_remove_rule">Xóa quy tắc</string>
     <string name="read_later_title">Đọc sau</string>
     <string name="read_later_empty">Chưa có bài viết nào được lưu để đọc ngoại tuyến.</string>
     <string name="read_later_saved">Đã lưu bài viết để đọc ngoại tuyến</string>
@@ -105,7 +145,24 @@
     <string name="read_later_reading_mode">Chế độ đọc ngoại tuyến</string>
     <string name="read_later_confirm_delete">Xóa bài viết</string>
     <string name="read_later_delete_msg">Bạn có chắc muốn xóa \"%1$s\" khỏi Đọc sau?</string>
-
     <string name="nav_home">Trang chủ</string>
     <string name="memory_warning_low_ram">Tối ưu bộ nhớ: Đã giải phóng bộ nhớ đệm WebView</string>
+    <string name="ad_tip_header">Mẹo dùng NaviTV</string>
+    <string name="ad_badge">QUẢNG CÁO</string>
+    <string name="guide_badge">HƯỚNG DẪN</string>
+    <string name="tip_icon_desc">Mẹo điều hướng</string>
+    <string name="chip_icon">Thẻ dấu trang</string>
+    <string name="list_item_icon">Biểu tượng mục</string>
+    <string name="action_delete">Xóa</string>
+    <string name="app_logo_desc">Biểu trưng Trình Duyệt NaviTV</string>
+    <string name="ad_tip_1">Cắm chuột USB hoặc Bluetooth để duyệt web thuận tiện nhất!</string>
+    <string name="ad_tip_2">Bấm vào nút Micro và nói để tìm kiếm hoặc đọc địa chỉ web!</string>
+    <string name="ad_tip_3">Nhấn giữ nút OK trên lối tắt màn hình chính để xóa chúng!</string>
+    <string name="ad_tip_4">Bật Trình chặn quảng cáo trong Cài đặt để tải trang nhanh hơn!</string>
+    <string name="ad_tip_5">Bấm nút Quay lại trên điều khiển để bỏ chọn vùng nhập và đóng bàn phím.</string>
+    <string name="settings_clear_history_confirm">Bạn có chắc chắn muốn xóa toàn bộ lịch sử duyệt web?</string>
+    <string name="settings_clear_bookmarks_confirm">Bạn có chắc chắn muốn xóa toàn bộ dấu trang?</string>
+    <string name="settings_clear_cache_confirm">Bạn có chắc chắn muốn xóa bộ nhớ đệm và tệp tạm thời?</string>
+    <string name="read_later_clear_all_confirm">Bạn có chắc chắn muốn xóa toàn bộ bài viết đã lưu ngoại tuyến?</string>
+    <string name="ai_local_summary_prefix">Tóm tắt nhanh:</string>
 </resources>

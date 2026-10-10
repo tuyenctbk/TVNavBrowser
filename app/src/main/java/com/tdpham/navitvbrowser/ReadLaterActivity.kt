@@ -53,7 +53,7 @@ class ReadLaterActivity : ComponentActivity() {
         btnClearAll.setOnClickListener {
             AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.read_later_clear_all)
-                .setMessage(R.string.read_later_cleared)
+                .setMessage(R.string.read_later_clear_all_confirm)
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) { repository.clearAll() }
@@ -115,7 +115,7 @@ class ReadLaterActivity : ComponentActivity() {
         AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
             .setTitle(R.string.read_later_confirm_delete)
             .setMessage(getString(R.string.read_later_delete_msg, article.title))
-            .setPositiveButton(R.string.settings_remove_rule) { _, _ ->
+            .setPositiveButton(R.string.action_delete) { _, _ ->
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) { repository.deleteArticle(article) }
                     Toast.makeText(this@ReadLaterActivity, R.string.read_later_removed, Toast.LENGTH_SHORT).show()

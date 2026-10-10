@@ -18,7 +18,8 @@ class FirebaseVertexAiProvider : AiProvider {
     
     override suspend fun summarize(text: String): Result<String> = withContext(Dispatchers.IO) {
         try {
-            val model = Firebase.vertexAI.generativeModel("gemini-1.5-flash")
+            val modelName = RemoteConfigHelper.getAiModelName()
+            val model = Firebase.vertexAI.generativeModel(modelName)
             val response = model.generateContent(content {
                 text("${AiHelper.SYSTEM_PROMPT} \n\n$text")
             })
@@ -35,16 +36,18 @@ class LocalExtractiveProvider : AiProvider {
     override suspend fun summarize(text: String): Result<String> {
         val sentences = text.split(Regex("(?<=[.!?])\\s+")).filter { it.isNotBlank() }
         val extracted = if (sentences.isNotEmpty()) {
-            sentences.take(3).joinToString(" ")
+            val taken = sentences.take(3).joinToString(" ")
+            if (sentences.size > 3) "$taken..." else taken
         } else {
-            text.take(300)
+            val taken = text.take(300)
+            if (text.length > 300) "$taken..." else taken
         }
         return Result.success(extracted)
     }
 }
 
 object AiHelper {
-    const val SYSTEM_PROMPT = "Summarize the following web page content concisely for an Android TV user. Focus on the main points and keep it under 150 words."
+    const val SYSTEM_PROMPT = "Summarize the following web page content concisely for an Android TV user. Respond in the same language as the page content. Focus on the main points and keep it under 150 words."
 
     suspend fun getSummaryWithFailover(context: Context, text: String): Result<String> {
         android.util.Log.d("TVNAV_DEBUG", "getSummaryWithFailover started. Text length: ${text.length}")
@@ -57,8 +60,9 @@ object AiHelper {
 
         // 2. Fallback: Local Extraction
         android.util.Log.d("TVNAV_DEBUG", "Firebase Vertex AI failed: ${vertexResult.exceptionOrNull()?.message}, falling back")
+        val prefix = context.getString(R.string.ai_local_summary_prefix)
         return LocalExtractiveProvider().summarize(text).map { summary ->
-            "LITE SUMMARY: $summary...\n\n${context.getString(R.string.ai_local_summary_note)}"
+            "$prefix $summary\n\n${context.getString(R.string.ai_local_summary_note)}"
         }
     }
 }

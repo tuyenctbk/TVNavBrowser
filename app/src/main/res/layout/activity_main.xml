@@ -399,6 +399,8 @@
         android:id="@+id/ivCursor"
         android:layout_width="28dp"
         android:layout_height="28dp"
+        android:clickable="false"
+        android:focusable="false"
         android:contentDescription="@string/cursor_content_desc"
         android:src="@drawable/ic_cursor_pointer"
         android:visibility="gone" />
