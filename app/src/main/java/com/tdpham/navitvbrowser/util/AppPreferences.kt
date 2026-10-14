@@ -120,11 +120,23 @@ object AppPreferences {
         return RemoteConfigHelper.getHomepageUrl().ifBlank { DEFAULT_HOMEPAGE }
     }
 
-    fun isBlockEmbeddedAdsEnabled(context: Context): Boolean =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    @Volatile
+    private var cachedBlockEmbeddedAds: Boolean? = null
+
+    @Volatile
+    private var cachedAutoFullscreen: Boolean? = null
+
+    fun isBlockEmbeddedAdsEnabled(context: Context): Boolean {
+        val cached = cachedBlockEmbeddedAds
+        if (cached != null) return cached
+        val value = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getBoolean(KEY_BLOCK_EMBEDDED_ADS, true)
+        cachedBlockEmbeddedAds = value
+        return value
+    }
 
     fun setBlockEmbeddedAdsEnabled(context: Context, enabled: Boolean) {
+        cachedBlockEmbeddedAds = enabled
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(KEY_BLOCK_EMBEDDED_ADS, enabled)
@@ -142,11 +154,17 @@ object AppPreferences {
             .apply()
     }
 
-    fun isAutoFullscreenEnabled(context: Context): Boolean =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    fun isAutoFullscreenEnabled(context: Context): Boolean {
+        val cached = cachedAutoFullscreen
+        if (cached != null) return cached
+        val value = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getBoolean(KEY_AUTO_FULLSCREEN, false)
+        cachedAutoFullscreen = value
+        return value
+    }
 
     fun setAutoFullscreenEnabled(context: Context, enabled: Boolean) {
+        cachedAutoFullscreen = enabled
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(KEY_AUTO_FULLSCREEN, enabled)

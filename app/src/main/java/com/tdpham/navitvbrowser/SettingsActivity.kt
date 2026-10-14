@@ -283,10 +283,6 @@ class SettingsActivity : ComponentActivity() {
                 .setPositiveButton(R.string.settings_clear_cache) { _, _ ->
                     lifecycleScope.launch {
                         try {
-                            WebView(applicationContext).apply {
-                                clearCache(true)
-                                destroy()
-                            }
                             com.tdpham.navitvbrowser.util.WebViewCacheManager.clearEntireCache(applicationContext)
                             FirebaseInitializer.logEvent("settings_cache_cleared")
                             Toast.makeText(this@SettingsActivity, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()

@@ -46,6 +46,8 @@ object WebViewCacheManager {
         if (periodicJob?.isActive == true) return
 
         periodicJob = scope.launch {
+            // Delay initial cleanup so it never runs during app startup / browsing setup
+            delay(15 * 60 * 1000L)
             while (isActive) {
                 try {
                     pruneExpiredCache(context)
@@ -99,7 +101,7 @@ object WebViewCacheManager {
      */
     suspend fun clearEntireCache(context: Context): Boolean = withContext(Dispatchers.IO) {
         try {
-            // Clear WebStorage quotas
+            // Clear WebStorage quotas via official API
             withContext(Dispatchers.Main) {
                 try {
                     WebStorage.getInstance().deleteAllData()
@@ -137,25 +139,9 @@ object WebViewCacheManager {
     private fun getWebViewCacheDirectories(context: Context): List<File> {
         val list = mutableListOf<File>()
 
-        // Internal app cache
+        // Internal app cache (Standard app temporary caches only - NEVER delete app_webview directly)
         context.cacheDir?.let { cache ->
             list.add(cache)
-            list.add(File(cache, "WebView"))
-            list.add(File(cache, "org.chromium.android_webview"))
-            list.add(File(cache, "Code Cache"))
-        }
-
-        // App WebView data directory
-        val dataDir = context.applicationInfo.dataDir
-        if (dataDir != null) {
-            val appWebViewDir = File(dataDir, "app_webview")
-            if (appWebViewDir.exists()) {
-                list.add(File(appWebViewDir, "Default/HTTP Cache"))
-                list.add(File(appWebViewDir, "Default/Code Cache"))
-                list.add(File(appWebViewDir, "Default/GPUCache"))
-                list.add(File(appWebViewDir, "Default/Service Worker"))
-                list.add(File(appWebViewDir, "Crash Reports"))
-            }
         }
 
         // External cache if available
@@ -224,6 +210,10 @@ object WebViewCacheManager {
         return lower.startsWith("cookies") ||
                 lower.startsWith("browser_database") ||
                 lower.startsWith("user_prefs") ||
+                lower.startsWith("app_webview") ||
+                lower.startsWith("webview") ||
+                lower.startsWith("shared_prefs") ||
+                lower.startsWith("databases") ||
                 lower.endsWith(".db") ||
                 lower.endsWith("-wal") ||
                 lower.endsWith("-shm")

@@ -31,18 +31,9 @@ class WebViewMemoryManager(
 
     private fun configureWebViewForMemory() {
         webView.settings.apply {
-            // Adjust cache mode based on RAM availability
-            cacheMode = if (isLowRamDevice) WebSettings.LOAD_NO_CACHE else WebSettings.LOAD_DEFAULT
-            
-            // Enable storage mechanisms safely
+            cacheMode = WebSettings.LOAD_DEFAULT
             domStorageEnabled = true
             databaseEnabled = true
-            
-            // Render priority and hardware layer optimization for TV devices
-            if (isLowRamDevice) {
-                @Suppress("DEPRECATION")
-                setRenderPriority(WebSettings.RenderPriority.HIGH)
-            }
         }
         
         Log.d(TAG, "WebView memory manager initialized. Low RAM device: $isLowRamDevice")
@@ -51,7 +42,6 @@ class WebViewMemoryManager(
     fun optimizeOnNavigation() {
         val historyList = webView.copyBackForwardList()
         if (historyList.size > MAX_HISTORY_STEPS) {
-            // Trim memory footprint when navigation history grows too large
             Log.d(TAG, "Navigation history exceeds $MAX_HISTORY_STEPS steps (${historyList.size}). Clearing non-essential history.")
             webView.clearHistory()
         }
@@ -59,10 +49,9 @@ class WebViewMemoryManager(
 
     fun forceTrimMemory(isCritical: Boolean = false) {
         try {
-            Log.w(TAG, "Executing force memory trim (critical: $isCritical)...")
-            webView.clearCache(isCritical)
-            webView.freeMemory()
-            System.gc()
+            Log.w(TAG, "Executing safe memory trim (critical: $isCritical)...")
+            // Only clear in-memory web cache without blocking disk I/O or triggering Stop-The-World GC
+            webView.clearCache(false)
             if (isCritical) {
                 Toast.makeText(context, R.string.memory_warning_low_ram, Toast.LENGTH_SHORT).show()
             }
@@ -95,12 +84,10 @@ class WebViewMemoryManager(
 
     fun onPause() {
         webView.onPause()
-        webView.pauseTimers()
     }
 
     fun onResume() {
         webView.onResume()
-        webView.resumeTimers()
     }
 
     fun destroy() {
@@ -109,7 +96,6 @@ class WebViewMemoryManager(
             (webView.parent as? android.view.ViewGroup)?.removeView(webView)
             webView.stopLoading()
             webView.clearHistory()
-            webView.clearCache(true)
             webView.removeAllViews()
             webView.destroy()
         } catch (e: Exception) {

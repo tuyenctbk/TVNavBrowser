@@ -59,7 +59,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TVNavBrowser"
         android:usesCleartextTraffic="true"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:hardwareAccelerated="true">
 
         <property
             android:name="android.adservices.AD_SERVICES_CONFIG"

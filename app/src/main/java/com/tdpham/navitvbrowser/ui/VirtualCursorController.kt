@@ -31,6 +31,10 @@ class VirtualCursorController(
     private val mainHandler = Handler(Looper.getMainLooper())
     private var isFrameCallbackPosted = false
 
+    private var isClickPending = false
+    private var pendingDownRunnable: Runnable? = null
+    private var pendingUpRunnable: Runnable? = null
+
     private var holdingUp = false
     private var holdingDown = false
     private var holdingLeft = false
@@ -54,6 +58,7 @@ class VirtualCursorController(
             webView.requestFocus()
         } else {
             stopMotion()
+            cancelPendingClick()
             cursor.visibility = View.GONE
         }
     }
@@ -251,6 +256,7 @@ class VirtualCursorController(
     fun hideForPhysicalPointer() {
         if (isEnabled) {
             stopMotion()
+            cancelPendingClick()
             cursor.visibility = View.GONE
         }
     }
@@ -261,34 +267,94 @@ class VirtualCursorController(
         }
     }
 
-    fun simulateClick() {
-        val x = cursor.x + 4f
-        val y = cursor.y + 4f
-        val downTime = SystemClock.uptimeMillis()
+    fun onPause() {
+        stopMotion()
+        cancelPendingClick()
+    }
 
-        val downEvent = MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0).apply {
-            source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+    private fun cancelPendingClick() {
+        pendingDownRunnable?.let {
+            mainHandler.removeCallbacks(it)
+            pendingDownRunnable = null
         }
-        container.dispatchTouchEvent(downEvent)
-        downEvent.recycle()
+        pendingUpRunnable?.let {
+            mainHandler.removeCallbacks(it)
+            pendingUpRunnable = null
+            try {
+                val now = SystemClock.uptimeMillis()
+                val cancelEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, cursor.x + 4f, cursor.y + 4f, 0).apply {
+                    source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+                }
+                container.dispatchTouchEvent(cancelEvent)
+            } catch (_: Throwable) {
+                // Ignore cancellation dispatch issues during teardown
+            }
+        }
+        isClickPending = false
+    }
 
-        // 40ms touch contact window for Chromium Blink gesture detection to register clean tap
-        mainHandler.postDelayed({
-            val upTime = SystemClock.uptimeMillis()
-            val upEvent = MotionEvent.obtain(downTime, upTime, MotionEvent.ACTION_UP, x, y, 0).apply {
+    fun simulateClick() {
+        if (!isEnabled || isClickPending) return
+        isClickPending = true
+
+        val downRunnable = Runnable {
+            pendingDownRunnable = null
+            if (!isEnabled) {
+                isClickPending = false
+                return@Runnable
+            }
+
+            val x = cursor.x + 4f
+            val y = cursor.y + 4f
+            val downTime = SystemClock.uptimeMillis()
+
+            val downEvent = MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0).apply {
                 source = android.view.InputDevice.SOURCE_TOUCHSCREEN
             }
-            container.dispatchTouchEvent(upEvent)
-            upEvent.recycle()
 
-            webView.requestFocus()
-        }, 40L)
+            try {
+                container.dispatchTouchEvent(downEvent)
+            } catch (e: Throwable) {
+                isClickPending = false
+                return@Runnable
+            }
+            // CRITICAL: DO NOT call downEvent.recycle()!
+            // Passing an event to dispatchTouchEvent transfers lifecycle to the receiver/system.
+            // Calling recycle() immediately causes use-after-free / SIGSEGV in Chromium's native EventForwarder.
 
-        cursor.animate().scaleX(0.78f).scaleY(0.78f).setDuration(60).withEndAction {
-            cursor.animate().scaleX(1f).scaleY(1f).setDuration(80).start()
-        }.start()
+            val upRunnable = Runnable {
+                pendingUpRunnable = null
+                try {
+                    val upTime = SystemClock.uptimeMillis()
+                    val upEvent = MotionEvent.obtain(downTime, upTime, MotionEvent.ACTION_UP, x, y, 0).apply {
+                        source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+                    }
+                    container.dispatchTouchEvent(upEvent)
+                    // CRITICAL: DO NOT call upEvent.recycle()!
+                    if (isEnabled) {
+                        webView.requestFocus()
+                    }
+                } catch (e: Throwable) {
+                    // Ignore exceptions during teardown
+                } finally {
+                    isClickPending = false
+                }
+            }
 
-        onCursorActivity?.invoke()
+            pendingUpRunnable = upRunnable
+            // 40ms touch contact window for Chromium Blink gesture detection to register clean tap
+            mainHandler.postDelayed(upRunnable, 40L)
+
+            cursor.animate().scaleX(0.78f).scaleY(0.78f).setDuration(60).withEndAction {
+                cursor.animate().scaleX(1f).scaleY(1f).setDuration(80).start()
+            }.start()
+
+            onCursorActivity?.invoke()
+        }
+
+        pendingDownRunnable = downRunnable
+        // Decouple touch dispatch from current KeyEvent loop to prevent re-entrant dispatch crashes in Chromium
+        mainHandler.post(downRunnable)
     }
 
     fun centerCursor() {

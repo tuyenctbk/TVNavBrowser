@@ -379,6 +379,9 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onPause() {
+        if (::virtualCursor.isInitialized) {
+            virtualCursor.onPause()
+        }
         if (::webViewMemoryManager.isInitialized) {
             webViewMemoryManager.onPause()
         } else if (::webView.isInitialized) {
@@ -389,11 +392,24 @@ class MainActivity : ComponentActivity() {
         super.onPause()
     }
 
+    override fun onStop() {
+        if (customView != null) {
+            try {
+                customViewCallback?.onCustomViewHidden()
+                if (::customViewContainer.isInitialized) {
+                    customViewContainer.removeView(customView)
+                    customViewContainer.visibility = View.GONE
+                }
+                customView = null
+                customViewCallback = null
+            } catch (_: Exception) {}
+        }
+        super.onStop()
+    }
+
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        if (::webViewMemoryManager.isInitialized) {
-            webViewMemoryManager.onTrimMemory(level)
-        }
+        // Note: webViewMemoryManager registers itself as ComponentCallbacks2 so it receives onTrimMemory directly
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -471,6 +487,16 @@ class MainActivity : ComponentActivity() {
             }
             if (virtualCursor.handleKey(event)) {
                 return true
+            }
+            // Consume navigation keys so they never leak into WebView.dispatchKeyEvent
+            // which triggers synchronous InputManagerGlobal lookups in Chromium on the UI thread
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP,
+                KeyEvent.KEYCODE_DPAD_DOWN,
+                KeyEvent.KEYCODE_DPAD_LEFT,
+                KeyEvent.KEYCODE_DPAD_RIGHT,
+                KeyEvent.KEYCODE_DPAD_CENTER,
+                KeyEvent.KEYCODE_ENTER -> return true
             }
         } else if (event.action == KeyEvent.ACTION_DOWN && (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN)) {
             // Smooth accelerated scrolling when holding D-pad in spatial navigation mode
