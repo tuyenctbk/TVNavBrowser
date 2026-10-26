@@ -831,9 +831,9 @@
             if (!navContainer || !sectionsContainer) return;
 
             // Build Category Tabs
-            var tabsHtml = '<button class="cat-tab active" onclick="filterCategory(\'all\', this)">✨ All Portals</button>';
+            var tabsHtml = '<button class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\', this)">✨ All Portals</button>';
             data.categories.forEach(function(cat) {
-                tabsHtml += '<button class="cat-tab" onclick="filterCategory(\'' + cat.id + '\', this)">' + cat.tabIcon + ' ' + cat.tabTitle + '</button>';
+                tabsHtml += '<button class="cat-tab" data-cat="' + cat.id + '" onclick="filterCategory(\'' + cat.id + '\', this)">' + cat.tabIcon + ' ' + cat.tabTitle + '</button>';
             });
             navContainer.innerHTML = tabsHtml;
 
@@ -868,6 +868,19 @@
                 sectionsHtml += '</div>';
             });
             sectionsContainer.innerHTML = sectionsHtml;
+
+            // Check URL hash for category deep link (e.g. #arcade, #video, #news, #tools)
+            function applyHash() {
+                var hash = (window.location.hash || '').replace('#', '');
+                if (hash) {
+                    var targetBtn = document.querySelector('.cat-tab[data-cat="' + hash + '"]');
+                    if (targetBtn) {
+                        filterCategory(hash, targetBtn);
+                    }
+                }
+            }
+            applyHash();
+            window.addEventListener('hashchange', applyHash);
         }
 
         function loadSuggestions() {
