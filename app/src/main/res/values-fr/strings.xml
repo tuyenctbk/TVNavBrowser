@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Navigateur NaviTV</string>
     <string name="bookmarks">Favoris</string>
@@ -41,6 +42,7 @@
     <string name="settings_bookmarks_cleared">Favoris effacés</string>
     <string name="settings_cache_cleared">Cache effacé</string>
     <string name="settings_cache_failed">Impossible d\'effacer le cache</string>
+    <string name="settings_data_storage">Données et stockage</string>
     <string name="settings_force_dark_mode">Forcer les pages web sombres</string>
     <string name="settings_force_dark_mode_summary">Applique automatiquement un style sombre à tous les sites visités.</string>
     <string name="settings_dark_mode_enabled">Pages sombres : Activé</string>
@@ -165,7 +167,6 @@
     <string name="settings_clear_cache_confirm">Voulez-vous vraiment vider le cache et les fichiers temporaires ?</string>
     <string name="read_later_clear_all_confirm">Voulez-vous vraiment supprimer tous les articles enregistrés hors-ligne ?</string>
     <string name="ai_local_summary_prefix">Aperçu rapide :</string>
-
     <string name="nav_game_mode">Mode Jeu</string>
     <string name="game_mode_active_hint">🎮 Mode Jeu actif · La croix directionnelle contrôle le jeu · Appuyez sur RETOUR pour quitter</string>
     <string name="game_mode_enabled">Mode Jeu activé : la croix directionnelle contrôle le personnage</string>
@@ -176,5 +177,4 @@
     <string name="settings_mouse_speed_normal">Normale (Par défaut)</string>
     <string name="settings_mouse_speed_fast">Rapide</string>
     <string name="settings_mouse_speed_changed">Vitesse du pointeur : %1$s</string>
-    <string name="settings_data_storage">Données et stockage</string>
 </resources>

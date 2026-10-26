@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Navegador NaviTV</string>
     <string name="bookmarks">Favoritos</string>
@@ -41,11 +42,11 @@
     <string name="settings_bookmarks_cleared">Favoritos limpos</string>
     <string name="settings_cache_cleared">Cache limpo</string>
     <string name="settings_cache_failed">Não foi possível limpar o cache</string>
+    <string name="settings_data_storage">Dados e armazenamento</string>
     <string name="settings_force_dark_mode">Forçar Modo Escuro</string>
     <string name="settings_force_dark_mode_summary">Aplicar tema escuro automaticamente a todos os sites (Ideal para TV).</string>
     <string name="settings_dark_mode_enabled">Modo Escuro forçado: Ativado</string>
     <string name="settings_dark_mode_disabled">Modo Escuro forçado: Desativado</string>
-
     <string name="settings_theme_title">Tema da Interface</string>
     <string name="settings_theme_summary">Alterne entre o modo Escuro e Claro para os controles do navegador na TV para melhorar a visibilidade.</string>
     <string name="settings_theme_dark">Tema Escuro</string>
@@ -54,10 +55,8 @@
     <string name="settings_theme_light_desc">Alto Contraste · Máxima clareza para luz do dia</string>
     <string name="settings_theme_changed">Tema da interface alterado para %1$s</string>
     <string name="theme_active_indicator">Ativo</string>
-
-
     <string name="mouse_mode_on">Mouse LIGADO</string>
-    <string name="mouse_mode_off">Mouse</string>
+    <string name="mouse_mode_off">Rato</string>
     <string name="nav_back">Voltar</string>
     <string name="nav_forward">Avançar</string>
     <string name="nav_refresh">Recarregar</string>
@@ -98,16 +97,13 @@
     <string name="share_title">Compartilhar Navegador NaviTV</string>
     <string name="share_message">Ajude outros a descobrir a melhor experiência de navegação na Android TV!</string>
     <string name="share_scan_hint">Escaneie com seu celular para compartilhar</string>
-
     <string name="nav_dark_mode">Modo Noturno</string>
     <string name="dark_mode_active">Modo Noturno: Ativado</string>
     <string name="dark_mode_inactive">Modo Noturno: Desativado</string>
-
     <string name="ai_summary_heading">Resumo da Página por IA Gemini</string>
     <string name="ai_summary_copy">Copiar para Área de Transferência</string>
     <string name="ai_summary_copied">Resumo copiado para a área de transferência!</string>
     <string name="ai_summary_close">Fechar</string>
-
     <string name="sync_bookmarks_title">Sincronização em Nuvem</string>
     <string name="sync_bookmarks_btn">Sincronizar Favoritos na Nuvem</string>
     <string name="sync_bookmarks_success">Favoritos sincronizados com sucesso (%1$d novos da nuvem)</string>
@@ -118,7 +114,6 @@
     <string name="sync_user_id_desc">Use o mesmo ID de Conta em outros aparelhos de TV para sincronizar favoritos em todas as suas telas.</string>
     <string name="sync_save_user_id">Salvar ID da Conta</string>
     <string name="sync_user_id_saved">ID da Conta salvo!</string>
-
     <string name="settings_custom_adblock_title">Regras Personalizadas de Bloqueio</string>
     <string name="settings_custom_adblock_summary">Adicione domínios ou padrões de URL para bloquear (ex: adserver.com, popunder).</string>
     <string name="settings_custom_adblock_hint">Digite o domínio ou padrão de URL para bloquear</string>
@@ -126,7 +121,6 @@
     <string name="settings_adblock_rule_added">Regra de bloqueio adicionada: %1$s</string>
     <string name="settings_adblock_rule_removed">Regra de bloqueio removida: %1$s</string>
     <string name="settings_no_custom_rules">Nenhuma regra personalizada adicionada ainda.</string>
-
     <string name="voice_search_prompt">Diga um site, pesquisa ou comando…</string>
     <string name="voice_perm_required">Permissão de microfone é necessária para controle por voz.</string>
     <string name="voice_command_executed">Comando de Voz: %1$s</string>
@@ -136,9 +130,7 @@
     <string name="voice_error_timeout">Tempo limite de voz esgotado</string>
     <string name="voice_error_generic">Erro de reconhecimento de voz</string>
     <string name="voice_error_speech">Erro de fala: %1$s</string>
-
     <string name="settings_remove_rule">Remover Regra</string>
-
     <string name="read_later_title">Ler Depois</string>
     <string name="read_later_empty">Nenhum artigo salvo para leitura offline.</string>
     <string name="read_later_saved">Artigo salvo para leitura offline</string>
@@ -155,11 +147,8 @@
     <string name="read_later_reading_mode">Modo de Leitura Offline</string>
     <string name="read_later_confirm_delete">Excluir Artigo</string>
     <string name="read_later_delete_msg">Tem certeza de que deseja remover \"%1$s\" do Ler Depois?</string>
-
     <string name="nav_home">Início</string>
     <string name="memory_warning_low_ram">Otimização de memória: Cache do WebView liberado</string>
-
-    <!-- Dicas e Guias -->
     <string name="ad_tip_header">Dicas do NaviTV</string>
     <string name="ad_badge">ANÚNCIO</string>
     <string name="guide_badge">GUIA</string>
@@ -178,7 +167,6 @@
     <string name="settings_clear_cache_confirm">Tem certeza de que deseja limpar o cache e os arquivos temporários?</string>
     <string name="read_later_clear_all_confirm">Tem certeza de que deseja remover todos os artigos salvos off-line?</string>
     <string name="ai_local_summary_prefix">Resumo rápido:</string>
-
     <string name="nav_game_mode">Modo Jogo</string>
     <string name="game_mode_active_hint">🎮 Modo Jogo ativo · D-pad controla o personagem · Pressione VOLTAR para sair</string>
     <string name="game_mode_enabled">Modo Jogo ativado: D-pad controla o jogo</string>
@@ -189,5 +177,4 @@
     <string name="settings_mouse_speed_normal">Normal (Padrão)</string>
     <string name="settings_mouse_speed_fast">Rápido</string>
     <string name="settings_mouse_speed_changed">Velocidade do ponteiro: %1$s</string>
-    <string name="settings_data_storage">Dados e armazenamento</string>
 </resources>

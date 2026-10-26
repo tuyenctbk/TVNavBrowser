@@ -192,11 +192,12 @@
             border-color: #fde68a;
         }
 
-        * {
+        *, *:focus, *:focus-visible, *:focus-within {
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
-            outline: none;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
         body {
@@ -296,12 +297,26 @@
             transition: all 0.2s ease;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent !important;
         }
 
         .search-box:focus-within {
             border-color: var(--accent-color);
             box-shadow: 0 0 24px var(--accent-glow);
             transform: scale(1.02);
+            outline: none !important;
+        }
+
+        #search-form {
+            display: block;
+            margin: 0;
+            padding: 0;
+            outline: none !important;
+            border: none !important;
+            background: transparent !important;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-focus-ring-color: transparent !important;
         }
 
         .search-input {
@@ -311,8 +326,21 @@
             border: none;
             background: transparent;
             color: var(--text-color);
-            outline: none;
+            outline: none !important;
+            box-shadow: none !important;
             font-family: inherit;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-focus-ring-color: transparent !important;
+        }
+
+        .search-input:focus,
+        #search-input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: none !important;
+            transform: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-focus-ring-color: transparent !important;
         }
 
         .search-input::placeholder {

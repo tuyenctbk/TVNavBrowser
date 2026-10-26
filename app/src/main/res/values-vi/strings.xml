@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Trình Duyệt NaviTV</string>
     <string name="bookmarks">Dấu trang</string>
@@ -41,6 +42,7 @@
     <string name="settings_bookmarks_cleared">Đã xóa dấu trang</string>
     <string name="settings_cache_cleared">Đã xóa bộ nhớ đệm</string>
     <string name="settings_cache_failed">Không thể xóa bộ nhớ đệm</string>
+    <string name="settings_data_storage">Dữ liệu &amp; Bộ nhớ</string>
     <string name="settings_force_dark_mode">Chế độ tối bắt buộc</string>
     <string name="settings_force_dark_mode_summary">Tự động áp dụng giao diện tối cho tất cả trang web (Tốt nhất cho TV).</string>
     <string name="settings_dark_mode_enabled">Chế độ tối: Bật</string>
@@ -165,7 +167,6 @@
     <string name="settings_clear_cache_confirm">Bạn có chắc chắn muốn xóa bộ nhớ đệm và tệp tạm thời?</string>
     <string name="read_later_clear_all_confirm">Bạn có chắc chắn muốn xóa toàn bộ bài viết đã lưu ngoại tuyến?</string>
     <string name="ai_local_summary_prefix">Tóm tắt nhanh:</string>
-
     <string name="nav_game_mode">Chế độ trò chơi</string>
     <string name="game_mode_active_hint">🎮 Chế độ trò chơi đang bật · Phím D-pad điều khiển nhân vật · Bấm QUAY LẠI để thoát</string>
     <string name="game_mode_enabled">Đã bật Chế độ trò chơi: D-pad điều khiển nhân vật</string>
@@ -176,5 +177,4 @@
     <string name="settings_mouse_speed_normal">Bình thường (Mặc định)</string>
     <string name="settings_mouse_speed_fast">Nhanh</string>
     <string name="settings_mouse_speed_changed">Tốc độ con trỏ chuột: %1$s</string>
-    <string name="settings_data_storage">Dữ liệu &amp; Bộ nhớ</string>
 </resources>

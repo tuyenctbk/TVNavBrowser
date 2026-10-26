@@ -240,6 +240,12 @@ class MainActivity : ComponentActivity() {
         rootLayout = findViewById(R.id.rootLayout)
         customViewContainer = findViewById(R.id.customViewContainer)
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            webView.defaultFocusHighlightEnabled = false
+            webViewContainer.defaultFocusHighlightEnabled = false
+            rootLayout.defaultFocusHighlightEnabled = false
+        }
+
         // Summary Overlay
         summaryOverlayContainer = findViewById(R.id.summaryOverlayContainer)
         tvSummaryTitle = findViewById(R.id.tvSummaryTitle)
@@ -1471,8 +1477,19 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun injectFocusStyle(view: WebView?) {
+        val currentUrl = view?.url ?: ""
+        if (currentUrl.startsWith("file:///android_asset/")) {
+            // The local dashboard already has its own bespoke TV focus states; clean up injected style if present
+            view?.evaluateJavascript("var s = document.getElementById('tvnav-focus-style'); if (s) s.remove();", null)
+            return
+        }
         val css = """
-            *:focus, a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus, [role="button"]:focus {
+            *:focus:not(#search-input):not(.search-input),
+            a:focus, button:focus,
+            input:focus:not(#search-input):not(.search-input),
+            select:focus, textarea:focus,
+            [tabindex]:focus:not(#search-input):not(.search-input),
+            [role="button"]:focus {
                 outline: 3px solid #FFC857 !important;
                 outline-offset: 3px !important;
                 box-shadow: 0 0 16px rgba(255, 200, 87, 0.9), 0 0 28px rgba(255, 200, 87, 0.4) !important;

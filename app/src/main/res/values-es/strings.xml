@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Navegador NaviTV</string>
     <string name="bookmarks">Marcadores</string>
@@ -41,6 +42,7 @@
     <string name="settings_bookmarks_cleared">Marcadores borrados</string>
     <string name="settings_cache_cleared">Caché borrada</string>
     <string name="settings_cache_failed">No se pudo borrar la caché</string>
+    <string name="settings_data_storage">Datos y almacenamiento</string>
     <string name="settings_force_dark_mode">Forzar páginas web oscuras</string>
     <string name="settings_force_dark_mode_summary">Aplica automáticamente estilos oscuros a todos los sitios web visitados.</string>
     <string name="settings_dark_mode_enabled">Páginas oscuras: Activado</string>
@@ -165,7 +167,6 @@
     <string name="settings_clear_cache_confirm">¿Está seguro de que desea borrar la memoria caché y los archivos temporales?</string>
     <string name="read_later_clear_all_confirm">¿Está seguro de que desea eliminar todos los artículos sin conexión guardados?</string>
     <string name="ai_local_summary_prefix">Resumen rápido:</string>
-
     <string name="nav_game_mode">Modo Juego</string>
     <string name="game_mode_active_hint">🎮 Modo Juego activo · El D-pad controla el personaje · Presiona ATRÁS para salir</string>
     <string name="game_mode_enabled">Modo Juego activado: D-pad controla el juego</string>
@@ -176,5 +177,4 @@
     <string name="settings_mouse_speed_normal">Normal (Predeterminado)</string>
     <string name="settings_mouse_speed_fast">Rápido</string>
     <string name="settings_mouse_speed_changed">Velocidad del puntero: %1$s</string>
-    <string name="settings_data_storage">Datos y almacenamiento</string>
 </resources>
