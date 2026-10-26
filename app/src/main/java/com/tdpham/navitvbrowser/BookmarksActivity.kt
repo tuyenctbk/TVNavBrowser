@@ -86,8 +86,14 @@ class BookmarksActivity : ComponentActivity() {
             val btnDeleteRow = row.findViewById<ImageButton>(R.id.btnDeleteRow)
 
             ivRowIcon.setImageResource(R.drawable.ic_nav_bookmark)
+            ivRowIcon.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
             tvRowTitle.text = bookmark.title
+            tvRowTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
             tvRowUrl.text = bookmark.url
+            tvRowUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
+            row.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            btnDeleteRow.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
+            btnDeleteRow.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
 
             FocusAnimationHelper.apply(row)
             FocusAnimationHelper.apply(btnDeleteRow)

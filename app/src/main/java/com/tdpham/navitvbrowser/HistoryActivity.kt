@@ -67,8 +67,14 @@ class HistoryActivity : ComponentActivity() {
             val btnDeleteRow = row.findViewById<ImageButton>(R.id.btnDeleteRow)
 
             ivRowIcon.setImageResource(R.drawable.ic_nav_history)
+            ivRowIcon.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
             tvRowTitle.text = history.title
+            tvRowTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
             tvRowUrl.text = history.url
+            tvRowUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
+            row.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            btnDeleteRow.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
+            btnDeleteRow.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
 
             FocusAnimationHelper.apply(row)
             FocusAnimationHelper.apply(btnDeleteRow)

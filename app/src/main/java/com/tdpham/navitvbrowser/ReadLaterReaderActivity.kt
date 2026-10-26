@@ -55,6 +55,17 @@ class ReadLaterReaderActivity : ComponentActivity() {
         btnOpenOnline = findViewById(R.id.btnOpenOnline)
         btnReaderBack = findViewById(R.id.btnReaderBack)
 
+        val btnBg = ThemeHelper.getToolbarButtonBackground(this)
+        val textPrimary = ThemeHelper.getTextPrimaryColor(this)
+        val textSecondary = ThemeHelper.getTextSecondaryColor(this)
+        tvArticleTitle.setTextColor(textPrimary)
+        tvArticleUrl.setTextColor(textSecondary)
+        tvArticleContent.setTextColor(textPrimary)
+        btnReaderBack.setBackgroundResource(btnBg)
+        btnReaderBack.imageTintList = android.content.res.ColorStateList.valueOf(textPrimary)
+        btnOpenOnline.setBackgroundResource(btnBg)
+        btnToggleReadStatus.setBackgroundResource(btnBg)
+
         FocusAnimationHelper.applyAll(btnReaderBack, btnOpenOnline, btnToggleReadStatus)
 
         btnReaderBack.setOnClickListener { finish() }

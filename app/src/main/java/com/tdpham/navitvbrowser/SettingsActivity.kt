@@ -36,6 +36,26 @@ class SettingsActivity : ComponentActivity() {
 
         ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
+        val sectionBg = ThemeHelper.getSettingsSectionBackground(this)
+        val badgeBg = ThemeHelper.getStepBadgeBackground(this)
+        listOf(
+            R.id.themeSectionContainer,
+            R.id.mouseSpeedSectionContainer,
+            R.id.homepageSectionContainer,
+            R.id.adblockSectionContainer,
+            R.id.cloudSyncSectionContainer,
+            R.id.preferencesSectionContainer,
+            R.id.dataSectionContainer
+        ).forEach { findViewById<View>(it)?.setBackgroundResource(sectionBg) }
+
+        listOf(
+            R.id.tvThemeDarkBadge,
+            R.id.tvThemeLightBadge,
+            R.id.tvMouseSpeedSlowBadge,
+            R.id.tvMouseSpeedNormalBadge,
+            R.id.tvMouseSpeedFastBadge
+        ).forEach { findViewById<View>(it)?.setBackgroundResource(badgeBg) }
+
         FirebaseInitializer.logEvent("settings_screen_opened")
 
         // Interface Theme Selection (Light / Dark)
@@ -124,7 +144,7 @@ class SettingsActivity : ComponentActivity() {
             if (rules.isEmpty()) {
                 val tvEmpty = android.widget.TextView(this).apply {
                     text = getString(R.string.settings_no_custom_rules)
-                    setTextColor(getColor(R.color.text_secondary))
+                    setTextColor(ThemeHelper.getTextSecondaryColor(this@SettingsActivity))
                     textSize = 13f
                     setPadding(0, 8, 0, 8)
                 }
@@ -139,21 +159,22 @@ class SettingsActivity : ComponentActivity() {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     ).apply { setMargins(0, 4, 0, 4) }
-                    setBackgroundResource(R.drawable.bg_url_bar)
+                    setBackgroundResource(ThemeHelper.getUrlBarBackground(this@SettingsActivity))
                     setPadding(12, 6, 12, 6)
                     gravity = android.view.Gravity.CENTER_VERTICAL
                 }
 
                 val tvRule = android.widget.TextView(this).apply {
                     text = rule
-                    setTextColor(getColor(R.color.text_primary))
+                    setTextColor(ThemeHelper.getTextPrimaryColor(this@SettingsActivity))
                     textSize = 14f
                     layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 }
 
                 val btnRemove = android.widget.ImageButton(this).apply {
                     setImageResource(R.drawable.ic_nav_delete)
-                    setBackgroundResource(R.drawable.bg_toolbar_btn)
+                    setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this@SettingsActivity))
+                    imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this@SettingsActivity))
                     contentDescription = getString(R.string.settings_remove_rule)
                     setOnClickListener {
                         AppPreferences.removeCustomAdRule(this@SettingsActivity, rule)
@@ -248,7 +269,8 @@ class SettingsActivity : ComponentActivity() {
             cardThemeDark, cardThemeLight,
             cardMouseSpeedSlow, cardMouseSpeedNormal, cardMouseSpeedFast,
             btnSaveHomepage, btnClearHistory, btnClearBookmarks, btnClearCache, etHomepage,
-            switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen
+            switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen,
+            btnAddAdRule, etCustomAdRule, etSyncUserId, btnSaveSyncId, btnTriggerCloudSync
         )
 
         val saveHomepageAction = {

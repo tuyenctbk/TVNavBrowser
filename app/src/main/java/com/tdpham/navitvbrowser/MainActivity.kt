@@ -344,25 +344,40 @@ class MainActivity : ComponentActivity() {
         tvInputHint.setTextColor(ThemeHelper.getTextSecondaryColor(this))
 
         val btnBg = ThemeHelper.getToolbarButtonBackground(this)
-        btnBack.setBackgroundResource(btnBg)
-        btnForward.setBackgroundResource(btnBg)
-        btnRefresh.setBackgroundResource(btnBg)
-        btnHome.setBackgroundResource(btnBg)
-        btnBookmark.setBackgroundResource(btnBg)
-        btnReadLater.setBackgroundResource(btnBg)
-        btnDesktopMode.setBackgroundResource(btnBg)
-        btnDarkMode.setBackgroundResource(btnBg)
-        btnVoiceSearch.setBackgroundResource(btnBg)
-        btnSummarize.setBackgroundResource(btnBg)
+        val iconTint = ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
+        val accentColor = ThemeHelper.getAccentColor(this)
+
+        val buttons = listOfNotNull(
+            btnBack, btnForward, btnRefresh, btnHome, btnVoiceSearch,
+            btnBookmark, btnReadLater,
+            findViewById<ImageButton>(R.id.btnShowBookmarks),
+            findViewById<ImageButton>(R.id.btnShowHistory),
+            btnSummarize, btnDesktopMode, btnDarkMode,
+            findViewById<ImageButton>(R.id.btnSettings),
+            btnFullscreen
+        )
+        buttons.forEach { btn ->
+            btn.setBackgroundResource(btnBg)
+            btn.imageTintList = iconTint
+        }
+
         btnGameMode.setBackgroundResource(btnBg)
         btnGameMode.imageTintList = ColorStateList.valueOf(
-            ContextCompat.getColor(this, if (isGameModeActive) R.color.accent else R.color.text_primary)
+            if (isGameModeActive) accentColor else ThemeHelper.getTextPrimaryColor(this)
         )
-        btnFullscreen.setBackgroundResource(btnBg)
 
         summaryOverlayContainer.findViewById<View>(R.id.cardSummary)?.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
-        tvSummaryTitle.setTextColor(ThemeHelper.getAccentColor(this))
+        tvSummaryTitle.setTextColor(accentColor)
         tvSummaryContent.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        btnCopySummary.setBackgroundResource(btnBg)
+        btnCopySummary.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        btnCloseSummary.setBackgroundResource(btnBg)
+        btnCloseSummary.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        btnCloseSummaryIcon.setBackgroundResource(btnBg)
+        btnCloseSummaryIcon.imageTintList = iconTint
+
+        // Ensure dashboard.html reflects the active theme immediately
+        webView.evaluateJavascript("if (typeof applyTheme === 'function') { applyTheme($isLight); }", null)
     }
 
     override fun onResume() {
@@ -730,6 +745,8 @@ class MainActivity : ComponentActivity() {
                 if (AppPreferences.isForceDarkModeEnabled(this@MainActivity)) {
                     injectDarkMode(view)
                 }
+                val isLight = ThemeHelper.isLightTheme(this@MainActivity)
+                view?.evaluateJavascript("if (typeof applyTheme === 'function') { applyTheme($isLight); }", null)
                 injectInputFocusListeners(view)
 
                 // Only move focus to WebView if the user is NOT currently navigating the toolbar
@@ -1828,6 +1845,11 @@ class MainActivity : ComponentActivity() {
             runOnUiThread {
                 isWebViewInputFocused = false
             }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun isLightTheme(): Boolean {
+            return ThemeHelper.isLightTheme(this@MainActivity)
         }
 
         /**

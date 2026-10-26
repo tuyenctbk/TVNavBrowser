@@ -45,6 +45,7 @@
     <string name="settings_bookmarks_cleared">Bookmarks cleared</string>
     <string name="settings_cache_cleared">Cache cleared</string>
     <string name="settings_cache_failed">Could not clear cache</string>
+    <string name="settings_data_storage">Data &amp; Storage</string>
 
     <string name="settings_force_dark_mode">Force Dark Web Pages</string>
     <string name="settings_force_dark_mode_summary">Automatically inject dark styles into all visited websites for night browsing.</string>

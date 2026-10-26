@@ -87,10 +87,17 @@ class ReadLaterActivity : ComponentActivity() {
             val btnDelete = row.findViewById<ImageButton>(R.id.btnDelete)
 
             tvTitle.text = article.title
+            tvTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
             tvExcerpt.text = article.excerpt
+            tvExcerpt.setTextColor(ThemeHelper.getTextSecondaryColor(this))
             tvUrl.text = article.url
+            tvUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
+            row.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            btnDelete.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
+            btnDelete.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
             tvReadBadge.text = if (article.isRead) getString(R.string.read_later_read) else getString(R.string.read_later_unread)
-            tvReadBadge.setBackgroundColor(if (article.isRead) 0x20808080 else 0x2038BDF8)
+            tvReadBadge.setTextColor(ThemeHelper.getAccentColor(this))
+            tvReadBadge.setBackgroundResource(ThemeHelper.getStepBadgeBackground(this))
 
             FocusAnimationHelper.apply(row)
             FocusAnimationHelper.apply(btnDelete)

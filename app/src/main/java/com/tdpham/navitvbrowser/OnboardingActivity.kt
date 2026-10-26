@@ -64,6 +64,14 @@ class OnboardingActivity : ComponentActivity() {
         btnNext = findViewById(R.id.btnNext)
         btnSkip = findViewById(R.id.btnSkip)
 
+        val btnBg = ThemeHelper.getToolbarButtonBackground(this)
+        btnNext.setBackgroundResource(btnBg)
+        btnSkip.setBackgroundResource(btnBg)
+        tvTitle.setTextColor(ThemeHelper.getAccentColor(this))
+        tvMessage.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        tvStep.setTextColor(ThemeHelper.getAccentColor(this))
+        tvStep.setBackgroundResource(ThemeHelper.getStepBadgeBackground(this))
+
         FocusAnimationHelper.apply(btnNext, 1.08f)
         FocusAnimationHelper.apply(btnSkip, 1.08f)
 
