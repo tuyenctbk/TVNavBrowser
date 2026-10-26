@@ -13,6 +13,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Message
 import android.os.SystemClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -113,7 +114,11 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnDarkMode: ImageButton
     private lateinit var btnVoiceSearch: ImageButton
     private lateinit var btnSummarize: ImageButton
+    private lateinit var btnGameMode: ImageButton
     private lateinit var ivCursor: ImageView
+    private lateinit var cursorRipple: View
+    private lateinit var gameModeOverlay: FrameLayout
+    private lateinit var tvGameModeStatus: TextView
     private lateinit var webViewContainer: View
     private lateinit var progressBar: ProgressBar
     private lateinit var tvInputHint: TextView
@@ -123,6 +128,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var toolbarContainer: View
     private lateinit var rootLayout: View
     private lateinit var customViewContainer: FrameLayout
+
+    private var isGameModeActive = false
 
     // Dedicated AI Summary Overlay Views
     private lateinit var summaryOverlayContainer: FrameLayout
@@ -211,7 +218,11 @@ class MainActivity : ComponentActivity() {
         btnDarkMode = findViewById(R.id.btnDarkMode)
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
         btnSummarize = findViewById(R.id.btnSummarize)
+        btnGameMode = findViewById(R.id.btnGameMode)
         ivCursor = findViewById(R.id.ivCursor)
+        cursorRipple = findViewById(R.id.cursorRipple)
+        gameModeOverlay = findViewById(R.id.gameModeOverlay)
+        tvGameModeStatus = findViewById(R.id.tvGameModeStatus)
         webViewContainer = findViewById(R.id.webViewContainer)
         progressBar = findViewById(R.id.progressBar)
         tvInputHint = findViewById(R.id.tvInputHint)
@@ -255,7 +266,8 @@ class MainActivity : ComponentActivity() {
             BookmarkSyncManager.syncBookmarks(this@MainActivity, bookmarkRepo)
         }
 
-        virtualCursor = VirtualCursorController(rootLayout, ivCursor, webView)
+        virtualCursor = VirtualCursorController(rootLayout, ivCursor, webView, cursorRipple)
+        virtualCursor.speedMultiplier = AppPreferences.getMouseSpeedMultiplier(this)
         virtualCursor.onCursorActivity = {
             if (isFullscreenMode) {
                 if (ivCursor.y <= 10f) {
@@ -266,11 +278,7 @@ class MainActivity : ComponentActivity() {
         }
 
         webView.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (isSwitchingMode) return@OnFocusChangeListener
-            if (hasFocus) {
-                setMouseMode(true)
-            } else {
-                setMouseMode(false)
+            if (!hasFocus) {
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(webView.windowToken, 0)
             }
@@ -346,6 +354,10 @@ class MainActivity : ComponentActivity() {
         btnDarkMode.setBackgroundResource(btnBg)
         btnVoiceSearch.setBackgroundResource(btnBg)
         btnSummarize.setBackgroundResource(btnBg)
+        btnGameMode.setBackgroundResource(btnBg)
+        btnGameMode.imageTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, if (isGameModeActive) R.color.accent else R.color.text_primary)
+        )
         btnFullscreen.setBackgroundResource(btnBg)
 
         summaryOverlayContainer.findViewById<View>(R.id.cardSummary)?.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
@@ -362,6 +374,9 @@ class MainActivity : ComponentActivity() {
             return
         }
         applyInterfaceTheme()
+        if (::virtualCursor.isInitialized) {
+            virtualCursor.speedMultiplier = AppPreferences.getMouseSpeedMultiplier(this)
+        }
         // Keep the toolbar toggle in sync with the Settings switch (both write the same preference).
         if (::webView.isInitialized) {
             val darkPref = AppPreferences.isForceDarkModeEnabled(this)
@@ -453,6 +468,19 @@ class MainActivity : ComponentActivity() {
     @Suppress("RestrictedApi")
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         resetInactivityTimer()
+
+        // 1. Dedicated Game Mode handling for TV gamers
+        if (isGameModeActive) {
+            if (event.keyCode == KeyEvent.KEYCODE_BACK) {
+                if (event.action == KeyEvent.ACTION_UP) {
+                    toggleGameMode(false)
+                }
+                return true
+            }
+            if (dispatchGameKeyEvent(event)) {
+                return true
+            }
+        }
         
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
@@ -511,6 +539,29 @@ class MainActivity : ComponentActivity() {
         return super.dispatchKeyEvent(event)
     }
 
+    private fun dispatchGameKeyEvent(event: KeyEvent): Boolean {
+        val isDown = event.action == KeyEvent.ACTION_DOWN
+        val (code, key, keyCodeNum) = when (event.keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> Triple("ArrowUp", "ArrowUp", 38)
+            KeyEvent.KEYCODE_DPAD_DOWN -> Triple("ArrowDown", "ArrowDown", 40)
+            KeyEvent.KEYCODE_DPAD_LEFT -> Triple("ArrowLeft", "ArrowLeft", 37)
+            KeyEvent.KEYCODE_DPAD_RIGHT -> Triple("ArrowRight", "ArrowRight", 39)
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_BUTTON_A -> Triple("Enter", "Enter", 13)
+            KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_BUTTON_Y -> Triple("Space", " ", 32)
+            KeyEvent.KEYCODE_BUTTON_X -> Triple("KeyZ", "z", 90)
+            KeyEvent.KEYCODE_BUTTON_B -> Triple("KeyX", "x", 88)
+            else -> return false
+        }
+
+        // 1. Dispatch directly to Android WebView
+        webView.dispatchKeyEvent(event)
+
+        // 2. Dispatch synthetic JS KeyboardEvent for canvas/HTML5 games that listen on window or document
+        val js = "if (window.__tvnavSendGameKey) window.__tvnavSendGameKey('$code', '$key', $keyCodeNum, $isDown);"
+        webView.evaluateJavascript(js, null)
+        return true
+    }
+
     @SuppressLint("MissingSuperCall")
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -532,12 +583,26 @@ class MainActivity : ComponentActivity() {
             tvInputHint.isVisible = true
             if (webView.dispatchGenericMotionEvent(event)) return true
         } else if (event.source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK &&
-            event.action == MotionEvent.ACTION_MOVE && virtualCursor.isEnabled
+            event.action == MotionEvent.ACTION_MOVE
         ) {
             val x = event.getAxisValue(MotionEvent.AXIS_X)
             val y = event.getAxisValue(MotionEvent.AXIS_Y)
-            if (Math.abs(x) > 0.15f || Math.abs(y) > 0.15f) {
-                virtualCursor.move(x * 32f, y * 32f)
+            if (isGameModeActive) {
+                // Analog stick in Game Mode maps to Arrow keys for canvas games
+                val absX = Math.abs(x)
+                val absY = Math.abs(y)
+                if (absX > 0.35f || absY > 0.35f) {
+                    val (code, key, keyCodeNum) = if (absX > absY) {
+                        if (x > 0) Triple("ArrowRight", "ArrowRight", 39) else Triple("ArrowLeft", "ArrowLeft", 37)
+                    } else {
+                        if (y > 0) Triple("ArrowDown", "ArrowDown", 40) else Triple("ArrowUp", "ArrowUp", 38)
+                    }
+                    val js = "if (window.__tvnavSendGameKey) window.__tvnavSendGameKey('$code', '$key', $keyCodeNum, true);"
+                    webView.evaluateJavascript(js, null)
+                    return true
+                }
+            } else if (virtualCursor.isEnabled) {
+                virtualCursor.setJoystick(x, y)
                 return true
             }
         }
@@ -546,7 +611,7 @@ class MainActivity : ComponentActivity() {
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         resetInactivityTimer()
-        if (InputHelper.isTouchEvent(event)) {
+        if (::virtualCursor.isInitialized && !virtualCursor.isDispatchingSyntheticEvent && InputHelper.isTouchEvent(event)) {
             virtualCursor.hideForPhysicalPointer()
             tvInputHint.text = getString(R.string.input_hint_touch)
             tvInputHint.isVisible = true
@@ -573,6 +638,8 @@ class MainActivity : ComponentActivity() {
         settings.displayZoomControls = false
         settings.setSupportZoom(true)
         settings.setNeedInitialFocus(true)
+        settings.setSupportMultipleWindows(true)
+        settings.javaScriptCanOpenWindowsAutomatically = true
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             settings.safeBrowsingEnabled = RemoteConfigHelper.isSafeBrowsingEnabled()
         }
@@ -639,8 +706,14 @@ class MainActivity : ComponentActivity() {
                 
                 updateAdContainerVisibility()
 
+                if (isGameModeActive) {
+                    toggleGameMode(false)
+                }
+                btnGameMode.visibility = View.GONE
+
                 view?.evaluateJavascript("window.__tvnavAdBlockerApplied = false;", null)
                 injectFocusStyle(view)
+                injectGameModeBridge(view)
                 updateNavButtonsState()
 
                 if (AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
@@ -653,6 +726,7 @@ class MainActivity : ComponentActivity() {
                 progressBar.isVisible = false
                 updateAdContainerVisibility()
                 injectFocusStyle(view)
+                injectGameModeBridge(view)
                 if (AppPreferences.isForceDarkModeEnabled(this@MainActivity)) {
                     injectDarkMode(view)
                 }
@@ -664,6 +738,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 virtualCursor.showIfEnabled()
+                updateGameModeAvailability(url)
                 if (!UrlUtils.isBrowsableUrl(url.orEmpty())) return
                 urlInput.setText(url)
                 if (AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
@@ -683,6 +758,29 @@ class MainActivity : ComponentActivity() {
         }
 
         webView.webChromeClient = object : WebChromeClient() {
+            override fun onCreateWindow(
+                view: WebView?,
+                isDialog: Boolean,
+                isUserGesture: Boolean,
+                resultMsg: Message?
+            ): Boolean {
+                if (resultMsg == null) return false
+                val transport = resultMsg.obj as? WebView.WebViewTransport ?: return false
+                val tempWebView = WebView(this@MainActivity)
+                tempWebView.webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                        val targetUrl = request?.url?.toString()
+                        if (!targetUrl.isNullOrBlank()) {
+                            webView.loadUrl(targetUrl)
+                        }
+                        return true
+                    }
+                }
+                transport.webView = tempWebView
+                resultMsg.sendToTarget()
+                return true
+            }
+
             override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
                 if (customView != null) {
                     onHideCustomView()
@@ -730,6 +828,7 @@ class MainActivity : ComponentActivity() {
         btnSummarize.setOnClickListener { onSummarizeClicked() }
         btnDesktopMode.setOnClickListener { toggleDesktopMode() }
         btnDarkMode.setOnClickListener { applyDarkMode(!isDarkModeActive) }
+        btnGameMode.setOnClickListener { toggleGameMode() }
 
         btnBack.setOnClickListener {
             if (webView.canGoBack()) webView.goBack()
@@ -1074,7 +1173,7 @@ class MainActivity : ComponentActivity() {
     private fun setupFocusAnimations() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnHome, btnBookmark, btnReadLater,
-            btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize,
+            btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize, btnGameMode,
             findViewById(R.id.btnShowBookmarks),
             findViewById(R.id.btnShowHistory),
             findViewById(R.id.btnSettings),
@@ -1088,9 +1187,126 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val hideGameModeHudRunnable = Runnable {
+        if (!isFinishing && !isDestroyed) {
+            gameModeOverlay.animate()
+                .alpha(0f)
+                .setDuration(250)
+                .withEndAction {
+                    gameModeOverlay.visibility = View.GONE
+                    gameModeOverlay.alpha = 1f
+                }
+                .start()
+        }
+    }
+
+    private fun toggleGameMode(enabled: Boolean? = null) {
+        val target = enabled ?: !isGameModeActive
+        if (isGameModeActive == target) return
+        isGameModeActive = target
+
+        handler.removeCallbacks(hideGameModeHudRunnable)
+
+        if (target) {
+            virtualCursor.setEnabled(false)
+            btnGameMode.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accent))
+            gameModeOverlay.alpha = 1f
+            gameModeOverlay.visibility = View.VISIBLE
+            tvGameModeStatus.text = getString(R.string.game_mode_active_hint)
+            handler.postDelayed(hideGameModeHudRunnable, 4000L)
+            webView.requestFocus()
+            Toast.makeText(this, R.string.game_mode_enabled, Toast.LENGTH_SHORT).show()
+            FirebaseInitializer.logEvent("game_mode_enabled", null)
+        } else {
+            btnGameMode.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.text_primary))
+            gameModeOverlay.visibility = View.GONE
+            virtualCursor.setEnabled(true)
+            updateAdContainerVisibility()
+            Toast.makeText(this, R.string.game_mode_disabled, Toast.LENGTH_SHORT).show()
+            FirebaseInitializer.logEvent("game_mode_disabled", null)
+        }
+    }
+
+    private fun injectGameModeBridge(view: WebView?) {
+        val js = """
+            (function() {
+                if (window.__tvnavGameBridgeReady) return;
+                window.__tvnavGameBridgeReady = true;
+                window.__tvnavSendGameKey = function(code, key, keyCode, isDown) {
+                    var eventType = isDown ? 'keydown' : 'keyup';
+                    var ev = new KeyboardEvent(eventType, {
+                        key: key,
+                        code: code,
+                        keyCode: keyCode,
+                        which: keyCode,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    (document.activeElement || document.body || window).dispatchEvent(ev);
+                    window.dispatchEvent(ev);
+                };
+            })();
+        """.trimIndent()
+        view?.evaluateJavascript(js, null)
+    }
+
+    private fun updateGameModeAvailability(url: String? = webView.url) {
+        if (isGameModeActive) {
+            btnGameMode.visibility = View.VISIBLE
+            return
+        }
+
+        // 1. Show if a physical gamepad / joystick device is connected
+        val hasGamepad = try {
+            InputDevice.getDeviceIds().any { id ->
+                val device = InputDevice.getDevice(id) ?: return@any false
+                (device.sources and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD) ||
+                (device.sources and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK)
+            }
+        } catch (_: Exception) {
+            false
+        }
+
+        if (hasGamepad) {
+            btnGameMode.visibility = View.VISIBLE
+            return
+        }
+
+        // 2. Show if URL is on known web game portals
+        val pageUrl = url?.lowercase().orEmpty()
+        val isGameSite = pageUrl.contains("poki.com") ||
+                pageUrl.contains("crazygames.com") ||
+                pageUrl.contains("itch.io") ||
+                pageUrl.contains("y8.com") ||
+                pageUrl.contains("krunker.io") ||
+                pageUrl.contains("/game") ||
+                pageUrl.contains("arcade")
+
+        if (isGameSite) {
+            btnGameMode.visibility = View.VISIBLE
+            return
+        }
+
+        // 3. Inspect DOM for interactive game canvas or embed containers
+        webView.evaluateJavascript(
+            "(function() { return !!(document.querySelector('canvas') || document.querySelector('embed') || document.querySelector('iframe[src*=\"game\"]')); })();"
+        ) { result ->
+            val hasCanvas = result?.equals("true", ignoreCase = true) == true
+            runOnUiThread {
+                if (!isFinishing && !isDestroyed && !isGameModeActive) {
+                    btnGameMode.visibility = if (hasCanvas) View.VISIBLE else View.GONE
+                }
+            }
+        }
+    }
+
     private fun setupBackHandler() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (isGameModeActive) {
+                    toggleGameMode(false)
+                    return
+                }
                 if (summaryOverlayContainer.visibility == View.VISIBLE) {
                     summaryOverlayContainer.visibility = View.GONE
                     webView.requestFocus()

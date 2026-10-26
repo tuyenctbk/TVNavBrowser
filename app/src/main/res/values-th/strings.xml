@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">โหมดเกม</string>
+    <string name="game_mode_active_hint">🎮 โหมดเกมเปิดอยู่ · ปุ่มทิศทางควบคุมตัวละคร · กด ย้อนกลับ เพื่อออก</string>
+    <string name="game_mode_enabled">เปิดโหมดเกมแล้ว: ปุ่มทิศทางควบคุมตัวละครในเกม</string>
+    <string name="game_mode_disabled">ออกจากโหมดเกมแล้ว: คืนค่าเคอร์เซอร์เมาส์</string>
+    <string name="settings_mouse_speed_title">ความเร็วตัวชี้เมาส์</string>
+    <string name="settings_mouse_speed_summary">ปรับความไวและความเร็วในการเคลื่อนที่ของเคอร์เซอร์สำหรับรีโมตทีวี</string>
+    <string name="settings_mouse_speed_slow">ช้า / แม่นยำ</string>
+    <string name="settings_mouse_speed_normal">ปกติ (ค่าเริ่มต้น)</string>
+    <string name="settings_mouse_speed_fast">เร็ว</string>
+    <string name="settings_mouse_speed_changed">ความเร็วตัวชี้เมาส์: %1$s</string>
 </resources>

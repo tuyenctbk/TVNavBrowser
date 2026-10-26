@@ -165,4 +165,15 @@
     <string name="settings_clear_cache_confirm">Möchten Sie wirklich den Browser-Cache und temporäre Dateien leeren?</string>
     <string name="read_later_clear_all_confirm">Möchten Sie wirklich alle gespeicherten Offline-Artikel entfernen?</string>
     <string name="ai_local_summary_prefix">Kurzübersicht:</string>
+
+    <string name="nav_game_mode">Spielmodus</string>
+    <string name="game_mode_active_hint">🎮 Spielmodus aktiv · Steuerkreuz steuert Spielfigur · ZURÜCK zum Beenden</string>
+    <string name="game_mode_enabled">Spielmodus aktiviert: Steuerkreuz steuert Spielfigur</string>
+    <string name="game_mode_disabled">Spielmodus beendet: Mauszeiger wiederhergestellt</string>
+    <string name="settings_mouse_speed_title">Mauszeiger-Geschwindigkeit</string>
+    <string name="settings_mouse_speed_summary">Passen Sie die Zeigerempfindlichkeit und -geschwindigkeit für Ihre TV-Fernbedienung an.</string>
+    <string name="settings_mouse_speed_slow">Langsam / Präzise</string>
+    <string name="settings_mouse_speed_normal">Normal (Standard)</string>
+    <string name="settings_mouse_speed_fast">Schnell</string>
+    <string name="settings_mouse_speed_changed">Mauszeiger-Geschwindigkeit: %1$s</string>
 </resources>

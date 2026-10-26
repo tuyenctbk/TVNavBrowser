@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">Oyun Modu</string>
+    <string name="game_mode_active_hint">🎮 Oyun Modu Aktif · Yön tuşları karakteri kontrol eder · Çıkmak için GERİ basın</string>
+    <string name="game_mode_enabled">Oyun Modu Açıldı: Yön tuşları karakteri kontrol eder</string>
+    <string name="game_mode_disabled">Oyun Modundan Çıkıldı: Fare imleci geri yüklendi</string>
+    <string name="settings_mouse_speed_title">Fare İmleci Hızı</string>
+    <string name="settings_mouse_speed_summary">Kumandanız için imleç hassasiyetini ve hareket hızını ayarlayın.</string>
+    <string name="settings_mouse_speed_slow">Yavaş / Hassas</string>
+    <string name="settings_mouse_speed_normal">Normal (Varsayılan)</string>
+    <string name="settings_mouse_speed_fast">Hızlı</string>
+    <string name="settings_mouse_speed_changed">Fare imleci hızı: %1$s</string>
 </resources>

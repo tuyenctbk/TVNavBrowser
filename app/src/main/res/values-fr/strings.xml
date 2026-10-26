@@ -165,4 +165,15 @@
     <string name="settings_clear_cache_confirm">Voulez-vous vraiment vider le cache et les fichiers temporaires ?</string>
     <string name="read_later_clear_all_confirm">Voulez-vous vraiment supprimer tous les articles enregistrés hors-ligne ?</string>
     <string name="ai_local_summary_prefix">Aperçu rapide :</string>
+
+    <string name="nav_game_mode">Mode Jeu</string>
+    <string name="game_mode_active_hint">🎮 Mode Jeu actif · La croix directionnelle contrôle le jeu · Appuyez sur RETOUR pour quitter</string>
+    <string name="game_mode_enabled">Mode Jeu activé : la croix directionnelle contrôle le personnage</string>
+    <string name="game_mode_disabled">Mode Jeu désactivé : pointeur de souris restauré</string>
+    <string name="settings_mouse_speed_title">Vitesse du pointeur</string>
+    <string name="settings_mouse_speed_summary">Ajustez la sensibilité et la vitesse du curseur pour votre télécommande.</string>
+    <string name="settings_mouse_speed_slow">Lente / Précise</string>
+    <string name="settings_mouse_speed_normal">Normale (Par défaut)</string>
+    <string name="settings_mouse_speed_fast">Rapide</string>
+    <string name="settings_mouse_speed_changed">Vitesse du pointeur : %1$s</string>
 </resources>

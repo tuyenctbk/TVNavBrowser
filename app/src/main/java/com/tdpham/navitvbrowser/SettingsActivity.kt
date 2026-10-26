@@ -66,6 +66,42 @@ class SettingsActivity : ComponentActivity() {
         cardThemeLight.setOnClickListener { onThemeSelected(AppPreferences.THEME_LIGHT) }
         updateThemeSelectionUi()
 
+        // Mouse Pointer Speed Selection (Slow / Normal / Fast)
+        val cardMouseSpeedSlow: View = findViewById(R.id.cardMouseSpeedSlow)
+        val cardMouseSpeedNormal: View = findViewById(R.id.cardMouseSpeedNormal)
+        val cardMouseSpeedFast: View = findViewById(R.id.cardMouseSpeedFast)
+        val tvMouseSpeedSlowBadge: TextView = findViewById(R.id.tvMouseSpeedSlowBadge)
+        val tvMouseSpeedNormalBadge: TextView = findViewById(R.id.tvMouseSpeedNormalBadge)
+        val tvMouseSpeedFastBadge: TextView = findViewById(R.id.tvMouseSpeedFastBadge)
+
+        fun updateMouseSpeedUi() {
+            val currentSpeed = AppPreferences.getMouseSpeed(this)
+            tvMouseSpeedSlowBadge.visibility = if (currentSpeed == AppPreferences.MOUSE_SPEED_SLOW) View.VISIBLE else View.GONE
+            tvMouseSpeedNormalBadge.visibility = if (currentSpeed == AppPreferences.MOUSE_SPEED_NORMAL) View.VISIBLE else View.GONE
+            tvMouseSpeedFastBadge.visibility = if (currentSpeed == AppPreferences.MOUSE_SPEED_FAST) View.VISIBLE else View.GONE
+            cardMouseSpeedSlow.alpha = if (currentSpeed == AppPreferences.MOUSE_SPEED_SLOW) 1.0f else 0.75f
+            cardMouseSpeedNormal.alpha = if (currentSpeed == AppPreferences.MOUSE_SPEED_NORMAL) 1.0f else 0.75f
+            cardMouseSpeedFast.alpha = if (currentSpeed == AppPreferences.MOUSE_SPEED_FAST) 1.0f else 0.75f
+        }
+
+        fun onMouseSpeedSelected(speed: String) {
+            if (AppPreferences.getMouseSpeed(this) == speed) return
+            AppPreferences.setMouseSpeed(this, speed)
+            updateMouseSpeedUi()
+            val speedLabel = when (speed) {
+                AppPreferences.MOUSE_SPEED_SLOW -> getString(R.string.settings_mouse_speed_slow)
+                AppPreferences.MOUSE_SPEED_FAST -> getString(R.string.settings_mouse_speed_fast)
+                else -> getString(R.string.settings_mouse_speed_normal)
+            }
+            Toast.makeText(this, getString(R.string.settings_mouse_speed_changed, speedLabel), Toast.LENGTH_SHORT).show()
+            FirebaseInitializer.logEvent("settings_mouse_speed_changed", mapOf("speed" to speed))
+        }
+
+        cardMouseSpeedSlow.setOnClickListener { onMouseSpeedSelected(AppPreferences.MOUSE_SPEED_SLOW) }
+        cardMouseSpeedNormal.setOnClickListener { onMouseSpeedSelected(AppPreferences.MOUSE_SPEED_NORMAL) }
+        cardMouseSpeedFast.setOnClickListener { onMouseSpeedSelected(AppPreferences.MOUSE_SPEED_FAST) }
+        updateMouseSpeedUi()
+
         val etHomepage: EditText = findViewById(R.id.etHomepage)
         val btnSaveHomepage: Button = findViewById(R.id.btnSaveHomepage)
         val btnClearHistory: Button = findViewById(R.id.btnClearHistory)
@@ -210,6 +246,7 @@ class SettingsActivity : ComponentActivity() {
 
         FocusAnimationHelper.applyAll(
             cardThemeDark, cardThemeLight,
+            cardMouseSpeedSlow, cardMouseSpeedNormal, cardMouseSpeedFast,
             btnSaveHomepage, btnClearHistory, btnClearBookmarks, btnClearCache, etHomepage,
             switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen
         )

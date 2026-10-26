@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">游戏模式</string>
+    <string name="game_mode_active_hint">🎮 游戏模式已激活 · 方向键控制角色 · 按返回键退出</string>
+    <string name="game_mode_enabled">游戏模式已开启：方向键控制游戏角色</string>
+    <string name="game_mode_disabled">游戏模式已退出：恢复鼠标指针</string>
+    <string name="settings_mouse_speed_title">鼠标指针速度</string>
+    <string name="settings_mouse_speed_summary">调整电视遥控器的光标灵敏度和移动速度。</string>
+    <string name="settings_mouse_speed_slow">慢速 / 精准</string>
+    <string name="settings_mouse_speed_normal">正常 (默认)</string>
+    <string name="settings_mouse_speed_fast">快速</string>
+    <string name="settings_mouse_speed_changed">鼠标指针速度：%1$s</string>
 </resources>

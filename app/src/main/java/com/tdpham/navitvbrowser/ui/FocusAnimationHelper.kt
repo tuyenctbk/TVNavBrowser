@@ -27,7 +27,8 @@ object FocusAnimationHelper {
                 .setDuration(ANIM_DURATION_MS)
                 .start()
 
-            v.elevation = if (hasFocus) 4f else 0f
+            v.elevation = if (hasFocus) 6f else 0f
+            v.translationZ = if (hasFocus) 4f else 0f
             onFocusChange?.invoke(v, hasFocus)
         }
     }

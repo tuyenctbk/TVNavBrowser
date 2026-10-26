@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">ゲームモード</string>
+    <string name="game_mode_active_hint">🎮 ゲームモード有効 · Dパッドで操作 · [戻る]で終了</string>
+    <string name="game_mode_enabled">ゲームモード有効化：Dパッドでキャラクターを操作できます</string>
+    <string name="game_mode_disabled">ゲームモード終了：マウスポインターを復元しました</string>
+    <string name="settings_mouse_speed_title">マウスポインターの速度</string>
+    <string name="settings_mouse_speed_summary">リモコンのカーソル感度と移動速度を調整します。</string>
+    <string name="settings_mouse_speed_slow">低速 / 高精度</string>
+    <string name="settings_mouse_speed_normal">標準 (デフォルト)</string>
+    <string name="settings_mouse_speed_fast">高速</string>
+    <string name="settings_mouse_speed_changed">マウスポインターの速度：%1$s</string>
 </resources>

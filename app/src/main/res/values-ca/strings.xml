@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">Game Mode</string>
+    <string name="game_mode_active_hint">🎮 Game Mode Active · D-pad controls character · Press BACK to exit</string>
+    <string name="game_mode_enabled">Game Mode Enabled: D-pad controls game character</string>
+    <string name="game_mode_disabled">Game Mode Exited: Mouse pointer restored</string>
+    <string name="settings_mouse_speed_title">Mouse Pointer Speed</string>
+    <string name="settings_mouse_speed_summary">Adjust cursor sensitivity and movement speed for your remote.</string>
+    <string name="settings_mouse_speed_slow">Slow / Precise</string>
+    <string name="settings_mouse_speed_normal">Normal (Default)</string>
+    <string name="settings_mouse_speed_fast">Fast</string>
+    <string name="settings_mouse_speed_changed">Mouse pointer speed: %1$s</string>
 </resources>

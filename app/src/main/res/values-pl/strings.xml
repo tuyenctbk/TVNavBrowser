@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">Tryb Gry</string>
+    <string name="game_mode_active_hint">🎮 Tryb Gry aktywny · D-pad steruje postacią · Naciśnij WSTECZ aby wyjść</string>
+    <string name="game_mode_enabled">Tryb Gry włączony: D-pad steruje postacią w grze</string>
+    <string name="game_mode_disabled">Tryb Gry wyłączony: Kursor myszy przywrócony</string>
+    <string name="settings_mouse_speed_title">Szybkość wskaźnika myszy</string>
+    <string name="settings_mouse_speed_summary">Dostosuj czułość i szybkość kursora dla pilota TV.</string>
+    <string name="settings_mouse_speed_slow">Wolno / Precyzyjnie</string>
+    <string name="settings_mouse_speed_normal">Normalnie (Domyślnie)</string>
+    <string name="settings_mouse_speed_fast">Szybko</string>
+    <string name="settings_mouse_speed_changed">Szybkość wskaźnika myszy: %1$s</string>
 </resources>

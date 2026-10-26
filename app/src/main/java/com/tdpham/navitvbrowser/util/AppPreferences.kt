@@ -15,10 +15,15 @@ object AppPreferences {
     private const val KEY_CUSTOM_AD_RULES = "custom_ad_rules"
     private const val KEY_FIRESTORE_SYNC_ENABLED = "firestore_sync_enabled"
     private const val KEY_SYNC_USER_ID = "sync_user_id"
+    private const val KEY_MOUSE_SPEED = "mouse_speed"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     const val THEME_DARK = "dark"
     const val THEME_LIGHT = "light"
+
+    const val MOUSE_SPEED_SLOW = "slow"
+    const val MOUSE_SPEED_NORMAL = "normal"
+    const val MOUSE_SPEED_FAST = "fast"
 
     fun getAppTheme(context: Context): String =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -170,4 +175,22 @@ object AppPreferences {
             .putBoolean(KEY_AUTO_FULLSCREEN, enabled)
             .apply()
     }
+
+    fun getMouseSpeed(context: Context): String =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getString(KEY_MOUSE_SPEED, MOUSE_SPEED_NORMAL) ?: MOUSE_SPEED_NORMAL
+
+    fun setMouseSpeed(context: Context, speed: String) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putString(KEY_MOUSE_SPEED, speed)
+            .apply()
+    }
+
+    fun getMouseSpeedMultiplier(context: Context): Float =
+        when (getMouseSpeed(context)) {
+            MOUSE_SPEED_SLOW -> 0.75f
+            MOUSE_SPEED_FAST -> 1.35f
+            else -> 1.0f
+        }
 }

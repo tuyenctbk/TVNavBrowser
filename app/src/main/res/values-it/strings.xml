@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">Modalità Gioco</string>
+    <string name="game_mode_active_hint">🎮 Modalità Gioco attiva · D-pad controlla il personaggio · Premi INDIETRO per uscire</string>
+    <string name="game_mode_enabled">Modalità Gioco attivata: D-pad controlla il personaggio</string>
+    <string name="game_mode_disabled">Modalità Gioco disattivata: Cursore del mouse ripristinato</string>
+    <string name="settings_mouse_speed_title">Velocità del puntatore</string>
+    <string name="settings_mouse_speed_summary">Regola la sensibilità e la velocità del cursore per il telecomando.</string>
+    <string name="settings_mouse_speed_slow">Lenta / Precisa</string>
+    <string name="settings_mouse_speed_normal">Normale (Predefinita)</string>
+    <string name="settings_mouse_speed_fast">Veloce</string>
+    <string name="settings_mouse_speed_changed">Velocità del puntatore: %1$s</string>
 </resources>

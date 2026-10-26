@@ -178,4 +178,15 @@
     <string name="settings_clear_cache_confirm">Tem certeza de que deseja limpar o cache e os arquivos temporários?</string>
     <string name="read_later_clear_all_confirm">Tem certeza de que deseja remover todos os artigos salvos off-line?</string>
     <string name="ai_local_summary_prefix">Resumo rápido:</string>
+
+    <string name="nav_game_mode">Modo Jogo</string>
+    <string name="game_mode_active_hint">🎮 Modo Jogo ativo · D-pad controla o personagem · Pressione VOLTAR para sair</string>
+    <string name="game_mode_enabled">Modo Jogo ativado: D-pad controla o jogo</string>
+    <string name="game_mode_disabled">Modo Jogo desativado: Ponteiro do mouse restaurado</string>
+    <string name="settings_mouse_speed_title">Velocidade do ponteiro</string>
+    <string name="settings_mouse_speed_summary">Ajuste a sensibilidade e velocidade do cursor para o controle da TV.</string>
+    <string name="settings_mouse_speed_slow">Lento / Preciso</string>
+    <string name="settings_mouse_speed_normal">Normal (Padrão)</string>
+    <string name="settings_mouse_speed_fast">Rápido</string>
+    <string name="settings_mouse_speed_changed">Velocidade do ponteiro: %1$s</string>
 </resources>

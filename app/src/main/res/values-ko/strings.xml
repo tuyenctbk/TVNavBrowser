@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">게임 모드</string>
+    <string name="game_mode_active_hint">🎮 게임 모드 활성화 · 방향키로 캐릭터 조작 · 뒤로가기 버튼으로 종료</string>
+    <string name="game_mode_enabled">게임 모드 활성화: 방향키로 게임 캐릭터를 조작합니다</string>
+    <string name="game_mode_disabled">게임 모드 종료: 마우스 포인터가 복원되었습니다</string>
+    <string name="settings_mouse_speed_title">마우스 포인터 속도</string>
+    <string name="settings_mouse_speed_summary">TV 리모컨의 커서 감도 및 이동 속도를 조절합니다.</string>
+    <string name="settings_mouse_speed_slow">느리게 / 정밀</string>
+    <string name="settings_mouse_speed_normal">보통 (기본값)</string>
+    <string name="settings_mouse_speed_fast">빠르게</string>
+    <string name="settings_mouse_speed_changed">마우스 포인터 속도: %1$s</string>
 </resources>

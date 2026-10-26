@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">Ігровий режим</string>
+    <string name="game_mode_active_hint">🎮 Ігровий режим активний · D-pad керує персонажем · Натисніть НАЗАД для виходу</string>
+    <string name="game_mode_enabled">Ігровий режим увімкнено: D-pad керує персонажем</string>
+    <string name="game_mode_disabled">Ігровий режим вимкнено: Вказівник миші відновлено</string>
+    <string name="settings_mouse_speed_title">Швидкість вказівника миші</string>
+    <string name="settings_mouse_speed_summary">Налаштуйте чутливість і швидкість курсора для пульта телевізора.</string>
+    <string name="settings_mouse_speed_slow">Повільно / Точно</string>
+    <string name="settings_mouse_speed_normal">Звичайно (За замовчуванням)</string>
+    <string name="settings_mouse_speed_fast">Швидко</string>
+    <string name="settings_mouse_speed_changed">Швидкість вказівника миші: %1$s</string>
 </resources>

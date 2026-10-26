@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">Mode Game</string>
+    <string name="game_mode_active_hint">🎮 Mode Game Aktif · D-pad mengontrol karakter · Tekan KEMBALI untuk keluar</string>
+    <string name="game_mode_enabled">Mode Game Aktif: D-pad mengontrol karakter game</string>
+    <string name="game_mode_disabled">Keluar dari Mode Game: Penunjuk mouse dipulihkan</string>
+    <string name="settings_mouse_speed_title">Kecepatan Penunjuk Mouse</string>
+    <string name="settings_mouse_speed_summary">Sesuaikan sensitivitas kursor dan kecepatan gerak untuk remote TV Anda.</string>
+    <string name="settings_mouse_speed_slow">Lambat / Presisi</string>
+    <string name="settings_mouse_speed_normal">Normal (Bawaan)</string>
+    <string name="settings_mouse_speed_fast">Cepat</string>
+    <string name="settings_mouse_speed_changed">Kecepatan penunjuk mouse: %1$s</string>
 </resources>

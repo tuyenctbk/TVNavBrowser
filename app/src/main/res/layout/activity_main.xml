@@ -134,16 +134,27 @@
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_nav_summarize"
                 android:nextFocusLeft="@id/btnShowHistory"
-                android:nextFocusRight="@id/btnDesktopMode"
+                android:nextFocusRight="@id/btnGameMode"
                 android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_summarize" />
+
+            <ImageButton
+                android:id="@+id/btnGameMode"
+                style="@style/ToolbarIconButton"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_nav_gamepad"
+                android:visibility="gone"
+                android:nextFocusLeft="@id/btnSummarize"
+                android:nextFocusRight="@id/btnDesktopMode"
+                android:nextFocusDown="@id/webView"
+                android:contentDescription="@string/nav_game_mode" />
 
             <ImageButton
                 android:id="@+id/btnDesktopMode"
                 style="@style/ToolbarIconButton"
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_nav_desktop"
-                android:nextFocusLeft="@id/btnSummarize"
+                android:nextFocusLeft="@id/btnGameMode"
                 android:nextFocusRight="@id/btnDarkMode"
                 android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_desktop_mode" />
@@ -395,10 +406,45 @@
         </LinearLayout>
     </FrameLayout>
 
+    <!-- Game Mode Floating HUD Overlay -->
+    <FrameLayout
+        android:id="@+id/gameModeOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_input_hint"
+        android:paddingStart="18dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="10dp"
+        android:elevation="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvGameModeStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/game_mode_active_hint"
+            android:textColor="@color/accent"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- Virtual Click Ripple Feedback -->
+    <View
+        android:id="@+id/cursorRipple"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_cursor_ripple"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/ivCursor"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:clickable="false"
         android:focusable="false"
         android:contentDescription="@string/cursor_content_desc"

@@ -166,4 +166,15 @@
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
     <string name="read_later_clear_all_confirm">Are you sure you want to remove all saved offline articles?</string>
     <string name="ai_local_summary_prefix">Quick summary:</string>
+
+    <string name="nav_game_mode">Gamemodus</string>
+    <string name="game_mode_active_hint">🎮 Gamemodus actief · D-pad bestuurt het personage · Druk op TERUG om te sluiten</string>
+    <string name="game_mode_enabled">Gamemodus ingeschakeld: D-pad bestuurt personage</string>
+    <string name="game_mode_disabled">Gamemodus beëindigd: muisaanwijzer hersteld</string>
+    <string name="settings_mouse_speed_title">Muisaanwijzersnelheid</string>
+    <string name="settings_mouse_speed_summary">Pas de cursorgevoeligheid en bewegingssnelheid aan voor uw afstandsbediening.</string>
+    <string name="settings_mouse_speed_slow">Langzaam / Nauwkeurig</string>
+    <string name="settings_mouse_speed_normal">Normaal (Standaard)</string>
+    <string name="settings_mouse_speed_fast">Snel</string>
+    <string name="settings_mouse_speed_changed">Muisaanwijzersnelheid: %1$s</string>
 </resources>
