@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">Normal (Bawaan)</string>
     <string name="settings_mouse_speed_fast">Cepat</string>
     <string name="settings_mouse_speed_changed">Kecepatan penunjuk mouse: %1$s</string>
+    <string name="settings_data_storage">Data &amp; penyimpanan</string>
 </resources>

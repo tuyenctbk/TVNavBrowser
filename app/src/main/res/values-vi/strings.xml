@@ -176,4 +176,5 @@
     <string name="settings_mouse_speed_normal">Bình thường (Mặc định)</string>
     <string name="settings_mouse_speed_fast">Nhanh</string>
     <string name="settings_mouse_speed_changed">Tốc độ con trỏ chuột: %1$s</string>
+    <string name="settings_data_storage">Dữ liệu &amp; Bộ nhớ</string>
 </resources>

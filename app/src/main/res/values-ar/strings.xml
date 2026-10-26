@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">عادي (افتراضي)</string>
     <string name="settings_mouse_speed_fast">سريع</string>
     <string name="settings_mouse_speed_changed">سرعة مؤشر الفأرة: %1$s</string>
+    <string name="settings_data_storage">البيانات وسعة التخزين</string>
 </resources>

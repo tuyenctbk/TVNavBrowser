@@ -3,10 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    android:background="@drawable/focusable_item_background"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="10dp"
+    android:background="?attr/focusableItemBackground"
     android:clickable="true"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="16dp">
@@ -16,7 +20,7 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:src="@drawable/ic_read_later"
-        app:tint="@color/accent"
+        app:tint="?attr/colorAccent"
         android:contentDescription="@string/read_later_title" />
 
     <LinearLayout
@@ -39,7 +43,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/text_primary"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -48,13 +52,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:background="#2038BDF8"
+                android:background="?attr/stepBadgeBackground"
                 android:paddingStart="8dp"
                 android:paddingTop="2dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="2dp"
                 android:text="@string/read_later_unread"
-                android:textColor="@color/accent"
+                android:textColor="?attr/colorAccent"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -66,7 +70,7 @@
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/text_secondary"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="13sp" />
 
         <TextView
@@ -76,7 +80,7 @@
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="#82B1FF"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -85,6 +89,7 @@
         style="@style/ToolbarIconButton"
         android:layout_marginStart="12dp"
         android:src="@drawable/ic_nav_delete"
+        app:tint="?android:attr/textColorSecondary"
         android:contentDescription="@string/settings_remove_rule" />
 
 </LinearLayout>

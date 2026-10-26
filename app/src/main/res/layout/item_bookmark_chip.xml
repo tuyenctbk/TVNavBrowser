@@ -5,7 +5,7 @@
     android:layout_height="36dp"
     android:layout_marginStart="4dp"
     android:layout_marginEnd="4dp"
-    android:background="@drawable/focusable_item_background"
+    android:background="?attr/focusableItemBackground"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_vertical"
@@ -32,7 +32,7 @@
         android:maxWidth="140dp"
         android:singleLine="true"
         android:ellipsize="end"
-        android:textColor="@color/text_primary"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="13sp" />
 
 </LinearLayout>

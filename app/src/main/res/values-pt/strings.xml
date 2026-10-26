@@ -189,4 +189,5 @@
     <string name="settings_mouse_speed_normal">Normal (Padrão)</string>
     <string name="settings_mouse_speed_fast">Rápido</string>
     <string name="settings_mouse_speed_changed">Velocidade do ponteiro: %1$s</string>
+    <string name="settings_data_storage">Dados e armazenamento</string>
 </resources>

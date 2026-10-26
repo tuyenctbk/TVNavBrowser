@@ -22,6 +22,7 @@ import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -110,10 +111,13 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnHome: ImageButton
     private lateinit var btnBookmark: ImageButton
     private lateinit var btnReadLater: ImageButton
+    private lateinit var btnShowBookmarks: ImageButton
+    private lateinit var btnShowHistory: ImageButton
     private lateinit var btnDesktopMode: ImageButton
     private lateinit var btnDarkMode: ImageButton
     private lateinit var btnVoiceSearch: ImageButton
     private lateinit var btnSummarize: ImageButton
+    private lateinit var btnSettings: ImageButton
     private lateinit var btnGameMode: ImageButton
     private lateinit var ivCursor: ImageView
     private lateinit var cursorRipple: View
@@ -214,10 +218,13 @@ class MainActivity : ComponentActivity() {
         btnHome = findViewById(R.id.btnHome)
         btnBookmark = findViewById(R.id.btnBookmark)
         btnReadLater = findViewById(R.id.btnReadLater)
+        btnShowBookmarks = findViewById(R.id.btnShowBookmarks)
+        btnShowHistory = findViewById(R.id.btnShowHistory)
         btnDesktopMode = findViewById(R.id.btnDesktopMode)
         btnDarkMode = findViewById(R.id.btnDarkMode)
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
         btnSummarize = findViewById(R.id.btnSummarize)
+        btnSettings = findViewById(R.id.btnSettings)
         btnGameMode = findViewById(R.id.btnGameMode)
         ivCursor = findViewById(R.id.ivCursor)
         cursorRipple = findViewById(R.id.cursorRipple)
@@ -305,11 +312,19 @@ class MainActivity : ComponentActivity() {
             recovering -> {
                 val home = resolveHomepage()
                 webView.loadUrl(home)
-                urlInput.setText(home)
+                if (isDashboardOrAssetUrl(home)) {
+                    urlInput.setText("")
+                } else {
+                    urlInput.setText(home)
+                }
             }
             !restoreUrl.isNullOrBlank() -> {
                 webView.loadUrl(restoreUrl)
-                urlInput.setText(restoreUrl)
+                if (isDashboardOrAssetUrl(restoreUrl)) {
+                    urlInput.setText("")
+                } else {
+                    urlInput.setText(restoreUrl)
+                }
             }
             else -> loadInitialUrl(intent)
         }
@@ -337,34 +352,49 @@ class MainActivity : ComponentActivity() {
         val isLight = ThemeHelper.isLightTheme(this)
         rootLayout.setBackgroundResource(ThemeHelper.getScreenBackground(this))
         toolbarContainer.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
-        bookmarkBarContainer.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
+        bookmarkBar.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
+        bookmarkBarContainer.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        if (::webViewContainer.isInitialized) {
+            webViewContainer.setBackgroundResource(if (isLight) R.drawable.bg_webview_frame_light else R.drawable.bg_webview_frame)
+        }
         urlInput.setBackgroundResource(ThemeHelper.getUrlBarBackground(this))
         urlInput.setTextColor(ThemeHelper.getTextPrimaryColor(this))
         urlInput.setHintTextColor(ThemeHelper.getTextSecondaryColor(this))
+        tvInputHint.setBackgroundResource(if (isLight) R.drawable.bg_input_hint_light else R.drawable.bg_input_hint)
         tvInputHint.setTextColor(ThemeHelper.getTextSecondaryColor(this))
 
         val btnBg = ThemeHelper.getToolbarButtonBackground(this)
         val iconTint = ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
         val accentColor = ThemeHelper.getAccentColor(this)
 
-        val buttons = listOfNotNull(
-            btnBack, btnForward, btnRefresh, btnHome, btnVoiceSearch,
-            btnBookmark, btnReadLater,
-            findViewById<ImageButton>(R.id.btnShowBookmarks),
-            findViewById<ImageButton>(R.id.btnShowHistory),
-            btnSummarize, btnDesktopMode, btnDarkMode,
-            findViewById<ImageButton>(R.id.btnSettings),
-            btnFullscreen
-        )
-        buttons.forEach { btn ->
-            btn.setBackgroundResource(btnBg)
-            btn.imageTintList = iconTint
+        fun styleToolbarElements(parent: View) {
+            if (parent is ViewGroup) {
+                for (i in 0 until parent.childCount) {
+                    when (val child = parent.getChildAt(i)) {
+                        is ImageButton -> {
+                            child.setBackgroundResource(btnBg)
+                            if (child.id == R.id.btnGameMode && isGameModeActive) {
+                                child.imageTintList = ColorStateList.valueOf(accentColor)
+                            } else {
+                                child.imageTintList = iconTint
+                            }
+                        }
+                        is Button -> {
+                            child.setBackgroundResource(btnBg)
+                            child.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+                        }
+                        is ViewGroup -> styleToolbarElements(child)
+                    }
+                }
+            }
         }
+        styleToolbarElements(toolbarContainer)
 
-        btnGameMode.setBackgroundResource(btnBg)
-        btnGameMode.imageTintList = ColorStateList.valueOf(
-            if (isGameModeActive) accentColor else ThemeHelper.getTextPrimaryColor(this)
-        )
+        for (i in 0 until bookmarkBarContainer.childCount) {
+            val chip = bookmarkBarContainer.getChildAt(i)
+            chip.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            chip.findViewById<TextView>(R.id.tvChipTitle)?.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        }
 
         summaryOverlayContainer.findViewById<View>(R.id.cardSummary)?.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
         tvSummaryTitle.setTextColor(accentColor)
@@ -630,6 +660,8 @@ class MainActivity : ComponentActivity() {
             virtualCursor.hideForPhysicalPointer()
             tvInputHint.text = getString(R.string.input_hint_touch)
             tvInputHint.isVisible = true
+            tvInputHint.removeCallbacks(hideInputHintRunnable)
+            tvInputHint.postDelayed(hideInputHintRunnable, 2500)
         }
         return super.dispatchTouchEvent(event)
     }
@@ -757,7 +789,11 @@ class MainActivity : ComponentActivity() {
                 virtualCursor.showIfEnabled()
                 updateGameModeAvailability(url)
                 if (!UrlUtils.isBrowsableUrl(url.orEmpty())) return
-                urlInput.setText(url)
+                if (isDashboardOrAssetUrl(url.orEmpty())) {
+                    urlInput.setText("")
+                } else {
+                    urlInput.setText(url)
+                }
                 if (AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
                     view?.let { EmbeddedAdBlocker.applyDomCleanup(it) }
                 }
@@ -857,7 +893,11 @@ class MainActivity : ComponentActivity() {
         btnHome.setOnClickListener {
             val home = resolveHomepage()
             webView.loadUrl(home)
-            urlInput.setText(home)
+            if (isDashboardOrAssetUrl(home)) {
+                urlInput.setText("")
+            } else {
+                urlInput.setText(home)
+            }
         }
         btnReadLater.setOnClickListener {
             startActivity(Intent(this, ReadLaterActivity::class.java))
@@ -1065,6 +1105,8 @@ class MainActivity : ComponentActivity() {
             val chip = inflater.inflate(R.layout.item_bookmark_chip, bookmarkBarContainer, false)
             val tvChipTitle = chip.findViewById<TextView>(R.id.tvChipTitle)
             val ivChipIcon = chip.findViewById<ImageView>(R.id.ivChipIcon)
+            chip.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            tvChipTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
             tvChipTitle.text = item.title
 
             when (item.type) {
@@ -1142,7 +1184,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val hideInputHintRunnable = Runnable { tvInputHint.isVisible = virtualCursor.isEnabled }
+    private val hideInputHintRunnable = Runnable {
+        if (::virtualCursor.isInitialized && virtualCursor.isEnabled) {
+            tvInputHint.text = getString(R.string.input_hint_virtual_mouse)
+            tvInputHint.isVisible = true
+        } else {
+            tvInputHint.isVisible = false
+        }
+    }
 
     private fun updateInputHint() {
         tvInputHint.removeCallbacks(hideInputHintRunnable)
@@ -1176,13 +1225,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupToolbarButtons() {
-        findViewById<ImageButton>(R.id.btnShowBookmarks).setOnClickListener {
+        btnShowBookmarks.setOnClickListener {
             startActivity(Intent(this, BookmarksActivity::class.java))
         }
-        findViewById<ImageButton>(R.id.btnShowHistory).setOnClickListener {
+        btnShowHistory.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
-        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
+        btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
@@ -1190,10 +1239,8 @@ class MainActivity : ComponentActivity() {
     private fun setupFocusAnimations() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnHome, btnBookmark, btnReadLater,
+            btnShowBookmarks, btnShowHistory, btnSettings,
             btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize, btnGameMode,
-            findViewById(R.id.btnShowBookmarks),
-            findViewById(R.id.btnShowHistory),
-            findViewById(R.id.btnSettings),
             btnCopySummary, btnCloseSummary, btnCloseSummaryIcon
         )
         FocusAnimationHelper.apply(urlInput) { _, hasFocus ->
@@ -1376,11 +1423,19 @@ class MainActivity : ComponentActivity() {
         })
     }
 
+    private fun isDashboardOrAssetUrl(url: String): Boolean {
+        return url.isBlank() || url.startsWith(TRUSTED_ASSET_PREFIX) || url.contains("dashboard.html")
+    }
+
     private fun loadInitialUrl(intent: Intent) {
         if (handleUrlIntent(intent)) return
         val homepage = resolveHomepage()
         webView.loadUrl(homepage)
-        urlInput.setText(homepage)
+        if (isDashboardOrAssetUrl(homepage)) {
+            urlInput.setText("")
+        } else {
+            urlInput.setText(homepage)
+        }
     }
 
     private fun handleUrlIntent(intent: Intent): Boolean {
@@ -1506,6 +1561,8 @@ class MainActivity : ComponentActivity() {
         list.forEach { bookmark ->
             val chip = inflater.inflate(R.layout.item_bookmark_chip, bookmarkBarContainer, false)
             val tvChipTitle = chip.findViewById<TextView>(R.id.tvChipTitle)
+            chip.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            tvChipTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
             tvChipTitle.text = bookmark.title
 
             FocusAnimationHelper.apply(chip)
@@ -1850,6 +1907,11 @@ class MainActivity : ComponentActivity() {
         @android.webkit.JavascriptInterface
         fun isLightTheme(): Boolean {
             return ThemeHelper.isLightTheme(this@MainActivity)
+        }
+
+        @android.webkit.JavascriptInterface
+        fun getSuggestionsJson(): String {
+            return com.tdpham.navitvbrowser.data.PortalSuggestionsManager.getSuggestionsJson(this@MainActivity)
         }
 
         /**

@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">Normal (Varsayılan)</string>
     <string name="settings_mouse_speed_fast">Hızlı</string>
     <string name="settings_mouse_speed_changed">Fare imleci hızı: %1$s</string>
+    <string name="settings_data_storage">Veriler ve depolama alanı</string>
 </resources>

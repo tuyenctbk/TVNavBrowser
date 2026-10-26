@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">Звичайно (За замовчуванням)</string>
     <string name="settings_mouse_speed_fast">Швидко</string>
     <string name="settings_mouse_speed_changed">Швидкість вказівника миші: %1$s</string>
+    <string name="settings_data_storage">Дані та пам’ять</string>
 </resources>

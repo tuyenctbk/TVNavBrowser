@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">正常 (默认)</string>
     <string name="settings_mouse_speed_fast">快速</string>
     <string name="settings_mouse_speed_changed">鼠标指针速度：%1$s</string>
+    <string name="settings_data_storage">数据与存储</string>
 </resources>

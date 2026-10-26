@@ -3,13 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/focusable_item_background"
+    android:background="?attr/focusableItemBackground"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="14dp"
-    android:layout_marginBottom="8dp">
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="10dp">
 
     <!-- Card Row Icon -->
     <ImageView
@@ -20,7 +23,7 @@
         android:contentDescription="@string/list_item_icon"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/ic_nav_bookmark"
-        app:tint="@color/accent" />
+        app:tint="?attr/colorAccent" />
 
     <!-- Text Group (Vertical) -->
     <LinearLayout
@@ -33,7 +36,7 @@
             android:id="@+id/tvRowTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/text_primary"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             android:singleLine="true"
@@ -44,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="@color/text_secondary"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="13sp"
             android:singleLine="true"
             android:ellipsize="end" />
@@ -60,7 +63,7 @@
         android:layout_marginStart="8dp"
         android:padding="8dp"
         android:src="@drawable/ic_nav_delete"
-        app:tint="@color/text_secondary"
+        app:tint="?android:attr/textColorSecondary"
         android:contentDescription="@string/action_delete" />
 
 </LinearLayout>

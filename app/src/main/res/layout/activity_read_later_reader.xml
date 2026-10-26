@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_screen"
+    android:background="?attr/screenBackground"
     android:orientation="vertical"
     android:padding="20dp">
 
@@ -28,7 +28,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/read_later_reading_mode"
-            android:textColor="@color/accent"
+            android:textColor="?attr/colorAccent"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:textColor="@color/text_primary"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="22sp"
         android:textStyle="bold" />
 
@@ -65,22 +65,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="#82B1FF"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="13sp" />
 
     <View
+        android:id="@+id/dividerLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:background="@color/divider" />
+        android:background="?attr/dividerColor" />
 
     <!-- Article Content WebView / Reader Container -->
     <ScrollView
+        android:id="@+id/readerScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#121829"
+        android:background="?attr/readerContentBackground"
         android:padding="16dp">
 
         <TextView
@@ -88,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="6dp"
-            android:textColor="#E2E8F0"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp" />
     </ScrollView>
 

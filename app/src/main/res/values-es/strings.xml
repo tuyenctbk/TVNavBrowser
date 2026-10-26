@@ -176,4 +176,5 @@
     <string name="settings_mouse_speed_normal">Normal (Predeterminado)</string>
     <string name="settings_mouse_speed_fast">Rápido</string>
     <string name="settings_mouse_speed_changed">Velocidad del puntero: %1$s</string>
+    <string name="settings_data_storage">Datos y almacenamiento</string>
 </resources>

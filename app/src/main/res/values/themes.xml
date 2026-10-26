@@ -11,6 +11,20 @@
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@color/bg_dark</item>
+
+        <!-- Custom Adaptive Attributes (Dark) -->
+        <item name="toolbarButtonBackground">@drawable/bg_toolbar_btn</item>
+        <item name="urlBarBackground">@drawable/bg_url_bar</item>
+        <item name="screenBackground">@drawable/bg_screen</item>
+        <item name="focusableItemBackground">@drawable/focusable_item_background</item>
+        <item name="settingsSectionBackground">@drawable/bg_settings_section</item>
+        <item name="inputHintBackground">@drawable/bg_input_hint</item>
+        <item name="overlayCardBackground">@drawable/bg_overlay_card</item>
+        <item name="stepBadgeBackground">@drawable/bg_step_badge</item>
+        <item name="dividerColor">@color/divider</item>
+        <item name="readerContentBackground">#FF121829</item>
+        <item name="toolbarBackground">@drawable/bg_toolbar</item>
+        <item name="webviewFrameBackground">@drawable/bg_webview_frame</item>
     </style>
 
     <style name="Theme.TVNavBrowser.Dialog" parent="Theme.AppCompat.Dialog.Alert">
@@ -33,6 +47,20 @@
         <item name="android:textColorSecondary">@color/light_text_secondary</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@color/light_bg</item>
+
+        <!-- Custom Adaptive Attributes (Light) -->
+        <item name="toolbarButtonBackground">@drawable/bg_toolbar_btn_light</item>
+        <item name="urlBarBackground">@drawable/bg_url_bar_light</item>
+        <item name="screenBackground">@drawable/bg_screen_light</item>
+        <item name="focusableItemBackground">@drawable/focusable_item_background_light</item>
+        <item name="settingsSectionBackground">@drawable/bg_settings_section_light</item>
+        <item name="inputHintBackground">@drawable/bg_input_hint_light</item>
+        <item name="overlayCardBackground">@drawable/bg_overlay_card_light</item>
+        <item name="stepBadgeBackground">@drawable/bg_step_badge_light</item>
+        <item name="dividerColor">@color/light_divider</item>
+        <item name="readerContentBackground">#FFFFFFFF</item>
+        <item name="toolbarBackground">@drawable/bg_toolbar_light</item>
+        <item name="webviewFrameBackground">@drawable/bg_webview_frame_light</item>
     </style>
 
     <style name="Theme.TVNavBrowser.Light.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">

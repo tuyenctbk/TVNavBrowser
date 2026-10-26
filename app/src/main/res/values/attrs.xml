@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="toolbarButtonBackground" format="reference" />
+    <attr name="urlBarBackground" format="reference" />
+    <attr name="screenBackground" format="reference" />
+    <attr name="focusableItemBackground" format="reference" />
+    <attr name="settingsSectionBackground" format="reference" />
+    <attr name="inputHintBackground" format="reference" />
+    <attr name="overlayCardBackground" format="reference" />
+    <attr name="stepBadgeBackground" format="reference" />
+    <attr name="dividerColor" format="color|reference" />
+    <attr name="readerContentBackground" format="color|reference" />
+    <attr name="toolbarBackground" format="reference" />
+    <attr name="webviewFrameBackground" format="reference" />
+</resources>

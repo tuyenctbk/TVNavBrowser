@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">Normal (Default)</string>
     <string name="settings_mouse_speed_fast">Fast</string>
     <string name="settings_mouse_speed_changed">Mouse pointer speed: %1$s</string>
+    <string name="settings_data_storage">Data və yaddaş</string>
 </resources>

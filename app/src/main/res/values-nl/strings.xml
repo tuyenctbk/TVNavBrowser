@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">Normaal (Standaard)</string>
     <string name="settings_mouse_speed_fast">Snel</string>
     <string name="settings_mouse_speed_changed">Muisaanwijzersnelheid: %1$s</string>
+    <string name="settings_data_storage">Gegevens en opslag</string>
 </resources>

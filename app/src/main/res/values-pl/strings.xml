@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">Normalnie (Domyślnie)</string>
     <string name="settings_mouse_speed_fast">Szybko</string>
     <string name="settings_mouse_speed_changed">Szybkość wskaźnika myszy: %1$s</string>
+    <string name="settings_data_storage">Dane i pamięć</string>
 </resources>

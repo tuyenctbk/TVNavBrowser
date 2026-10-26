@@ -5,9 +5,9 @@ import android.view.animation.OvershootInterpolator
 
 object FocusAnimationHelper {
 
-    private const val FOCUSED_SCALE = 1.08f
-    private const val ANIM_DURATION_MS = 170L
-    private val overshootInterpolator = OvershootInterpolator(1.25f)
+    private const val FOCUSED_SCALE = 1.03f
+    private const val ANIM_DURATION_MS = 160L
+    private val overshootInterpolator = OvershootInterpolator(1.15f)
 
     fun apply(
         view: View,

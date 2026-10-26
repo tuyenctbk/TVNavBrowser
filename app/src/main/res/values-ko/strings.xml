@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">보통 (기본값)</string>
     <string name="settings_mouse_speed_fast">빠르게</string>
     <string name="settings_mouse_speed_changed">마우스 포인터 속도: %1$s</string>
+    <string name="settings_data_storage">데이터 및 저장용량</string>
 </resources>

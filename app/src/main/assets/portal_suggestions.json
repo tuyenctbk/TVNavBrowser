@@ -1,0 +1,241 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "video",
+      "tabTitle": "Free Video & Stream",
+      "tabIcon": "🎬",
+      "headerTitle": "FREE TV, MOVIES & VIDEO",
+      "headerBadge": "100% WEB TV FRIENDLY",
+      "items": [
+        {
+          "title": "YouTube",
+          "badge": "HD",
+          "badgeClass": "badge-hd",
+          "desc": "Videos, music, live streams & clips",
+          "url": "https://www.youtube.com",
+          "cardClass": "card-youtube",
+          "fill": "#FF0000",
+          "path": "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+        },
+        {
+          "title": "Pluto TV",
+          "badge": "Live",
+          "badgeClass": "badge-live",
+          "desc": "100+ free live channels & movies",
+          "url": "https://pluto.tv",
+          "cardClass": "card-pluto",
+          "fill": "#FFDE00",
+          "path": "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+        },
+        {
+          "title": "Tubi TV",
+          "badge": "Free",
+          "badgeClass": "badge-free",
+          "desc": "Thousands of free movies & series",
+          "url": "https://tubitv.com",
+          "cardClass": "card-tubi",
+          "fill": "#FF6B00",
+          "path": "M4 4h16v16H4V4zm2 2v12h12V6H6zm3 2h6v2H9V8zm0 3h6v2H9v-2zm0 3h4v2H9v-2z"
+        },
+        {
+          "title": "Twitch",
+          "badge": "Live",
+          "badgeClass": "badge-live",
+          "desc": "Live gaming, esports & creative streams",
+          "url": "https://www.twitch.tv",
+          "cardClass": "card-twitch",
+          "fill": "#9146FF",
+          "path": "M2.149 0L.537 4.119v16.836h5.731V24h3.224l3.045-3.045h4.657l6.269-6.269V0H2.149zm19.164 13.612l-3.582 3.582H12l-3.045 3.045v-3.045H4.836V2.149h16.477v11.463zm-8.955-6.627h2.149v6.269h-2.149V6.985zm4.657 0h2.149v6.269h-2.149V6.985z"
+        },
+        {
+          "title": "Plex TV",
+          "badge": "Free",
+          "badgeClass": "badge-free",
+          "desc": "Free movies, shows & 300+ live channels",
+          "url": "https://watch.plex.tv",
+          "cardClass": "card-plex",
+          "fill": "#E5A00D",
+          "path": "M12 2L1 21h22L12 2zm0 4.5l7 12H5l7-12z"
+        },
+        {
+          "title": "Dailymotion",
+          "badge": "HD",
+          "badgeClass": "badge-hd",
+          "desc": "Trending news, sports, music & events",
+          "url": "https://www.dailymotion.com",
+          "cardClass": "card-dailymotion",
+          "fill": "#0066DC",
+          "path": "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.5v-9l6 4.5-6 4.5z"
+        },
+        {
+          "title": "Vimeo",
+          "badge": "HD",
+          "badgeClass": "badge-hd",
+          "desc": "High-quality films, animations & shorts",
+          "url": "https://vimeo.com/watch",
+          "cardClass": "card-vimeo",
+          "fill": "#1AB7EA",
+          "path": "M22.84 5.38c-.12 2.65-1.95 6.27-5.49 10.87-3.66 4.79-6.75 7.18-9.28 7.18-1.57 0-2.9-1.45-3.99-4.35l-2.17-7.98C1.19 8.15.54 6.67 0 6.67c-.24 0-1.07.51-2.49 1.54L-3.4 6.8c1.57-1.38 3.12-2.76 4.64-4.14 2.1-1.8 3.65-2.77 4.66-2.9 2.53-.25 4.09 1.48 4.68 5.2.71 4.41 1.2 7.18 1.47 8.3.82 3.86 1.73 5.79 2.73 5.79.78 0 1.76-1.25 2.94-3.75 1.18-2.5 1.83-4.4 1.95-5.71.24-2.22-.64-3.33-2.65-3.33-.94 0-1.91.22-2.91.65 1.93-6.32 5.62-9.35 11.08-9.08 4.05.19 5.96 2.45 5.74 6.78z"
+        },
+        {
+          "title": "TED Talks",
+          "badge": "HD",
+          "badgeClass": "badge-hd",
+          "desc": "Ideas worth spreading in science & tech",
+          "url": "https://www.ted.com/talks",
+          "cardClass": "card-ted",
+          "fill": "#E62B1E",
+          "path": "M19.5 4h-15C3.12 4 2 5.12 2 6.5v11C2 18.88 3.12 20 4.5 20h15c1.38 0 2.5-1.12 2.5-2.5v-11C22 5.12 20.88 4 19.5 4zm-7.5 11.5L7 12l5-3.5v7zm4 0h-2V8.5h2v7z"
+        }
+      ]
+    },
+    {
+      "id": "arcade",
+      "tabTitle": "TV Web Arcade",
+      "tabIcon": "🕹️",
+      "headerTitle": "TV WEB ARCADE & AUDIO",
+      "headerBadge": "FUN & CASUAL",
+      "items": [
+        {
+          "title": "Radio Garden",
+          "badge": "GLOBE",
+          "badgeClass": "badge-live",
+          "desc": "Explore live world radio on 3D globe",
+          "url": "https://radio.garden",
+          "cardClass": "card-radio",
+          "fill": "#00E59B",
+          "path": "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"
+        },
+        {
+          "title": "Retro Games",
+          "badge": "ARCADE",
+          "badgeClass": "badge-game",
+          "desc": "Classic retro console games in browser",
+          "url": "https://www.retrogames.onl",
+          "cardClass": "card-retro",
+          "fill": "#B388FF",
+          "path": "M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
+        },
+        {
+          "title": "Chess.com",
+          "badge": "PLAY",
+          "badgeClass": "badge-game",
+          "desc": "Play chess puzzles & live games on TV",
+          "url": "https://www.chess.com/play",
+          "cardClass": "card-chess",
+          "fill": "#769656",
+          "path": "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-2h2v2zm0-4H7v-2h2v2zm0-4H7V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"
+        },
+        {
+          "title": "Poki Games",
+          "badge": "FREE",
+          "badgeClass": "badge-free",
+          "desc": "Instant free casual web games on TV",
+          "url": "https://www.poki.com",
+          "cardClass": "card-retro",
+          "fill": "#00D4FF",
+          "path": "M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 15H22V9h-5.5l-3 3 3 3z"
+        }
+      ]
+    },
+    {
+      "id": "news",
+      "tabTitle": "News & Knowledge",
+      "tabIcon": "📰",
+      "headerTitle": "NEWS & KNOWLEDGE",
+      "headerBadge": "TRUSTED SOURCES",
+      "items": [
+        {
+          "title": "BBC News",
+          "badge": "GLOBAL",
+          "badgeClass": "badge-live",
+          "desc": "Breaking world news, analysis & video",
+          "url": "https://www.bbc.com/news",
+          "cardClass": "card-bbc",
+          "fill": "#BB1919",
+          "path": "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"
+        },
+        {
+          "title": "Reuters",
+          "badge": "WORLD",
+          "badgeClass": "badge-free",
+          "desc": "Independent global news & market data",
+          "url": "https://www.reuters.com",
+          "cardClass": "card-reuters",
+          "fill": "#FF8000",
+          "path": "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"
+        },
+        {
+          "title": "Wikipedia",
+          "badge": "INFO",
+          "badgeClass": "badge-hd",
+          "desc": "Free encyclopedia with millions of articles",
+          "url": "https://en.wikipedia.org",
+          "cardClass": "card-wiki",
+          "fill": "#FFFFFF",
+          "path": "M14.5 3L12 11.5 9.5 3H7L3.5 17h2.2l1.6-6.8L9.6 17h1.8l2.3-6.8 1.6 6.8h2.2L14 3z"
+        },
+        {
+          "title": "Hacker News",
+          "badge": "TECH",
+          "badgeClass": "badge-game",
+          "desc": "Tech, startup & computer science discussions",
+          "url": "https://news.ycombinator.com",
+          "cardClass": "card-reuters",
+          "fill": "#FF6600",
+          "path": "M2 2h20v20H2V2zm11 11.5V18h-2v-4.5L7 6h2.2l2.8 5.4L14.8 6H17l-4 7.5z"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "tabTitle": "Social & Tools",
+      "tabIcon": "🌐",
+      "headerTitle": "SOCIAL, UTILITIES & TOOLS",
+      "headerBadge": "ESSENTIAL WEB",
+      "items": [
+        {
+          "title": "Reddit",
+          "badge": "COMMUNITY",
+          "badgeClass": "badge-live",
+          "desc": "Dive into discussions, memes & topics",
+          "url": "https://www.reddit.com",
+          "cardClass": "card-reddit",
+          "fill": "#FF4500",
+          "path": "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm6.2 13.8c-.4.4-1.2.6-2.2.6s-1.8-.2-2.2-.6c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0 .3.3.9.4 1.5.4s1.2-.1 1.5-.4c.2-.2.5-.2.7 0 .2.2.2.5 0 .7zM9.5 11c-.8 0-1.5-.7-1.5-1.5S8.7 8 9.5 8s1.5.7 1.5 1.5-.7 1.5-1.5 1.5zm5 0c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5z"
+        },
+        {
+          "title": "Speedtest",
+          "badge": "TOOL",
+          "badgeClass": "badge-hd",
+          "desc": "Test your TV broadband & Wi-Fi speed",
+          "url": "https://www.speedtest.net",
+          "cardClass": "card-speedtest",
+          "fill": "#14E8B0",
+          "path": "M12 4C6.48 4 2 8.48 2 14c0 2.21.72 4.25 1.94 5.92l1.45-1.45C4.54 17.06 4 15.6 4 14c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.6-.54 3.06-1.39 4.47l1.45 1.45C21.28 18.25 22 16.21 22 14c0-5.52-4.48-10-10-10zm-1 6v5l4.24 2.55.76-1.28-3.5-2.08V10h-1.5z"
+        },
+        {
+          "title": "Bluesky",
+          "badge": "SOCIAL",
+          "badgeClass": "badge-free",
+          "desc": "Open decentralized social media feed",
+          "url": "https://bsky.app",
+          "cardClass": "card-vimeo",
+          "fill": "#1185FE",
+          "path": "M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566 1.018.8 1.954.8 4.79c0 2.383 1.157 11.233 1.83 13.518 1.05 3.568 5.097 4.148 7.42 1.42 1.258-1.478 1.95-3.328 1.95-3.328s.692 1.85 1.95 3.328c2.323 2.728 6.37 2.148 7.42-1.42.673-2.285 1.83-11.135 1.83-13.518 0-2.836-1.766-3.772-4.402-1.985C16.046 4.747 13.087 8.686 12 10.8z"
+        },
+        {
+          "title": "Internet Archive",
+          "badge": "LIBRARY",
+          "badgeClass": "badge-game",
+          "desc": "Millions of free books, movies & music",
+          "url": "https://archive.org",
+          "cardClass": "card-wiki",
+          "fill": "#C0C0C0",
+          "path": "M12 2L2 7v2h20V7L12 2zm-8 8v8h2v-8H4zm5 0v8h2v-8H9zm5 0v8h2v-8h-2zm5 0v8h2v-8h-2zM2 20v2h20v-2H2z"
+        }
+      ]
+    }
+  ]
+}

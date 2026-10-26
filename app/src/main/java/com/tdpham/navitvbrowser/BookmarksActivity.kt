@@ -62,6 +62,13 @@ class BookmarksActivity : ComponentActivity() {
         lifecycleScope.launch {
             // Auto-sync from cloud on launch if enabled
             com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@BookmarksActivity, repository)
+            if (repository.getAllBookmarksList().isEmpty()) {
+                repository.addBookmark("YouTube HD", "https://www.youtube.com")
+                repository.addBookmark("Wikipedia - Free Encyclopedia", "https://en.wikipedia.org")
+                repository.addBookmark("Radio Garden - Live World Radio", "https://radio.garden")
+                repository.addBookmark("Pluto TV - Free Live Channels", "https://pluto.tv")
+                repository.addBookmark("Retro Games Arcade", "https://www.retrogames.cc")
+            }
         }
 
         lifecycleScope.launch {

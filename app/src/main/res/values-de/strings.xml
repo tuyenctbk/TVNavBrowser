@@ -176,4 +176,5 @@
     <string name="settings_mouse_speed_normal">Normal (Standard)</string>
     <string name="settings_mouse_speed_fast">Schnell</string>
     <string name="settings_mouse_speed_changed">Mauszeiger-Geschwindigkeit: %1$s</string>
+    <string name="settings_data_storage">Daten &amp; Speicher</string>
 </resources>

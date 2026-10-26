@@ -6,7 +6,24 @@
         <item name="colorSecondary">@color/accent</item>
         <item name="colorSecondaryVariant">@color/accent_dark</item>
         <item name="colorOnSecondary">@color/black</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@color/bg_dark</item>
+
+        <!-- Custom Adaptive Attributes (Dark) -->
+        <item name="toolbarButtonBackground">@drawable/bg_toolbar_btn</item>
+        <item name="urlBarBackground">@drawable/bg_url_bar</item>
+        <item name="screenBackground">@drawable/bg_screen</item>
+        <item name="focusableItemBackground">@drawable/focusable_item_background</item>
+        <item name="settingsSectionBackground">@drawable/bg_settings_section</item>
+        <item name="inputHintBackground">@drawable/bg_input_hint</item>
+        <item name="overlayCardBackground">@drawable/bg_overlay_card</item>
+        <item name="stepBadgeBackground">@drawable/bg_step_badge</item>
+        <item name="dividerColor">@color/divider</item>
+        <item name="readerContentBackground">#FF121829</item>
+        <item name="toolbarBackground">@drawable/bg_toolbar</item>
+        <item name="webviewFrameBackground">@drawable/bg_webview_frame</item>
     </style>
 </resources>

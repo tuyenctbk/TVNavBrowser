@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">ปกติ (ค่าเริ่มต้น)</string>
     <string name="settings_mouse_speed_fast">เร็ว</string>
     <string name="settings_mouse_speed_changed">ความเร็วตัวชี้เมาส์: %1$s</string>
+    <string name="settings_data_storage">ข้อมูลและพื้นที่จัดเก็บ</string>
 </resources>

@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">Обычно (По умолчанию)</string>
     <string name="settings_mouse_speed_fast">Быстро</string>
     <string name="settings_mouse_speed_changed">Скорость указателя мыши: %1$s</string>
+    <string name="settings_data_storage">Данные и хранилище</string>
 </resources>

@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">標準 (デフォルト)</string>
     <string name="settings_mouse_speed_fast">高速</string>
     <string name="settings_mouse_speed_changed">マウスポインターの速度：%1$s</string>
+    <string name="settings_data_storage">データとストレージ</string>
 </resources>

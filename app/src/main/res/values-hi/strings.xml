@@ -177,4 +177,5 @@
     <string name="settings_mouse_speed_normal">सामान्य (डिफ़ॉल्ट)</string>
     <string name="settings_mouse_speed_fast">तेज़</string>
     <string name="settings_mouse_speed_changed">माउस पॉइंटर गति: %1$s</string>
+    <string name="settings_data_storage">डेटा और मेमोरी</string>
 </resources>
