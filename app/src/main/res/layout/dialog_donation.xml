@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="?attr/overlayCardBackground"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Header Title Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_support_heart"
+            android:contentDescription="@string/donation_title" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvDonationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/donation_title"
+                android:textColor="@color/accent"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDonationSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/donation_subtitle"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnCloseDonation"
+            style="@style/ToolbarIconButton"
+            android:src="@drawable/ic_nav_fullscreen_exit"
+            android:contentDescription="@string/ai_summary_close" />
+    </LinearLayout>
+
+    <!-- Active Supporter Badge Header -->
+    <LinearLayout
+        android:id="@+id/layoutSupporterBadge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="#204CAF50"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_support_heart"
+            app:tint="#4CAF50"
+            android:contentDescription="@string/donation_active_supporter" />
+
+        <TextView
+            android:id="@+id/tvSupporterBadgeStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/donation_active_supporter_desc"
+            android:textColor="#4CAF50"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Navigation Tabs for Donation Methods -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnTabPlay"
+            style="@style/ToolbarButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:text="Google Play"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btnTabPaypal"
+            style="@style/ToolbarButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:text="PayPal &amp; QR"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btnTabKofi"
+            style="@style/ToolbarButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:text="Ko-fi"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btnTabCrypto"
+            style="@style/ToolbarButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:text="Crypto"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Tab 1: Google Play Content -->
+    <LinearLayout
+        android:id="@+id/layoutPlayContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/donation_method_google_play"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnTier1"
+                style="@style/ToolbarButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:focusable="true"
+                android:text="@string/donation_tier_1" />
+
+            <Button
+                android:id="@+id/btnTier2"
+                style="@style/ToolbarButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:focusable="true"
+                android:text="@string/donation_tier_2" />
+
+            <Button
+                android:id="@+id/btnTier3"
+                style="@style/ToolbarButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:focusable="true"
+                android:text="@string/donation_tier_3" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Tab 2: PayPal Content -->
+    <LinearLayout
+        android:id="@+id/layoutPaypalContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/donation_paypal_desc"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnPreset3"
+                style="@style/ToolbarButton"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:focusable="true"
+                android:text="@string/donation_preset_3" />
+
+            <Button
+                android:id="@+id/btnPreset5"
+                style="@style/ToolbarButton"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:focusable="true"
+                android:text="@string/donation_preset_5" />
+
+            <Button
+                android:id="@+id/btnPreset10"
+                style="@style/ToolbarButton"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:focusable="true"
+                android:text="@string/donation_preset_10" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivPaypalQr"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginTop="12dp"
+            android:background="#FFFFFF"
+            android:padding="6dp"
+            android:contentDescription="@string/donation_qr_scan_hint" />
+
+        <Button
+            android:id="@+id/btnOpenPaypal"
+            style="@style/ToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="12dp"
+            android:focusable="true"
+            android:text="@string/donation_open_paypal" />
+    </LinearLayout>
+
+    <!-- Tab 3: Ko-fi Content -->
+    <LinearLayout
+        android:id="@+id/layoutKofiContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Support via Ko-fi platform"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivKofiQr"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginTop="12dp"
+            android:background="#FFFFFF"
+            android:padding="6dp"
+            android:contentDescription="@string/donation_qr_scan_hint" />
+
+        <Button
+            android:id="@+id/btnOpenKofi"
+            style="@style/ToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="12dp"
+            android:focusable="true"
+            android:text="@string/donation_open_kofi" />
+    </LinearLayout>
+
+    <!-- Tab 4: Crypto Content -->
+    <LinearLayout
+        android:id="@+id/layoutCryptoContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCryptoUsdt"
+                style="@style/ToolbarButton"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:focusable="true"
+                android:text="USDT (TRC20)" />
+
+            <Button
+                android:id="@+id/btnCryptoBtc"
+                style="@style/ToolbarButton"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:focusable="true"
+                android:text="Bitcoin (BTC)" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivCryptoQr"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="12dp"
+            android:background="#FFFFFF"
+            android:padding="6dp"
+            android:contentDescription="@string/donation_qr_scan_hint" />
+
+        <TextView
+            android:id="@+id/tvCryptoAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="6dp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="12sp"
+            android:textIsSelectable="true" />
+
+        <Button
+            android:id="@+id/btnCopyCrypto"
+            style="@style/ToolbarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
+            android:focusable="true"
+            android:text="@string/donation_copy_address" />
+    </LinearLayout>
+
+</LinearLayout>

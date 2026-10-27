@@ -45,8 +45,13 @@ class SettingsActivity : ComponentActivity() {
             R.id.adblockSectionContainer,
             R.id.cloudSyncSectionContainer,
             R.id.preferencesSectionContainer,
+            R.id.supportSectionContainer,
             R.id.dataSectionContainer
         ).forEach { findViewById<View>(it)?.setBackgroundResource(sectionBg) }
+
+        findViewById<Button>(R.id.btnSupportDevelopment)?.setOnClickListener {
+            com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this)
+        }
 
         listOf(
             R.id.tvThemeDarkBadge,

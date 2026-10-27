@@ -129,6 +129,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var bookmarkBar: View
     private lateinit var bookmarkBarContainer: LinearLayout
     private lateinit var btnFullscreen: ImageButton
+    private lateinit var btnDonate: ImageButton
+    private lateinit var donationBannerView: View
     private lateinit var toolbarContainer: View
     private lateinit var rootLayout: View
     private lateinit var customViewContainer: FrameLayout
@@ -345,6 +347,9 @@ class MainActivity : ComponentActivity() {
         findViewById<FrameLayout>(R.id.adContainer)?.let {
             AdsHelper.initAds(this, it)
         }
+
+        com.tdpham.navitvbrowser.util.DonationManager.initOrRecordLaunch(this)
+        setupDonationAndEngagement()
 
         if (AppPreferences.isOnboardingComplete(this)) {
             EngagementHelper.recordLaunch(this)
@@ -925,6 +930,7 @@ class MainActivity : ComponentActivity() {
                 if (added) {
                     BookmarkSyncManager.pushBookmark(this@MainActivity, BookmarkEntity(title = title, url = url))
                     EngagementHelper.recordBookmarkAdded(this@MainActivity)
+                    handleCoreOperationCompleted()
                     FirebaseInitializer.logEvent("bookmark_added", mapOf("host" to UrlUtils.hostOf(url)))
                 }
             }
@@ -2020,6 +2026,7 @@ class MainActivity : ComponentActivity() {
                 
                 result.onSuccess { summary ->
                     EngagementHelper.recordAiSummary(this@MainActivity)
+                    handleCoreOperationCompleted()
                     showSummaryDialog(summary)
                 }.onFailure { error ->
                     val message = when (error.message) {
@@ -2037,5 +2044,71 @@ class MainActivity : ComponentActivity() {
         tvSummaryContent.text = summary
         summaryOverlayContainer.visibility = View.VISIBLE
         btnCopySummary.requestFocus()
+    }
+
+    private fun setupDonationAndEngagement() {
+        btnDonate = findViewById(R.id.btnDonate)
+        btnDonate.setOnClickListener {
+            com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
+                updateDonationUi()
+            }
+        }
+
+        donationBannerView = findViewById(R.id.donationBanner)
+        val btnBannerSupport = donationBannerView.findViewById<Button>(R.id.btnBannerSupport)
+        val btnBannerDismiss = donationBannerView.findViewById<ImageButton>(R.id.btnBannerDismiss)
+
+        btnBannerSupport?.setOnClickListener {
+            com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
+                updateDonationUi()
+            }
+        }
+
+        btnBannerDismiss?.setOnClickListener {
+            com.tdpham.navitvbrowser.util.DonationManager.dismissBanner(this)
+            donationBannerView.visibility = View.GONE
+        }
+
+        updateDonationUi()
+    }
+
+    private fun updateDonationUi() {
+        if (com.tdpham.navitvbrowser.util.DonationManager.isSupporter(this)) {
+            donationBannerView.visibility = View.GONE
+            btnDonate.imageTintList = ColorStateList.valueOf(Color.parseColor("#4CAF50"))
+        } else {
+            if (com.tdpham.navitvbrowser.util.DonationManager.shouldShowBanner(this)) {
+                donationBannerView.visibility = View.VISIBLE
+            } else {
+                donationBannerView.visibility = View.GONE
+            }
+            btnDonate.imageTintList = ColorStateList.valueOf(Color.parseColor("#FF4081"))
+        }
+
+        if (com.tdpham.navitvbrowser.util.DonationManager.shouldShowAutoPrompt(this)) {
+            com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
+                updateDonationUi()
+            }
+            com.tdpham.navitvbrowser.util.DonationManager.dismissAutoPrompt(this)
+        }
+    }
+
+    private fun handleCoreOperationCompleted() {
+        val count = com.tdpham.navitvbrowser.util.DonationManager.recordCoreOperation(this)
+        val milestone = com.tdpham.navitvbrowser.util.DonationManager.checkAndGetMilestone(this, count)
+        if (milestone != null) {
+            val title = getString(R.string.donation_milestone_title, milestone)
+            val msg = getString(R.string.donation_milestone_msg)
+            androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.donation_banner_action) { _, _ ->
+                    com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
+                        updateDonationUi()
+                    }
+                }
+                .setNegativeButton(R.string.donation_banner_dismiss, null)
+                .show()
+        }
     }
 }

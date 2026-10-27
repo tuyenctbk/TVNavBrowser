@@ -13,8 +13,8 @@ android {
         applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
         targetSdk = 36
-        versionCode = 34
-        versionName = "2.9.7"
+        versionCode = 35
+        versionName = "2.9.8"
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

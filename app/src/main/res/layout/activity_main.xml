@@ -181,16 +181,26 @@
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_nav_settings"
                 android:nextFocusLeft="@id/btnDarkMode"
-                android:nextFocusRight="@id/btnFullscreen"
+                android:nextFocusRight="@id/btnDonate"
                 android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/settings" />
+
+            <ImageButton
+                android:id="@+id/btnDonate"
+                style="@style/ToolbarIconButton"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_support_heart"
+                android:nextFocusLeft="@id/btnSettings"
+                android:nextFocusRight="@id/btnFullscreen"
+                android:nextFocusDown="@id/webView"
+                android:contentDescription="@string/donation_header_btn_desc" />
 
             <ImageButton
                 android:id="@+id/btnFullscreen"
                 style="@style/ToolbarIconButton"
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_nav_fullscreen"
-                android:nextFocusLeft="@id/btnSettings"
+                android:nextFocusLeft="@id/btnDonate"
                 android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_fullscreen" />
 
@@ -267,6 +277,10 @@
                 android:textSize="12sp"
                 android:visibility="gone" />
         </FrameLayout>
+
+        <include
+            android:id="@+id/donationBanner"
+            layout="@layout/view_donation_banner" />
 
         <FrameLayout
             android:id="@+id/adContainer"
