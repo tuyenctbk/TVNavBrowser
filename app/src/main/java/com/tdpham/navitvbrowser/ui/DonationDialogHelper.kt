@@ -25,14 +25,11 @@ object DonationDialogHelper {
 
     private const val PAYPAL_USERNAME = "navitvbrowser"
     private const val KOFI_URL = "https://ko-fi.com/navitvbrowser"
-    private const val USDT_TRC20_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
-    private const val BTC_ADDRESS = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
 
     fun showDonationDialog(activity: Activity, onSupporterStateChanged: (() -> Unit)? = null) {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         
-        val isLight = ThemeHelper.isLightTheme(activity)
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_donation, null)
         dialog.setContentView(view)
 
@@ -42,19 +39,15 @@ object DonationDialogHelper {
         )
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val tvTitle = view.findViewById<TextView>(R.id.tvDonationTitle)
-        val tvSubtitle = view.findViewById<TextView>(R.id.tvDonationSubtitle)
         val btnClose = view.findViewById<ImageButton>(R.id.btnCloseDonation)
         
         val btnTabPlay = view.findViewById<Button>(R.id.btnTabPlay)
         val btnTabPaypal = view.findViewById<Button>(R.id.btnTabPaypal)
         val btnTabKofi = view.findViewById<Button>(R.id.btnTabKofi)
-        val btnTabCrypto = view.findViewById<Button>(R.id.btnTabCrypto)
 
         val layoutPlay = view.findViewById<LinearLayout>(R.id.layoutPlayContent)
         val layoutPaypal = view.findViewById<LinearLayout>(R.id.layoutPaypalContent)
         val layoutKofi = view.findViewById<LinearLayout>(R.id.layoutKofiContent)
-        val layoutCrypto = view.findViewById<LinearLayout>(R.id.layoutCryptoContent)
 
         // Active Supporter Banner inside Dialog
         val layoutSupporterBadge = view.findViewById<LinearLayout>(R.id.layoutSupporterBadge)
@@ -140,36 +133,10 @@ object DonationDialogHelper {
             }
         }
 
-        // Crypto Section
-        val btnCryptoUsdt = view.findViewById<Button>(R.id.btnCryptoUsdt)
-        val btnCryptoBtc = view.findViewById<Button>(R.id.btnCryptoBtc)
-        val ivCryptoQr = view.findViewById<ImageView>(R.id.ivCryptoQr)
-        val tvCryptoAddress = view.findViewById<TextView>(R.id.tvCryptoAddress)
-        val btnCopyCrypto = view.findViewById<Button>(R.id.btnCopyCrypto)
-
-        var activeCryptoAddress = USDT_TRC20_ADDRESS
-
-        fun updateCryptoView(address: String) {
-            activeCryptoAddress = address
-            tvCryptoAddress.text = address
-            val qrBitmap = QrCodeGenerator.generateQrCode(address, 320, 320)
-            if (qrBitmap != null) ivCryptoQr.setImageBitmap(qrBitmap)
-        }
-        updateCryptoView(USDT_TRC20_ADDRESS)
-
-        btnCryptoUsdt.setOnClickListener { updateCryptoView(USDT_TRC20_ADDRESS) }
-        btnCryptoBtc.setOnClickListener { updateCryptoView(BTC_ADDRESS) }
-
-        btnCopyCrypto.setOnClickListener {
-            val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            clipboard.setPrimaryClip(ClipData.newPlainText("Crypto Address", activeCryptoAddress))
-            Toast.makeText(activity, R.string.donation_address_copied, Toast.LENGTH_SHORT).show()
-        }
-
         // Tab Switching Logic
         fun selectTab(selectedBtn: Button, targetLayout: LinearLayout) {
-            val tabs = listOf(btnTabPlay, btnTabPaypal, btnTabKofi, btnTabCrypto)
-            val layouts = listOf(layoutPlay, layoutPaypal, layoutKofi, layoutCrypto)
+            val tabs = listOf(btnTabPlay, btnTabPaypal, btnTabKofi)
+            val layouts = listOf(layoutPlay, layoutPaypal, layoutKofi)
 
             layouts.forEach { it.visibility = View.GONE }
             tabs.forEach { button ->
@@ -183,7 +150,6 @@ object DonationDialogHelper {
         btnTabPlay.setOnClickListener { selectTab(btnTabPlay, layoutPlay) }
         btnTabPaypal.setOnClickListener { selectTab(btnTabPaypal, layoutPaypal) }
         btnTabKofi.setOnClickListener { selectTab(btnTabKofi, layoutKofi) }
-        btnTabCrypto.setOnClickListener { selectTab(btnTabCrypto, layoutCrypto) }
 
         btnClose.setOnClickListener { dialog.dismiss() }
 

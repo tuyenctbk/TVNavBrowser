@@ -122,17 +122,6 @@
             android:focusable="true"
             android:text="Ko-fi"
             android:textSize="13sp" />
-
-        <Button
-            android:id="@+id/btnTabCrypto"
-            style="@style/ToolbarButton"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="6dp"
-            android:layout_weight="1"
-            android:focusable="true"
-            android:text="Crypto"
-            android:textSize="13sp" />
     </LinearLayout>
 
     <!-- Tab 1: Google Play Content -->
@@ -289,68 +278,6 @@
             android:layout_marginTop="12dp"
             android:focusable="true"
             android:text="@string/donation_open_kofi" />
-    </LinearLayout>
-
-    <!-- Tab 4: Crypto Content -->
-    <LinearLayout
-        android:id="@+id/layoutCryptoContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnCryptoUsdt"
-                style="@style/ToolbarButton"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:focusable="true"
-                android:text="USDT (TRC20)" />
-
-            <Button
-                android:id="@+id/btnCryptoBtc"
-                style="@style/ToolbarButton"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="10dp"
-                android:focusable="true"
-                android:text="Bitcoin (BTC)" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/ivCryptoQr"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="12dp"
-            android:background="#FFFFFF"
-            android:padding="6dp"
-            android:contentDescription="@string/donation_qr_scan_hint" />
-
-        <TextView
-            android:id="@+id/tvCryptoAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="6dp"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="12sp"
-            android:textIsSelectable="true" />
-
-        <Button
-            android:id="@+id/btnCopyCrypto"
-            style="@style/ToolbarButton"
-            android:layout_width="wrap_content"
-            android:layout_height="44dp"
-            android:layout_marginTop="8dp"
-            android:focusable="true"
-            android:text="@string/donation_copy_address" />
     </LinearLayout>
 
 </LinearLayout>
