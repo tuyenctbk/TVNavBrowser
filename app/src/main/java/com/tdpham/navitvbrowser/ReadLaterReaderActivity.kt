@@ -15,6 +15,8 @@ import com.tdpham.navitvbrowser.data.repository.ReadLaterRepository
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
 import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
+import com.tdpham.navitvbrowser.util.ShareHelper
+import com.tdpham.navitvbrowser.util.TtsHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,10 +29,13 @@ class ReadLaterReaderActivity : ComponentActivity() {
 
     private lateinit var repository: ReadLaterRepository
     private var currentArticle: ReadLaterEntity? = null
+    private var ttsHelper: TtsHelper? = null
 
     private lateinit var tvArticleTitle: TextView
     private lateinit var tvArticleUrl: TextView
     private lateinit var tvArticleContent: TextView
+    private lateinit var btnSpeakArticle: Button
+    private lateinit var btnQrArticle: Button
     private lateinit var btnToggleReadStatus: Button
     private lateinit var btnOpenOnline: Button
     private lateinit var btnReaderBack: ImageButton
@@ -39,7 +44,12 @@ class ReadLaterReaderActivity : ComponentActivity() {
         ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_later_reader)
-        overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, android.R.anim.fade_out)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        }
 
         ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
@@ -51,6 +61,8 @@ class ReadLaterReaderActivity : ComponentActivity() {
         tvArticleTitle = findViewById(R.id.tvArticleTitle)
         tvArticleUrl = findViewById(R.id.tvArticleUrl)
         tvArticleContent = findViewById(R.id.tvArticleContent)
+        btnSpeakArticle = findViewById(R.id.btnSpeakArticle)
+        btnQrArticle = findViewById(R.id.btnQrArticle)
         btnToggleReadStatus = findViewById(R.id.btnToggleReadStatus)
         btnOpenOnline = findViewById(R.id.btnOpenOnline)
         btnReaderBack = findViewById(R.id.btnReaderBack)
@@ -63,12 +75,38 @@ class ReadLaterReaderActivity : ComponentActivity() {
         tvArticleContent.setTextColor(textPrimary)
         btnReaderBack.setBackgroundResource(btnBg)
         btnReaderBack.imageTintList = android.content.res.ColorStateList.valueOf(textPrimary)
+        btnSpeakArticle.setBackgroundResource(btnBg)
+        btnSpeakArticle.setTextColor(textPrimary)
+        btnQrArticle.setBackgroundResource(btnBg)
+        btnQrArticle.setTextColor(textPrimary)
         btnOpenOnline.setBackgroundResource(btnBg)
+        btnOpenOnline.setTextColor(textPrimary)
         btnToggleReadStatus.setBackgroundResource(btnBg)
+        btnToggleReadStatus.setTextColor(textPrimary)
 
-        FocusAnimationHelper.applyAll(btnReaderBack, btnOpenOnline, btnToggleReadStatus)
+        FocusAnimationHelper.applyAll(
+            btnReaderBack, btnSpeakArticle, btnQrArticle, btnOpenOnline, btnToggleReadStatus
+        )
+
+        ttsHelper = TtsHelper(this) { speaking ->
+            btnSpeakArticle.text = getString(
+                if (speaking) R.string.tts_stop_reading else R.string.tts_read_aloud
+            )
+        }
 
         btnReaderBack.setOnClickListener { finish() }
+
+        btnSpeakArticle.setOnClickListener {
+            val title = tvArticleTitle.text?.toString().orEmpty()
+            val body = tvArticleContent.text?.toString().orEmpty()
+            val fullSpeech = if (title.isNotBlank()) "$title. $body" else body
+            ttsHelper?.toggleSpeak(fullSpeech)
+        }
+
+        btnQrArticle.setOnClickListener {
+            val article = currentArticle ?: return@setOnClickListener
+            ShareHelper.showPageQrDialog(this, article.url, article.title)
+        }
 
         val articleId = intent.getLongExtra(EXTRA_ARTICLE_ID, -1L)
         if (articleId == -1L) {
@@ -136,5 +174,16 @@ class ReadLaterReaderActivity : ComponentActivity() {
 
     private fun updateReadButtonText(isRead: Boolean) {
         btnToggleReadStatus.text = if (isRead) getString(R.string.read_later_mark_unread) else getString(R.string.read_later_mark_read)
+    }
+
+    override fun onStop() {
+        ttsHelper?.stop()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        ttsHelper?.shutdown()
+        ttsHelper = null
+        super.onDestroy()
     }
 }

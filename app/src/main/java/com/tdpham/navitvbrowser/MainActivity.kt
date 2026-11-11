@@ -119,6 +119,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnSummarize: ImageButton
     private lateinit var btnSettings: ImageButton
     private lateinit var btnGameMode: ImageButton
+    private lateinit var btnMouseMode: ImageButton
     private lateinit var ivCursor: ImageView
     private lateinit var cursorRipple: View
     private lateinit var gameModeOverlay: FrameLayout
@@ -141,9 +142,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var summaryOverlayContainer: FrameLayout
     private lateinit var tvSummaryTitle: TextView
     private lateinit var tvSummaryContent: TextView
+    private lateinit var btnSpeakSummary: Button
+    private lateinit var btnShareSummaryQr: Button
     private lateinit var btnCopySummary: Button
     private lateinit var btnCloseSummary: Button
     private lateinit var btnCloseSummaryIcon: ImageButton
+    private var ttsHelper: com.tdpham.navitvbrowser.util.TtsHelper? = null
 
     // Voice Overlay Views
     private lateinit var voiceOverlay: FrameLayout
@@ -228,6 +232,8 @@ class MainActivity : ComponentActivity() {
         btnSummarize = findViewById(R.id.btnSummarize)
         btnSettings = findViewById(R.id.btnSettings)
         btnGameMode = findViewById(R.id.btnGameMode)
+        btnMouseMode = findViewById(R.id.btnMouseMode)
+        btnDonate = findViewById(R.id.btnDonate)
         ivCursor = findViewById(R.id.ivCursor)
         cursorRipple = findViewById(R.id.cursorRipple)
         gameModeOverlay = findViewById(R.id.gameModeOverlay)
@@ -252,9 +258,30 @@ class MainActivity : ComponentActivity() {
         summaryOverlayContainer = findViewById(R.id.summaryOverlayContainer)
         tvSummaryTitle = findViewById(R.id.tvSummaryTitle)
         tvSummaryContent = findViewById(R.id.tvSummaryContent)
+        btnSpeakSummary = findViewById(R.id.btnSpeakSummary)
+        btnShareSummaryQr = findViewById(R.id.btnShareSummaryQr)
         btnCopySummary = findViewById(R.id.btnCopySummary)
         btnCloseSummary = findViewById(R.id.btnCloseSummary)
         btnCloseSummaryIcon = findViewById(R.id.btnCloseSummaryIcon)
+
+        ttsHelper = com.tdpham.navitvbrowser.util.TtsHelper(this) { speaking ->
+            if (::btnSpeakSummary.isInitialized) {
+                btnSpeakSummary.text = getString(
+                    if (speaking) R.string.tts_stop_reading else R.string.tts_read_aloud
+                )
+            }
+        }
+
+        btnSpeakSummary.setOnClickListener {
+            val text = tvSummaryContent.text.toString()
+            if (text.isNotBlank()) {
+                ttsHelper?.toggleSpeak(text)
+            }
+        }
+
+        btnShareSummaryQr.setOnClickListener {
+            com.tdpham.navitvbrowser.util.ShareHelper.showPageQrDialog(this, webView.url, webView.title)
+        }
 
         btnCopySummary.setOnClickListener {
             val text = tvSummaryContent.text.toString()
@@ -265,6 +292,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         val closeOverlayAction = {
+            ttsHelper?.stop()
             summaryOverlayContainer.visibility = View.GONE
             webView.requestFocus()
         }
@@ -290,6 +318,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
             resetInactivityTimer()
+        }
+        virtualCursor.onEscapeToToolbar = {
+            if (isFullscreenMode) {
+                toggleFullscreen(false)
+            }
+            urlInput.requestFocus()
         }
 
         webView.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -384,10 +418,27 @@ class MainActivity : ComponentActivity() {
                     when (val child = parent.getChildAt(i)) {
                         is ImageButton -> {
                             child.setBackgroundResource(btnBg)
-                            if (child.id == R.id.btnGameMode && isGameModeActive) {
-                                child.imageTintList = ColorStateList.valueOf(accentColor)
-                            } else {
-                                child.imageTintList = iconTint
+                            when {
+                                child.id == R.id.btnGameMode && isGameModeActive -> {
+                                    child.imageTintList = ColorStateList.valueOf(accentColor)
+                                }
+                                child.id == R.id.btnMouseMode && ::virtualCursor.isInitialized && virtualCursor.isEnabled -> {
+                                    child.imageTintList = ColorStateList.valueOf(accentColor)
+                                }
+                                child.id == R.id.btnDarkMode && isDarkModeActive -> {
+                                    child.imageTintList = ColorStateList.valueOf(accentColor)
+                                }
+                                child.id == R.id.btnDonate -> {
+                                    val donateTint = if (com.tdpham.navitvbrowser.util.DonationManager.isSupporter(this@MainActivity)) {
+                                        Color.parseColor("#4CAF50")
+                                    } else {
+                                        Color.parseColor("#FF4081")
+                                    }
+                                    child.imageTintList = ColorStateList.valueOf(donateTint)
+                                }
+                                else -> {
+                                    child.imageTintList = iconTint
+                                }
                             }
                         }
                         is Button -> {
@@ -410,6 +461,10 @@ class MainActivity : ComponentActivity() {
         summaryOverlayContainer.findViewById<View>(R.id.cardSummary)?.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
         tvSummaryTitle.setTextColor(accentColor)
         tvSummaryContent.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        btnSpeakSummary.setBackgroundResource(btnBg)
+        btnSpeakSummary.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        btnShareSummaryQr.setBackgroundResource(btnBg)
+        btnShareSummaryQr.setTextColor(ThemeHelper.getTextPrimaryColor(this))
         btnCopySummary.setBackgroundResource(btnBg)
         btnCopySummary.setTextColor(ThemeHelper.getTextPrimaryColor(this))
         btnCloseSummary.setBackgroundResource(btnBg)
@@ -464,6 +519,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStop() {
+        ttsHelper?.stop()
         if (customView != null) {
             try {
                 customViewCallback?.onCustomViewHidden()
@@ -503,6 +559,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        ttsHelper?.shutdown()
+        ttsHelper = null
         try {
             speechRecognizer?.destroy()
             speechRecognizer = null
@@ -755,6 +813,17 @@ class MainActivity : ComponentActivity() {
                 progressBar.isVisible = true
                 progressBar.progress = 0
                 isWebViewInputFocused = false
+                virtualCursor.setHoveringInteractive(false)
+
+                val host = UrlUtils.hostOf(url.orEmpty())
+                if (host.isNotBlank() && !isDashboardOrAssetUrl(url.orEmpty())) {
+                    val savedZoom = AppPreferences.getSiteTextZoom(this@MainActivity, host)
+                    view?.settings?.textZoom = savedZoom
+                    val wantDesktop = AppPreferences.getSiteDesktopMode(this@MainActivity, host)
+                    applySiteDesktopSetting(wantDesktop)
+                } else {
+                    view?.settings?.textZoom = 100
+                }
                 
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
@@ -884,6 +953,31 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        webView.setDownloadListener { url, userAgent, contentDisposition, mimetype, _ ->
+            if (url.isNullOrBlank()) return@setDownloadListener
+            try {
+                val fileName = android.webkit.URLUtil.guessFileName(url, contentDisposition, mimetype)
+                val request = android.app.DownloadManager.Request(android.net.Uri.parse(url)).apply {
+                    setMimeType(mimetype)
+                    addRequestHeader("User-Agent", userAgent)
+                    android.webkit.CookieManager.getInstance().getCookie(url)?.let { cookie ->
+                        addRequestHeader("cookie", cookie)
+                    }
+                    setDescription(getString(R.string.app_name))
+                    setTitle(fileName)
+                    setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, fileName)
+                }
+                val dm = getSystemService(Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+                dm.enqueue(request)
+                Toast.makeText(this@MainActivity, fileName, Toast.LENGTH_SHORT).show()
+            } catch (_: Exception) {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)))
+                } catch (_: Exception) {}
+            }
+        }
     }
 
     private fun setupNavigationButtons() {
@@ -891,8 +985,17 @@ class MainActivity : ComponentActivity() {
         btnVoiceSearch.setOnClickListener { startVoiceControl() }
         btnSummarize.setOnClickListener { onSummarizeClicked() }
         btnDesktopMode.setOnClickListener { toggleDesktopMode() }
+        btnDesktopMode.setOnLongClickListener {
+            cycleSiteTextZoom()
+            true
+        }
         btnDarkMode.setOnClickListener { applyDarkMode(!isDarkModeActive) }
         btnGameMode.setOnClickListener { toggleGameMode() }
+        btnMouseMode.setOnClickListener {
+            val nextState = !virtualCursor.isEnabled
+            setMouseMode(nextState)
+            showModeNotice(getString(if (nextState) R.string.mode_virtual_mouse else R.string.mode_dpad))
+        }
 
         btnBack.setOnClickListener {
             if (webView.canGoBack()) webView.goBack()
@@ -901,6 +1004,10 @@ class MainActivity : ComponentActivity() {
             if (webView.canGoForward()) webView.goForward()
         }
         btnRefresh.setOnClickListener { webView.reload() }
+        btnRefresh.setOnLongClickListener {
+            com.tdpham.navitvbrowser.util.ShareHelper.showPageQrDialog(this, webView.url, webView.title)
+            true
+        }
         btnHome.setOnClickListener {
             val home = resolveHomepage()
             webView.loadUrl(home)
@@ -1011,21 +1118,13 @@ class MainActivity : ComponentActivity() {
     private enum class SuggestionType {
         BOOKMARK,
         HISTORY,
-        FREQUENT,
-        WEB
+        FREQUENT
     }
 
     private data class SearchSuggestion(
         val title: String,
         val url: String,
         val type: SuggestionType
-    )
-
-    private val SUGGESTED_SITES = listOf(
-        "google.com", "youtube.com", "facebook.com", "netflix.com", 
-        "amazon.com", "twitter.com", "instagram.com", "wikipedia.org",
-        "reddit.com", "twitch.tv", "pluto.tv", "disneyplus.com",
-        "github.com", "yahoo.com", "bing.com", "spotify.com"
     )
 
     private var autocompleteJob: Job? = null
@@ -1082,18 +1181,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                // 4. Fallback matching web domains
-                if (results.size < 6) {
-                    val matchingSites = SUGGESTED_SITES.filter { it.contains(query.lowercase()) }
-                    matchingSites.forEach { site ->
-                        val url = "https://$site"
-                        val norm = normalize(url)
-                        if (seenUrls.add(norm)) {
-                            results.add(SearchSuggestion(site, url, SuggestionType.WEB))
-                        }
-                    }
-                }
-
                 results.take(12)
             }
 
@@ -1130,10 +1217,6 @@ class MainActivity : ComponentActivity() {
                     ivChipIcon?.setImageResource(R.drawable.ic_nav_history)
                     ivChipIcon?.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accent))
                 }
-                SuggestionType.WEB -> {
-                    ivChipIcon?.setImageResource(R.drawable.ic_nav_search)
-                    ivChipIcon?.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.text_secondary))
-                }
             }
 
             FocusAnimationHelper.apply(chip)
@@ -1150,30 +1233,72 @@ class MainActivity : ComponentActivity() {
         showBookmarkBar()
     }
 
-    private fun toggleDesktopMode() {
+    private fun applySiteDesktopSetting(wantDesktop: Boolean) {
         val settings = webView.settings
-        val isDesktop = settings.userAgentString.contains("Windows NT")
-        
-        if (isDesktop) {
-            // Switch to Mobile
-            settings.userAgentString = null // Default mobile UA
-            settings.useWideViewPort = false
-            settings.loadWithOverviewMode = false
-            btnDesktopMode.imageTintList = ColorStateList.valueOf(getColor(R.color.text_primary))
-            Toast.makeText(this, getString(R.string.nav_mobile_site_requested), Toast.LENGTH_SHORT).show()
-        } else {
-            // Switch to Desktop
+        val currentlyDesktop = settings.userAgentString?.contains("Windows NT") == true
+        if (currentlyDesktop == wantDesktop) return
+        if (wantDesktop) {
             settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             settings.useWideViewPort = true
             settings.loadWithOverviewMode = true
-            btnDesktopMode.imageTintList = ColorStateList.valueOf(getColor(R.color.accent))
-            Toast.makeText(this, getString(R.string.nav_desktop_site_requested), Toast.LENGTH_SHORT).show()
+            btnDesktopMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
+        } else {
+            settings.userAgentString = null
+            settings.useWideViewPort = false
+            settings.loadWithOverviewMode = false
+            btnDesktopMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
         }
+    }
+
+    private fun toggleDesktopMode() {
+        val settings = webView.settings
+        val isDesktop = settings.userAgentString?.contains("Windows NT") == true
+        val nextDesktop = !isDesktop
+        applySiteDesktopSetting(nextDesktop)
+
+        val host = UrlUtils.hostOf(webView.url.orEmpty())
+        if (host.isNotBlank()) {
+            AppPreferences.setSiteDesktopMode(this, host, nextDesktop)
+        }
+
+        val msgRes = if (nextDesktop) R.string.nav_desktop_site_requested else R.string.nav_mobile_site_requested
+        Toast.makeText(this, getString(msgRes), Toast.LENGTH_SHORT).show()
         webView.reload()
+    }
+
+    private fun cycleSiteTextZoom() {
+        val currentUrl = webView.url.orEmpty()
+        if (isDashboardOrAssetUrl(currentUrl)) return
+        val host = UrlUtils.hostOf(currentUrl)
+        val currentZoom = webView.settings.textZoom
+        val nextZoom = when {
+            currentZoom < 120 -> 125
+            currentZoom < 145 -> 150
+            else -> 100
+        }
+        webView.settings.textZoom = nextZoom
+        if (host.isNotBlank()) {
+            AppPreferences.setSiteTextZoom(this, host, nextZoom)
+        }
+        Toast.makeText(this, getString(R.string.site_zoom_changed, nextZoom), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateMouseModeButtonUi(enabled: Boolean) {
+        if (!::btnMouseMode.isInitialized) return
+        val tintColor = if (enabled) {
+            ThemeHelper.getAccentColor(this)
+        } else {
+            ThemeHelper.getTextPrimaryColor(this)
+        }
+        btnMouseMode.imageTintList = ColorStateList.valueOf(tintColor)
+        btnMouseMode.contentDescription = getString(
+            if (enabled) R.string.mouse_mode_on else R.string.mouse_mode_off
+        )
     }
 
     private fun setMouseMode(enabled: Boolean) {
         if (isSwitchingMode) return
+        updateMouseModeButtonUi(enabled)
         if (virtualCursor.isEnabled == enabled) return
         isSwitchingMode = true
         try {
@@ -1252,8 +1377,9 @@ class MainActivity : ComponentActivity() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnHome, btnBookmark, btnReadLater,
             btnShowBookmarks, btnShowHistory, btnSettings,
-            btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize, btnGameMode,
-            btnCopySummary, btnCloseSummary, btnCloseSummaryIcon
+            btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize,
+            btnGameMode, btnMouseMode, btnDonate,
+            btnSpeakSummary, btnShareSummaryQr, btnCopySummary, btnCloseSummary, btnCloseSummaryIcon
         )
         FocusAnimationHelper.apply(urlInput) { _, hasFocus ->
             if (!hasFocus) {
@@ -1285,6 +1411,7 @@ class MainActivity : ComponentActivity() {
 
         if (target) {
             virtualCursor.setEnabled(false)
+            updateMouseModeButtonUi(false)
             btnGameMode.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accent))
             gameModeOverlay.alpha = 1f
             gameModeOverlay.visibility = View.VISIBLE
@@ -1297,6 +1424,7 @@ class MainActivity : ComponentActivity() {
             btnGameMode.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.text_primary))
             gameModeOverlay.visibility = View.GONE
             virtualCursor.setEnabled(true)
+            updateMouseModeButtonUi(true)
             updateAdContainerVisibility()
             Toast.makeText(this, R.string.game_mode_disabled, Toast.LENGTH_SHORT).show()
             FirebaseInitializer.logEvent("game_mode_disabled", null)
@@ -1384,6 +1512,7 @@ class MainActivity : ComponentActivity() {
                     return
                 }
                 if (summaryOverlayContainer.visibility == View.VISIBLE) {
+                    ttsHelper?.stop()
                     summaryOverlayContainer.visibility = View.GONE
                     webView.requestFocus()
                     return
@@ -1790,6 +1919,28 @@ class MainActivity : ComponentActivity() {
             lower == "summarize" || lower == "summarize page" || lower == "ai summary" -> {
                 onSummarizeClicked()
             }
+            lower == "read aloud" || lower == "listen" || lower == "speak" -> {
+                if (summaryOverlayContainer.visibility == View.VISIBLE && tvSummaryContent.text.isNotBlank()) {
+                    ttsHelper?.toggleSpeak(tvSummaryContent.text.toString())
+                } else {
+                    webView.evaluateJavascript("(function(){ return document.body ? document.body.innerText.slice(0, 3500) : ''; })();") { raw ->
+                        val clean = try {
+                            if (raw.isNullOrBlank() || raw == "null") ""
+                            else JSONObject("{\"t\":$raw}").getString("t")
+                        } catch (_: Exception) {
+                            raw?.trim('"').orEmpty()
+                        }
+                        if (clean.isNotBlank()) {
+                            ttsHelper?.toggleSpeak(clean)
+                        } else {
+                            Toast.makeText(this, R.string.ai_error_empty, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+            lower == "qr code" || lower == "send to phone" || lower == "open on phone" -> {
+                com.tdpham.navitvbrowser.util.ShareHelper.showPageQrDialog(this, webView.url, webView.title)
+            }
             else -> {
                 urlInput.setText(command)
                 loadTypedUrl(command)
@@ -1853,6 +2004,16 @@ class MainActivity : ComponentActivity() {
                     });
                 }
                 addFocusListeners();
+                if (!window.__tvnavMagnetBound) {
+                    window.__tvnavMagnetBound = true;
+                    document.addEventListener('mouseover', function(e) {
+                        var t = e.target;
+                        var clickable = t && t.closest && t.closest('a, button, input, select, textarea, [role="button"], [onclick]');
+                        if (window.AndroidApp && window.AndroidApp.onInteractiveHover) {
+                            window.AndroidApp.onInteractiveHover(!!clickable);
+                        }
+                    }, { passive: true });
+                }
                 if (window.MutationObserver) {
                     var observer = new MutationObserver(addFocusListeners);
                     observer.observe(document.body, { childList: true, subtree: true });
@@ -1976,9 +2137,38 @@ class MainActivity : ComponentActivity() {
         }
 
         @android.webkit.JavascriptInterface
+        fun onInteractiveHover(hovering: Boolean) {
+            runOnUiThread {
+                if (::virtualCursor.isInitialized) {
+                    virtualCursor.setHoveringInteractive(hovering)
+                }
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun getDashboardLabelsJson(): String {
+            return JSONObject().apply {
+                put("quickSearch", getString(R.string.dashboard_quick_search_label))
+                put("allPortals", getString(R.string.dashboard_all_portals))
+            }.toString()
+        }
+
+        @android.webkit.JavascriptInterface
         fun openUrl(url: String) {
             runIfTrustedPage {
                 loadTypedUrl(url)
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        fun focusUrlBar() {
+            runIfTrustedPage {
+                if (isFullscreenMode) {
+                    toggleFullscreen(false)
+                }
+                urlInput.requestFocus()
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.showSoftInput(urlInput, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
             }
         }
     }

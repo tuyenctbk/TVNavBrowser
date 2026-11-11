@@ -7,18 +7,16 @@
     <style>
         :root {
             --bg-color: #080c16;
-            --bg-gradient: radial-gradient(circle at 50% 12%, #141f36 0%, #080c16 85%);
-            --card-bg: rgba(22, 33, 56, 0.75);
-            --card-hover-bg: rgba(30, 46, 78, 0.95);
-            --card-border: rgba(255, 255, 255, 0.08);
+            --bg-gradient: radial-gradient(circle at 50% 8%, #162440 0%, #080c16 82%);
+            --card-bg: rgba(22, 33, 56, 0.78);
+            --card-hover-bg: rgba(32, 49, 84, 0.96);
+            --card-border: rgba(255, 255, 255, 0.09);
             --accent-color: #ffc857;
             --accent-soft: rgba(255, 200, 87, 0.16);
-            --accent-glow: rgba(255, 200, 87, 0.35);
+            --accent-glow: rgba(255, 200, 87, 0.38);
             --text-color: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.72);
-            --search-bg: rgba(22, 33, 56, 0.75);
-            --pill-bg: rgba(22, 33, 56, 0.6);
-            --guide-bg: rgba(22, 33, 56, 0.65);
+            --pill-bg: rgba(22, 33, 56, 0.65);
             --badge-bg: rgba(255, 255, 255, 0.1);
             --card-icon-bg: rgba(255, 255, 255, 0.06);
             --badge-free: #10b981;
@@ -30,7 +28,7 @@
         /* Light Theme (Crisp, High-Contrast Modern TV Design) */
         html.theme-light, body.theme-light {
             --bg-color: #f1f5f9;
-            --bg-gradient: radial-gradient(circle at 50% 12%, #ffffff 0%, #f1f5f9 85%);
+            --bg-gradient: radial-gradient(circle at 50% 8%, #ffffff 0%, #f1f5f9 85%);
             --card-bg: rgba(255, 255, 255, 0.95);
             --card-hover-bg: #ffffff;
             --card-border: rgba(15, 23, 42, 0.12);
@@ -39,9 +37,7 @@
             --accent-glow: rgba(217, 119, 6, 0.32);
             --text-color: #0f172a;
             --text-secondary: #475569;
-            --search-bg: rgba(255, 255, 255, 0.98);
             --pill-bg: rgba(226, 232, 240, 0.85);
-            --guide-bg: rgba(255, 255, 255, 0.96);
             --badge-bg: rgba(15, 23, 42, 0.08);
             --card-icon-bg: rgba(15, 23, 42, 0.05);
         }
@@ -64,34 +60,6 @@
             color: #d97706;
         }
 
-        html.theme-light .search-box,
-        body.theme-light .search-box {
-            background: #ffffff;
-            border-color: #cbd5e1;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-        }
-
-        html.theme-light .search-box:focus-within,
-        body.theme-light .search-box:focus-within {
-            border-color: #d97706;
-            box-shadow: 0 6px 20px rgba(217, 119, 6, 0.25);
-        }
-
-        html.theme-light .search-input,
-        body.theme-light .search-input {
-            color: #0f172a;
-        }
-
-        html.theme-light .search-input::placeholder,
-        body.theme-light .search-input::placeholder {
-            color: #64748b;
-        }
-
-        html.theme-light .search-icon,
-        body.theme-light .search-icon {
-            color: #d97706;
-        }
-
         html.theme-light .engine-pill,
         body.theme-light .engine-pill {
             background: #e2e8f0;
@@ -99,15 +67,10 @@
             border-color: #cbd5e1;
         }
 
-        html.theme-light .engine-pill.active,
-        body.theme-light .engine-pill.active {
-            background: #fef3c7;
-            color: #b45309;
-            border-color: #d97706;
-        }
-
         html.theme-light .engine-pill:focus,
-        body.theme-light .engine-pill:focus {
+        body.theme-light .engine-pill:focus,
+        html.theme-light .engine-pill:hover,
+        body.theme-light .engine-pill:hover {
             color: #ffffff;
             background: #d97706;
             border-color: #d97706;
@@ -177,21 +140,6 @@
             color: #0f172a;
         }
 
-        html.theme-light .remote-guide,
-        body.theme-light .remote-guide {
-            background: #ffffff;
-            border-color: #e2e8f0;
-            color: #475569;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-        }
-
-        html.theme-light .key-badge,
-        body.theme-light .key-badge {
-            background: #fef3c7;
-            color: #b45309;
-            border-color: #fde68a;
-        }
-
         *, *:focus, *:focus-visible, *:focus-within {
             box-sizing: border-box;
             user-select: none;
@@ -200,9 +148,20 @@
             -webkit-tap-highlight-color: transparent !important;
         }
 
+        @keyframes fadeUpIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         body {
             margin: 0;
-            padding: 24px 44px 36px;
+            padding: 18px 40px 28px;
             background: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--text-color);
@@ -213,12 +172,14 @@
             overflow-x: hidden;
         }
 
-        /* Top Header */
+        /* Top Header with Quick Search Engines & Live Clock */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
         }
 
         .brand {
@@ -228,23 +189,23 @@
         }
 
         .brand-icon {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #ffc857 0%, #e6a819 100%);
-            border-radius: 11px;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #00e5ff 0%, #ffc857 100%);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
             color: #080c16;
-            font-size: 22px;
+            font-size: 20px;
             box-shadow: 0 4px 14px var(--accent-glow);
         }
 
         .brand h1 {
-            font-size: 24px;
+            font-size: 22px;
             margin: 0;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.3px;
             color: var(--text-color);
         }
@@ -253,12 +214,63 @@
             color: var(--accent-color);
         }
 
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Quick Search Engine Launcher Pills (No duplicate text input) */
+        .engine-switcher {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .engine-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-secondary);
+            margin-right: 2px;
+        }
+
+        .engine-pill {
+            background: var(--pill-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 6px 13px;
+            border-radius: 16px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+            outline: none;
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .engine-pill:focus,
+        .engine-pill:hover {
+            background: var(--accent-color);
+            color: #080c16;
+            border-color: var(--accent-color);
+            transform: scale(1.06);
+            box-shadow: 0 3px 12px var(--accent-glow);
+        }
+
         .live-clock {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-secondary);
             background: var(--pill-bg);
-            padding: 8px 18px;
+            padding: 7px 16px;
             border-radius: 20px;
             border: 1px solid var(--card-border);
             display: inline-flex;
@@ -272,133 +284,18 @@
         }
 
         .clock-icon {
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             flex-shrink: 0;
-            color: var(--accent-color);
-        }
-
-        /* Search Area */
-        .search-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 22px;
-            padding: 8px 12px;
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-            max-width: 680px;
-            border-radius: 28px;
-            background: var(--search-bg);
-            border: 2px solid var(--card-border);
-            transition: all 0.2s ease;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent !important;
-        }
-
-        .search-box:focus-within {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 24px var(--accent-glow);
-            transform: scale(1.02);
-            outline: none !important;
-        }
-
-        #search-form {
-            display: block;
-            margin: 0;
-            padding: 0;
-            outline: none !important;
-            border: none !important;
-            background: transparent !important;
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-focus-ring-color: transparent !important;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 14px 54px 14px 24px;
-            font-size: 16px;
-            border: none;
-            background: transparent;
-            color: var(--text-color);
-            outline: none !important;
-            box-shadow: none !important;
-            font-family: inherit;
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-focus-ring-color: transparent !important;
-        }
-
-        .search-input:focus,
-        #search-input:focus {
-            outline: none !important;
-            box-shadow: none !important;
-            border: none !important;
-            transform: none !important;
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-focus-ring-color: transparent !important;
-        }
-
-        .search-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-
-        /* Engine Switcher */
-        .engine-switcher {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .engine-pill {
-            background: var(--pill-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-secondary);
-            padding: 5px 14px;
-            border-radius: 16px;
-            font-size: 12.5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            outline: none;
-            white-space: nowrap;
-        }
-
-        .engine-pill:focus {
-            background: var(--accent-color);
-            color: #080c16;
-            border-color: var(--accent-color);
-            transform: scale(1.08);
-            box-shadow: 0 2px 10px var(--accent-glow);
-        }
-
-        .engine-pill.active {
-            border-color: var(--accent-color);
             color: var(--accent-color);
         }
 
         /* Category Tabs */
         .category-nav {
             display: flex;
-            gap: 12px;
-            margin: -6px -2px 16px;
-            padding: 12px 8px;
+            gap: 10px;
+            margin: 0 -2px 14px;
+            padding: 8px 6px;
             overflow-x: auto;
             scrollbar-width: none;
         }
@@ -411,9 +308,9 @@
             background: var(--pill-bg);
             border: 1px solid var(--card-border);
             color: var(--text-secondary);
-            padding: 9px 20px;
+            padding: 8px 18px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             cursor: pointer;
             white-space: nowrap;
@@ -428,7 +325,7 @@
             background: var(--accent-color);
             color: #080c16;
             border-color: var(--accent-color);
-            transform: scale(1.05);
+            transform: scale(1.06);
             box-shadow: 0 4px 18px var(--accent-glow);
         }
 
@@ -440,21 +337,22 @@
 
         /* Section Groups */
         .section-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            animation: fadeUpIn 0.28s ease-out both;
         }
 
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             padding-left: 2px;
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 0.9px;
             text-transform: uppercase;
             color: var(--text-secondary);
             display: flex;
@@ -463,7 +361,7 @@
         }
 
         .section-badge {
-            font-size: 10.5px;
+            font-size: 10px;
             background: var(--badge-bg);
             padding: 3px 8px;
             border-radius: 10px;
@@ -475,19 +373,22 @@
         /* Grid Layout - Padding ensures scaled cards and golden focus glows are never cut off */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 16px;
-            margin: -6px -10px 18px;
-            padding: 12px 10px;
+            grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+            gap: 14px;
+            margin: -6px -10px 14px;
+            padding: 10px 10px;
         }
 
         @media (max-width: 900px) {
+            body {
+                padding: 14px 24px 22px;
+            }
             .grid {
                 grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
                 gap: 12px;
             }
             .card {
-                height: 92px;
+                height: 90px;
                 padding: 0 14px;
                 gap: 12px;
             }
@@ -496,35 +397,36 @@
         @media (min-width: 1600px) {
             .grid {
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 20px;
+                gap: 18px;
             }
             .card {
-                height: 112px;
+                height: 108px;
             }
         }
 
         /* Shortcut Cards */
         .card {
             position: relative;
-            height: 104px;
+            height: 98px;
             border-radius: 16px;
             overflow: hidden;
             background-color: var(--card-bg);
             border: 2px solid var(--card-border);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
             cursor: pointer;
             display: flex;
             align-items: center;
-            padding: 0 18px;
+            padding: 0 16px;
             text-decoration: none;
             outline: none;
-            gap: 16px;
+            gap: 14px;
         }
 
-        .card:focus {
-            transform: scale(1.035);
+        .card:focus,
+        .card:hover {
+            transform: scale(1.04);
             border-color: var(--accent-color);
             background-color: var(--card-hover-bg);
             box-shadow: 0 8px 26px rgba(255, 200, 87, 0.35);
@@ -535,8 +437,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 12px;
             background: var(--card-icon-bg);
             flex-shrink: 0;
@@ -544,7 +446,8 @@
             transition: transform 0.2s ease;
         }
 
-        .card:focus .card-icon-wrap {
+        .card:focus .card-icon-wrap,
+        .card:hover .card-icon-wrap {
             transform: scale(1.08);
         }
 
@@ -569,7 +472,7 @@
 
         .card-label {
             color: var(--text-color);
-            font-size: 16px;
+            font-size: 15.5px;
             font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
@@ -599,84 +502,32 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        /* Remote Guide */
-        .remote-guide {
-            margin-top: auto;
-            padding: 14px 20px;
-            background: var(--guide-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            color: var(--text-secondary);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .guide-items {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .guide-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .key-badge {
-            background: var(--badge-bg);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 800;
-            color: var(--text-color);
-            border: 1px solid var(--card-border);
-        }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Top Header: Brand + Direct Search Engine Shortcuts + Live Clock -->
     <div class="header">
         <div class="brand">
             <div class="brand-icon">N</div>
             <h1>NaviTV <span>Browser</span></h1>
         </div>
-        <div class="live-clock" id="live-clock">
-            <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span id="live-clock-text">7:30 AM · Mon, Oct 26</span>
-        </div>
-    </div>
-
-    <!-- Search Section -->
-    <div class="search-area">
-        <div class="search-box">
-            <form id="search-form" onsubmit="return handleSearchSubmit(event)">
-                <input id="search-input" class="search-input" type="text" placeholder="Search the web or type a website address..." autocomplete="off" />
-                <div class="search-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </div>
-            </form>
-        </div>
-        <div class="engine-switcher">
-            <button class="engine-pill active" onclick="setEngine('google', this)">Google</button>
-            <button class="engine-pill" onclick="setEngine('duckduckgo', this)">DuckDuckGo</button>
-            <button class="engine-pill" onclick="setEngine('youtube', this)">YouTube</button>
-            <button class="engine-pill" onclick="setEngine('wikipedia', this)">Wikipedia</button>
-            <button class="engine-pill" onclick="setEngine('reddit', this)">Reddit</button>
+        <div class="header-right">
+            <div class="engine-switcher" aria-label="Quick Search Engines">
+                <span class="engine-label" id="quick-search-label">Quick Search:</span>
+                <a class="engine-pill" href="https://www.google.com">Google</a>
+                <a class="engine-pill" href="https://duckduckgo.com">DuckDuckGo</a>
+                <a class="engine-pill" href="https://www.youtube.com">YouTube</a>
+                <a class="engine-pill" href="https://en.wikipedia.org">Wikipedia</a>
+                <a class="engine-pill" href="https://www.reddit.com">Reddit</a>
+            </div>
+            <div class="live-clock" id="live-clock">
+                <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span id="live-clock-text"></span>
+            </div>
         </div>
     </div>
 
@@ -690,98 +541,41 @@
         <!-- Rendered from JSON -->
     </div>
 
-    <!-- Remote Guide -->
-    <div class="remote-guide">
-        <div class="guide-items">
-            <div class="guide-item">
-                <span class="key-badge">D-Pad</span>
-                <span>Navigate</span>
-            </div>
-            <div class="guide-item">
-                <span class="key-badge">OK</span>
-                <span>Launch / Click</span>
-            </div>
-            <div class="guide-item">
-                <span class="key-badge">Menu</span>
-                <span>URL Bar</span>
-            </div>
-            <div class="guide-item">
-                <span class="key-badge">Back</span>
-                <span>Toolbar / Back</span>
-            </div>
-            <div class="guide-item">
-                <span class="key-badge">Long Back</span>
-                <span>Home Page</span>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Live Clock
+        var localizedLabels = {
+            quickSearch: 'Quick Search:',
+            allPortals: '✨ All Portals'
+        };
+
+        try {
+            if (window.AndroidApp && typeof window.AndroidApp.getDashboardLabelsJson === 'function') {
+                var parsedLabels = JSON.parse(window.AndroidApp.getDashboardLabelsJson());
+                if (parsedLabels) {
+                    if (parsedLabels.quickSearch) localizedLabels.quickSearch = parsedLabels.quickSearch;
+                    if (parsedLabels.allPortals) localizedLabels.allPortals = parsedLabels.allPortals;
+                }
+            }
+        } catch (e) {}
+
+        var qsLabelEl = document.getElementById('quick-search-label');
+        if (qsLabelEl) qsLabelEl.textContent = localizedLabels.quickSearch;
+
+        // Locale-aware Live Clock
         function updateClock() {
             var now = new Date();
-            var hours = now.getHours();
-            var minutes = now.getMinutes();
-            var ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            var minutesStr = minutes < 10 ? '0' + minutes : minutes;
-            var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            var dateStr = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
-            var timeStr = hours + ':' + minutesStr + ' ' + ampm + ' · ' + dateStr;
+            var timeStr = '';
+            try {
+                var timePart = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                var datePart = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+                timeStr = timePart + ' · ' + datePart;
+            } catch (e) {
+                timeStr = now.toLocaleTimeString();
+            }
             var el = document.getElementById('live-clock-text') || document.getElementById('live-clock');
             if (el) el.textContent = timeStr;
         }
         updateClock();
         setInterval(updateClock, 10000);
-
-        // Search Engine Switcher
-        var currentEngine = 'google';
-        var engines = {
-            google: 'https://www.google.com/search?q=',
-            duckduckgo: 'https://duckduckgo.com/?q=',
-            youtube: 'https://www.youtube.com/results?search_query=',
-            wikipedia: 'https://en.wikipedia.org/wiki/Special:Search?search=',
-            reddit: 'https://www.reddit.com/search/?q='
-        };
-
-        function setEngine(name, btn) {
-            currentEngine = name;
-            var pills = document.querySelectorAll('.engine-pill');
-            pills.forEach(function(p) { p.classList.remove('active'); });
-            if (btn) btn.classList.add('active');
-            var input = document.getElementById('search-input');
-            if (input) {
-                var engineName = name.charAt(0).toUpperCase() + name.slice(1);
-                input.placeholder = 'Search ' + engineName + ' or enter URL...';
-            }
-        }
-
-        function handleSearchSubmit(e) {
-            if (e) e.preventDefault();
-            var input = document.getElementById('search-input');
-            var q = (input ? input.value : '').trim();
-            if (!q) return false;
-
-            if (q.indexOf('http://') === 0 || q.indexOf('https://') === 0) {
-                navigateTo(q);
-            } else if (q.indexOf('.') !== -1 && q.indexOf(' ') === -1) {
-                navigateTo('https://' + q);
-            } else {
-                var baseUrl = engines[currentEngine] || engines.google;
-                navigateTo(baseUrl + encodeURIComponent(q));
-            }
-            return false;
-        }
-
-        function navigateTo(url) {
-            if (window.AndroidApp && typeof window.AndroidApp.openUrl === 'function') {
-                window.AndroidApp.openUrl(url);
-            } else {
-                window.location.href = url;
-            }
-        }
 
         // Category Filter
         function filterCategory(cat, btn) {
@@ -797,39 +591,6 @@
                     g.style.display = 'none';
                 }
             });
-        }
-
-        // Native App Helpers
-        function openNativeBookmarks() {
-            if (window.AndroidApp && window.AndroidApp.openBookmarks) {
-                window.AndroidApp.openBookmarks();
-            } else {
-                alert("Use the Bookmarks icon on the top toolbar to access saved bookmarks.");
-            }
-        }
-
-        function openNativeReadLater() {
-            if (window.AndroidApp && window.AndroidApp.openReadLater) {
-                window.AndroidApp.openReadLater();
-            } else {
-                alert("Use the Read Later icon on the top toolbar to access offline saved articles.");
-            }
-        }
-
-        function openNativeHistory() {
-            if (window.AndroidApp && window.AndroidApp.openHistory) {
-                window.AndroidApp.openHistory();
-            } else {
-                alert("Use the History icon on the top toolbar to access browsing history.");
-            }
-        }
-
-        function openNativeSettings() {
-            if (window.AndroidApp && window.AndroidApp.openSettings) {
-                window.AndroidApp.openSettings();
-            } else {
-                alert("Use the Settings icon on the top toolbar to configure browser options.");
-            }
         }
 
         // Dynamic Light/Dark Theme Controller
@@ -851,24 +612,42 @@
             }
         }
 
-        // Dynamic Portal Suggestions Renderer
+        // Dynamic Portal Suggestions Renderer (filters out any duplicate top-bar native actions)
         function renderPortals(data) {
             if (!data || !data.categories) return;
             var navContainer = document.getElementById('category-nav');
             var sectionsContainer = document.getElementById('portal-sections-container');
             if (!navContainer || !sectionsContainer) return;
 
+            var validCategories = data.categories.map(function(cat) {
+                var filteredItems = (cat.items || []).filter(function(item) {
+                    var u = (item.url || '').toLowerCase();
+                    return u.indexOf('opennative') === -1;
+                });
+                return {
+                    id: cat.id,
+                    tabTitle: cat.tabTitle,
+                    tabIcon: cat.tabIcon,
+                    headerTitle: cat.headerTitle,
+                    headerBadge: cat.headerBadge,
+                    items: filteredItems
+                };
+            }).filter(function(cat) {
+                return cat.items.length > 0;
+            });
+
             // Build Category Tabs
-            var tabsHtml = '<button class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\', this)">✨ All Portals</button>';
-            data.categories.forEach(function(cat) {
+            var tabsHtml = '<button class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\', this)">' + localizedLabels.allPortals + '</button>';
+            validCategories.forEach(function(cat) {
                 tabsHtml += '<button class="cat-tab" data-cat="' + cat.id + '" onclick="filterCategory(\'' + cat.id + '\', this)">' + cat.tabIcon + ' ' + cat.tabTitle + '</button>';
             });
             navContainer.innerHTML = tabsHtml;
 
             // Build Category Sections and Cards
             var sectionsHtml = '';
-            data.categories.forEach(function(cat) {
-                sectionsHtml += '<div class="section-group" data-cat="' + cat.id + '">';
+            validCategories.forEach(function(cat, idx) {
+                var delay = (idx * 0.05).toFixed(2);
+                sectionsHtml += '<div class="section-group" data-cat="' + cat.id + '" style="animation-delay:' + delay + 's;">';
                 sectionsHtml += '  <div class="section-header">';
                 sectionsHtml += '    <div class="section-title">';
                 sectionsHtml += '      <span>' + cat.tabIcon + ' ' + cat.headerTitle + '</span>';

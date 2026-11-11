@@ -151,16 +151,26 @@
                 android:src="@drawable/ic_nav_gamepad"
                 android:visibility="gone"
                 android:nextFocusLeft="@id/btnSummarize"
-                android:nextFocusRight="@id/btnDesktopMode"
+                android:nextFocusRight="@id/btnMouseMode"
                 android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_game_mode" />
+
+            <ImageButton
+                android:id="@+id/btnMouseMode"
+                style="@style/ToolbarIconButton"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_nav_mouse"
+                android:nextFocusLeft="@id/btnSummarize"
+                android:nextFocusRight="@id/btnDesktopMode"
+                android:nextFocusDown="@id/webView"
+                android:contentDescription="@string/mouse_mode_on" />
 
             <ImageButton
                 android:id="@+id/btnDesktopMode"
                 style="@style/ToolbarIconButton"
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_nav_desktop"
-                android:nextFocusLeft="@id/btnGameMode"
+                android:nextFocusLeft="@id/btnMouseMode"
                 android:nextFocusRight="@id/btnDarkMode"
                 android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_desktop_mode" />
@@ -374,10 +384,30 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/btnSpeakSummary"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:drawableStart="@drawable/ic_nav_mic"
+                    android:drawablePadding="8dp"
+                    android:focusable="true"
+                    android:text="@string/tts_read_aloud" />
+
+                <Button
+                    android:id="@+id/btnShareSummaryQr"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="10dp"
+                    android:focusable="true"
+                    android:text="@string/qr_open_on_phone_btn" />
+
+                <Button
                     android:id="@+id/btnCopySummary"
                     style="@style/ToolbarButton"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
+                    android:layout_marginStart="10dp"
                     android:drawableStart="@drawable/ic_copy"
                     android:drawablePadding="8dp"
                     android:focusable="true"
@@ -388,7 +418,7 @@
                     style="@style/ToolbarButton"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="10dp"
                     android:focusable="true"
                     android:text="@string/ai_summary_close" />
             </LinearLayout>

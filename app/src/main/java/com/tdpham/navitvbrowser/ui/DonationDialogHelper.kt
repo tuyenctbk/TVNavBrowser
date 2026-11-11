@@ -29,7 +29,7 @@ object DonationDialogHelper {
     fun showDonationDialog(activity: Activity, onSupporterStateChanged: (() -> Unit)? = null) {
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        
+
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_donation, null)
         dialog.setContentView(view)
 
@@ -40,7 +40,7 @@ object DonationDialogHelper {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val btnClose = view.findViewById<ImageButton>(R.id.btnCloseDonation)
-        
+
         val btnTabPlay = view.findViewById<Button>(R.id.btnTabPlay)
         val btnTabPaypal = view.findViewById<Button>(R.id.btnTabPaypal)
         val btnTabKofi = view.findViewById<Button>(R.id.btnTabKofi)
@@ -78,9 +78,9 @@ object DonationDialogHelper {
             dialog.dismiss()
         }
 
-        btnTier1.setOnClickListener { handlePlayDonation("Coffee Supporter ($1.99)") }
-        btnTier2.setOnClickListener { handlePlayDonation("Fan Supporter ($4.99)") }
-        btnTier3.setOnClickListener { handlePlayDonation("VIP Supporter ($19.99)") }
+        btnTier1.setOnClickListener { handlePlayDonation(activity.getString(R.string.donation_tier_1)) }
+        btnTier2.setOnClickListener { handlePlayDonation(activity.getString(R.string.donation_tier_2)) }
+        btnTier3.setOnClickListener { handlePlayDonation(activity.getString(R.string.donation_tier_3)) }
 
         // PayPal Section
         val btnPreset3 = view.findViewById<Button>(R.id.btnPreset3)
@@ -111,7 +111,7 @@ object DonationDialogHelper {
                 activity.startActivity(intent)
             } catch (_: Exception) {
                 val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText("PayPal Link", paypalUrl))
+                clipboard.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.donation_method_paypal), paypalUrl))
                 Toast.makeText(activity, R.string.donation_address_copied, Toast.LENGTH_SHORT).show()
             }
         }
@@ -128,10 +128,17 @@ object DonationDialogHelper {
                 activity.startActivity(intent)
             } catch (_: Exception) {
                 val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText("Ko-fi Link", KOFI_URL))
+                clipboard.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.donation_method_kofi), KOFI_URL))
                 Toast.makeText(activity, R.string.donation_address_copied, Toast.LENGTH_SHORT).show()
             }
         }
+
+        FocusAnimationHelper.applyAll(
+            btnClose, btnTabPlay, btnTabPaypal, btnTabKofi,
+            btnTier1, btnTier2, btnTier3,
+            btnPreset3, btnPreset5, btnPreset10,
+            btnOpenPaypal, btnOpenKofi
+        )
 
         // Tab Switching Logic
         fun selectTab(selectedBtn: Button, targetLayout: LinearLayout) {

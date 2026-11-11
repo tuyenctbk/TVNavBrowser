@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">Trình Duyệt NaviTV</string>
     <string name="bookmarks">Dấu trang</string>
@@ -177,4 +177,48 @@
     <string name="settings_mouse_speed_normal">Bình thường (Mặc định)</string>
     <string name="settings_mouse_speed_fast">Nhanh</string>
     <string name="settings_mouse_speed_changed">Tốc độ con trỏ chuột: %1$s</string>
+    <string name="donation_title">Ủng hộ phát triển</string>
+    <string name="donation_subtitle">100% Độc lập, Ngoại tuyến &amp; Bảo mật. Hãy giúp Trình Duyệt NaviTV luôn nhanh và mượt mà!</string>
+    <string name="donation_header_btn_desc">Ủng hộ phát triển NaviTV</string>
+    <string name="donation_active_supporter">Người ủng hộ tích cực</string>
+    <string name="donation_active_supporter_desc">Cảm ơn bạn đã ủng hộ Trình Duyệt NaviTV! Mọi biểu ngữ ủng hộ đã được tắt vĩnh viễn.</string>
+    <string name="donation_tab_google_play">Google Play</string>
+    <string name="donation_tab_paypal">PayPal &amp; QR</string>
+    <string name="donation_tab_kofi">Ko-fi</string>
+    <string name="donation_method_google_play">Thanh toán qua Google Play</string>
+    <string name="donation_method_paypal">PayPal &amp; Mã QR trực tiếp</string>
+    <string name="donation_method_kofi">Ủng hộ qua nền tảng Ko-fi</string>
+    <string name="donation_tier_1">Gói 1: Ly Cà Phê ($1.99)</string>
+    <string name="donation_tier_2">Gói 2: Người Hâm Mộ ($4.99)</string>
+    <string name="donation_tier_3">Gói 3: Người Ủng Hộ VIP ($19.99)</string>
+    <string name="donation_paypal_desc">Quét mã QR bằng camera điện thoại hoặc ứng dụng PayPal để ủng hộ qua paypal.me/navitvbrowser.</string>
+    <string name="donation_address_copied">Đã sao chép liên kết vào bộ nhớ tạm!</string>
+    <string name="donation_open_paypal">Mở liên kết PayPal</string>
+    <string name="donation_open_kofi">Mở trang Ko-fi</string>
+    <string name="donation_qr_scan_hint">Quét mã QR bằng điện thoại của bạn</string>
+    <string name="donation_banner_title">Bạn thích Trình Duyệt NaviTV?</string>
+    <string name="donation_banner_msg">Nếu Trình Duyệt NaviTV hữu ích với bạn, hãy cân nhắc ủng hộ nhà phát triển độc lập một khoản nhỏ!</string>
+    <string name="donation_banner_action">Ủng hộ phát triển</string>
+    <string name="donation_banner_dismiss">Để sau</string>
+    <string name="donation_post_op_title">Hoàn tất tác vụ thành công!</string>
+    <string name="donation_post_op_msg">Mời nhà phát triển một ly cà phê nếu tính năng này hữu ích!</string>
+    <string name="donation_milestone_title">Đã hoàn thành %1$d tác vụ! 🎉</string>
+    <string name="donation_milestone_msg">Bạn đã đạt cột mốc ấn tượng! Cảm ơn bạn đã sử dụng Trình Duyệt NaviTV. Hãy cân nhắc ủng hộ phát triển độc lập.</string>
+    <string name="donation_thank_you">Cảm ơn sự ủng hộ quý báu của bạn!</string>
+    <string name="donation_simulation_success">Cảm ơn bạn! Bạn hiện là Người ủng hộ tích cực!</string>
+    <string name="donation_preset_3">$3</string>
+    <string name="donation_preset_5">$5</string>
+    <string name="donation_preset_10">$10</string>
+    <string name="donation_preset_any">Số tiền tùy chọn</string>
+    <string name="ai_reading_time_format">⏱ ~%1$d phút đọc (%2$d từ)</string>
+    <string name="tts_read_aloud">Đọc thành tiếng</string>
+    <string name="tts_stop_reading">Dừng đọc</string>
+    <string name="tts_reading_aloud">Đang đọc thành tiếng…</string>
+    <string name="tts_unavailable">Tính năng đọc văn bản không khả dụng trên thiết bị này</string>
+    <string name="qr_open_on_phone_btn">Mở trên ĐT (QR)</string>
+    <string name="qr_open_on_phone_title">Mở trang trên điện thoại</string>
+    <string name="qr_open_on_phone_msg">Quét mã QR này bằng camera điện thoại để tiếp tục xem trang trên thiết bị di động:</string>
+    <string name="site_zoom_changed">Cỡ chữ trang web: %1$d%% (đã lưu cho trang này)</string>
+    <string name="dashboard_quick_search_label">Tìm nhanh:</string>
+    <string name="dashboard_all_portals">✨ Tất cả cổng</string>
 </resources>

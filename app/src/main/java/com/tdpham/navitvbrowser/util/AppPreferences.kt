@@ -16,6 +16,8 @@ object AppPreferences {
     private const val KEY_FIRESTORE_SYNC_ENABLED = "firestore_sync_enabled"
     private const val KEY_SYNC_USER_ID = "sync_user_id"
     private const val KEY_MOUSE_SPEED = "mouse_speed"
+    private const val KEY_SITE_DESKTOP_PREFIX = "site_desktop_"
+    private const val KEY_SITE_ZOOM_PREFIX = "site_zoom_"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     const val THEME_DARK = "dark"
@@ -189,8 +191,41 @@ object AppPreferences {
 
     fun getMouseSpeedMultiplier(context: Context): Float =
         when (getMouseSpeed(context)) {
-            MOUSE_SPEED_SLOW -> 0.75f
+            MOUSE_SPEED_SLOW -> 0.65f
             MOUSE_SPEED_FAST -> 1.35f
-            else -> 1.0f
+            else -> 0.92f
         }
+
+    fun getSiteDesktopMode(context: Context, host: String): Boolean {
+        val cleanHost = host.trim().lowercase()
+        if (cleanHost.isEmpty()) return true
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getBoolean(KEY_SITE_DESKTOP_PREFIX + cleanHost, true)
+    }
+
+    fun setSiteDesktopMode(context: Context, host: String, isDesktop: Boolean) {
+        val cleanHost = host.trim().lowercase()
+        if (cleanHost.isEmpty()) return
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_SITE_DESKTOP_PREFIX + cleanHost, isDesktop)
+            .apply()
+    }
+
+    fun getSiteTextZoom(context: Context, host: String): Int {
+        val cleanHost = host.trim().lowercase()
+        if (cleanHost.isEmpty()) return 100
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getInt(KEY_SITE_ZOOM_PREFIX + cleanHost, 100)
+            .coerceIn(75, 200)
+    }
+
+    fun setSiteTextZoom(context: Context, host: String, zoomPercent: Int) {
+        val cleanHost = host.trim().lowercase()
+        if (cleanHost.isEmpty()) return
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putInt(KEY_SITE_ZOOM_PREFIX + cleanHost, zoomPercent.coerceIn(75, 200))
+            .apply()
+    }
 }

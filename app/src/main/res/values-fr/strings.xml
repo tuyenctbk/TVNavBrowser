@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">Navigateur NaviTV</string>
     <string name="bookmarks">Favoris</string>
@@ -177,4 +177,48 @@
     <string name="settings_mouse_speed_normal">Normale (Par défaut)</string>
     <string name="settings_mouse_speed_fast">Rapide</string>
     <string name="settings_mouse_speed_changed">Vitesse du pointeur : %1$s</string>
+    <string name="donation_title">Soutenir le développement</string>
+    <string name="donation_subtitle">100 % indépendant et respectueux de la vie privée. Aidez-nous à garder NaviTV Browser rapide !</string>
+    <string name="donation_header_btn_desc">Soutenir le développement de NaviTV</string>
+    <string name="donation_active_supporter">Contributeur actif</string>
+    <string name="donation_active_supporter_desc">Merci de soutenir NaviTV Browser ! Toutes les bannières de don sont désactivées.</string>
+    <string name="donation_tab_google_play">Google Play</string>
+    <string name="donation_tab_paypal">PayPal et QR</string>
+    <string name="donation_tab_kofi">Ko-fi</string>
+    <string name="donation_method_google_play">Achat intégré Google Play</string>
+    <string name="donation_method_paypal">PayPal et QR Code en direct</string>
+    <string name="donation_method_kofi">Soutenir via la plateforme Ko-fi</string>
+    <string name="donation_tier_1">Niveau 1 : Supporter Café (1,99 $)</string>
+    <string name="donation_tier_2">Niveau 2 : Supporter Fan (4,99 $)</string>
+    <string name="donation_tier_3">Niveau 3 : Supporter VIP (19,99 $)</string>
+    <string name="donation_paypal_desc">Scannez le code QR avec votre téléphone ou l\'application PayPal via paypal.me/navitvbrowser.</string>
+    <string name="donation_address_copied">Lien copié dans le presse-papiers !</string>
+    <string name="donation_open_paypal">Ouvrir le lien PayPal</string>
+    <string name="donation_open_kofi">Ouvrir la page Ko-fi</string>
+    <string name="donation_qr_scan_hint">Scannez le code QR avec votre mobile</string>
+    <string name="donation_banner_title">Vous appréciez NaviTV Browser ?</string>
+    <string name="donation_banner_msg">Si NaviTV Browser vous est utile, pensez à soutenir son développement indépendant !</string>
+    <string name="donation_banner_action">Soutenir le projet</string>
+    <string name="donation_banner_dismiss">Plus tard</string>
+    <string name="donation_post_op_title">Opération réussie !</string>
+    <string name="donation_post_op_msg">Offrez un café au développeur si cela vous a aidé !</string>
+    <string name="donation_milestone_title">%1$d tâches accomplies ! 🎉</string>
+    <string name="donation_milestone_msg">Vous avez franchi une étape importante ! Merci d\'utiliser NaviTV Browser.</string>
+    <string name="donation_thank_you">Merci pour votre généreux soutien !</string>
+    <string name="donation_simulation_success">Merci ! Vous êtes maintenant un Contributeur actif !</string>
+    <string name="donation_preset_3">3 $</string>
+    <string name="donation_preset_5">5 $</string>
+    <string name="donation_preset_10">10 $</string>
+    <string name="donation_preset_any">Montant libre</string>
+    <string name="ai_reading_time_format">⏱ ~%1$d min de lecture (%2$d mots)</string>
+    <string name="tts_read_aloud">Lire à voix haute</string>
+    <string name="tts_stop_reading">Arrêter la lecture</string>
+    <string name="tts_reading_aloud">Lecture à voix haute…</string>
+    <string name="tts_unavailable">Synthèse vocale indisponible sur cet appareil</string>
+    <string name="qr_open_on_phone_btn">Ouvrir sur mobile (QR)</string>
+    <string name="qr_open_on_phone_title">Ouvrir la page sur votre téléphone</string>
+    <string name="qr_open_on_phone_msg">Scannez ce code QR avec l\'appareil photo de votre téléphone pour continuer sur mobile :</string>
+    <string name="site_zoom_changed">Zoom du texte : %1$d%% (enregistré pour ce site)</string>
+    <string name="dashboard_quick_search_label">Recherche rapide :</string>
+    <string name="dashboard_all_portals">✨ Tous les portails</string>
 </resources>

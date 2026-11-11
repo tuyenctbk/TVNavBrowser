@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">Navegador NaviTV</string>
     <string name="bookmarks">Favoritos</string>
@@ -177,4 +177,48 @@
     <string name="settings_mouse_speed_normal">Normal (Padrão)</string>
     <string name="settings_mouse_speed_fast">Rápido</string>
     <string name="settings_mouse_speed_changed">Velocidade do ponteiro: %1$s</string>
+    <string name="donation_title">Apoiar o Desenvolvimento</string>
+    <string name="donation_subtitle">100% Independente, Offline e Focado na Privacidade. Ajude a manter o Navegador NaviTV rápido!</string>
+    <string name="donation_header_btn_desc">Apoiar o Desenvolvimento do NaviTV</string>
+    <string name="donation_active_supporter">Apoiador Ativo</string>
+    <string name="donation_active_supporter_desc">Obrigado por apoiar o Navegador NaviTV! Todos os banners de doação foram desativados permanentemente.</string>
+    <string name="donation_tab_google_play">Google Play</string>
+    <string name="donation_tab_paypal">PayPal e QR</string>
+    <string name="donation_tab_kofi">Ko-fi</string>
+    <string name="donation_method_google_play">Compra no App via Google Play</string>
+    <string name="donation_method_paypal">PayPal e Código QR ao Vivo</string>
+    <string name="donation_method_kofi">Apoiar via Plataforma Ko-fi</string>
+    <string name="donation_tier_1">Nível 1: Apoiador Café ($1.99)</string>
+    <string name="donation_tier_2">Nível 2: Apoiador Fã ($4.99)</string>
+    <string name="donation_tier_3">Nível 3: Apoiador VIP ($19.99)</string>
+    <string name="donation_paypal_desc">Escaneie o código QR com a câmera do celular ou app PayPal para doar via paypal.me/navitvbrowser.</string>
+    <string name="donation_address_copied">Link copiado para a área de transferência!</string>
+    <string name="donation_open_paypal">Abrir Link do PayPal</string>
+    <string name="donation_open_kofi">Abrir Página do Ko-fi</string>
+    <string name="donation_qr_scan_hint">Escaneie o código QR com seu celular</string>
+    <string name="donation_banner_title">Gostando do Navegador NaviTV?</string>
+    <string name="donation_banner_msg">Se o Navegador NaviTV ajudou no seu dia, considere apoiar o desenvolvimento independente!</string>
+    <string name="donation_banner_action">Apoiar o Desenvolvimento</string>
+    <string name="donation_banner_dismiss">Talvez Depois</string>
+    <string name="donation_post_op_title">Tarefa Concluída com Sucesso!</string>
+    <string name="donation_post_op_msg">Pague um café para o desenvolvedor se isso ajudou seu dia!</string>
+    <string name="donation_milestone_title">%1$d Tarefas Concluídas! 🎉</string>
+    <string name="donation_milestone_msg">Você alcançou um grande marco! Obrigado por usar o Navegador NaviTV. Considere apoiar o desenvolvimento independente.</string>
+    <string name="donation_thank_you">Obrigado pelo seu generoso apoio!</string>
+    <string name="donation_simulation_success">Obrigado! Agora você é um Apoiador Ativo!</string>
+    <string name="donation_preset_3">$3</string>
+    <string name="donation_preset_5">$5</string>
+    <string name="donation_preset_10">$10</string>
+    <string name="donation_preset_any">Valor Personalizado</string>
+    <string name="ai_reading_time_format">⏱ ~%1$d min de leitura (%2$d palavras)</string>
+    <string name="tts_read_aloud">Ler em Voz Alta</string>
+    <string name="tts_stop_reading">Parar Leitura</string>
+    <string name="tts_reading_aloud">Lendo em voz alta…</string>
+    <string name="tts_unavailable">Leitura de texto indisponível neste dispositivo</string>
+    <string name="qr_open_on_phone_btn">Abrir no Celular (QR)</string>
+    <string name="qr_open_on_phone_title">Abrir Página no Seu Celular</string>
+    <string name="qr_open_on_phone_msg">Escaneie este código QR com a câmera do celular para continuar lendo esta página no telefone:</string>
+    <string name="site_zoom_changed">Zoom de texto da página: %1$d%% (salvo para este site)</string>
+    <string name="dashboard_quick_search_label">Busca Rápida:</string>
+    <string name="dashboard_all_portals">✨ Todos os Portais</string>
 </resources>

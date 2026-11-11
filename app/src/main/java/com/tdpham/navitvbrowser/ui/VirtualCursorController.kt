@@ -41,12 +41,12 @@ class VirtualCursorController(
         private const val HOTSPOT_X_FRACTION = 4f / 24f
         private const val HOTSPOT_Y_FRACTION = 2f / 24f
 
-        private const val TAP_STEP_DP = 9f
-        private const val HOLD_DELAY_MS = 130L
-        private const val RAMP_MS = 750f
-        private const val MIN_SPEED_DP_PER_S = 340f
-        private const val MAX_SPEED_DP_PER_S = 1500f
-        private const val JOYSTICK_MAX_SPEED_DP_PER_S = 1300f
+        private const val TAP_STEP_DP = 5.5f
+        private const val HOLD_DELAY_MS = 185L
+        private const val RAMP_MS = 1100f
+        private const val MIN_SPEED_DP_PER_S = 165f
+        private const val MAX_SPEED_DP_PER_S = 820f
+        private const val JOYSTICK_MAX_SPEED_DP_PER_S = 780f
         private const val JOYSTICK_DEADZONE = 0.18f
 
         private const val LONG_PRESS_MS = 650L
@@ -64,13 +64,29 @@ class VirtualCursorController(
     var isDispatchingSyntheticEvent: Boolean = false
         private set
 
-    /** 0.6 (slow) .. 1.5 (fast); applied to glide speed and joystick speed. */
-    var speedMultiplier: Float = 1f
+    /** 0.4 (slow) .. 2.0 (fast); applied to glide speed and joystick speed. */
+    var speedMultiplier: Float = 0.92f
         set(value) {
             field = value.coerceIn(0.4f, 2f)
         }
 
+    /** True when the cursor is hovering over a clickable link or button in the WebView (Smart Link Magnet). */
+    var isHoveringInteractive: Boolean = false
+        private set
+
+    fun setHoveringInteractive(hovering: Boolean) {
+        if (isHoveringInteractive == hovering) return
+        isHoveringInteractive = hovering
+        if (isEnabled && cursor.visibility == View.VISIBLE) {
+            val targetScale = if (hovering) 1.14f else 1f
+            cursor.animate().scaleX(targetScale).scaleY(targetScale).setDuration(110).start()
+        }
+    }
+
     var onCursorActivity: (() -> Unit)? = null
+
+    /** Invoked when user presses DPAD_UP while the pointer is already at the top edge, allowing focus to jump to toolbar. */
+    var onEscapeToToolbar: (() -> Unit)? = null
 
     /** Invoked when OK/Select is held. When null, a long press behaves like a normal click. */
     var onSelectLongPress: (() -> Unit)? = null
@@ -161,7 +177,15 @@ class VirtualCursorController(
         val isDown = event.action == KeyEvent.ACTION_DOWN
 
         when (event.keyCode) {
-            KeyEvent.KEYCODE_DPAD_UP -> { onDirectionKey(isDown, event) { holdingUp = it }; return true }
+            KeyEvent.KEYCODE_DPAD_UP -> {
+                if (isDown && event.repeatCount == 0 && cursor.y <= -hotspotOffsetY + 4f && !webView.canScrollVertically(-1)) {
+                    stopMotion()
+                    onEscapeToToolbar?.invoke()
+                    return true
+                }
+                onDirectionKey(isDown, event) { holdingUp = it }
+                return true
+            }
             KeyEvent.KEYCODE_DPAD_DOWN -> { onDirectionKey(isDown, event) { holdingDown = it }; return true }
             KeyEvent.KEYCODE_DPAD_LEFT -> { onDirectionKey(isDown, event) { holdingLeft = it }; return true }
             KeyEvent.KEYCODE_DPAD_RIGHT -> { onDirectionKey(isDown, event) { holdingRight = it }; return true }
@@ -212,7 +236,7 @@ class VirtualCursorController(
         if (holdingUp) dy -= 1f
         if (holdingDown) dy += 1f
         if (dx == 0f && dy == 0f) return
-        val step = TAP_STEP_DP * density * (0.75f + 0.25f * speedMultiplier)
+        val step = TAP_STEP_DP * density * (0.7f + 0.3f * speedMultiplier)
         applyMove(dx * step, dy * step, 0L)
     }
 
@@ -305,8 +329,10 @@ class VirtualCursorController(
             holdMs = (now - pressStartTime).coerceAtLeast(0L)
             if (holdMs >= HOLD_DELAY_MS) {
                 val p = ((holdMs - HOLD_DELAY_MS) / RAMP_MS).coerceIn(0f, 1f)
-                val eased = p * p * (3f - 2f * p) // smoothstep: gentle start, no sudden jumps
-                val speed = (MIN_SPEED_DP_PER_S + (MAX_SPEED_DP_PER_S - MIN_SPEED_DP_PER_S) * eased) * speedMultiplier
+                // Gentle precision ease-in: stays slow for the first ~400ms of holding so users can aim accurately
+                val eased = p * p * (0.35f + 0.65f * p)
+                val magnetFactor = if (isHoveringInteractive) 0.72f else 1f
+                val speed = (MIN_SPEED_DP_PER_S + (MAX_SPEED_DP_PER_S - MIN_SPEED_DP_PER_S) * eased) * speedMultiplier * magnetFactor
                 val distance = speed * density * dtMs / 1000f
                 dx += dirX * distance
                 dy += dirY * distance
@@ -317,7 +343,8 @@ class VirtualCursorController(
             val rawMagnitude = sqrt(joystickX * joystickX + joystickY * joystickY)
             val magnitude = rawMagnitude.coerceAtMost(1f)
             // Quadratic response curve: fine control near the centre, fast at full tilt.
-            val speed = JOYSTICK_MAX_SPEED_DP_PER_S * magnitude * magnitude * speedMultiplier
+            val magnetFactor = if (isHoveringInteractive) 0.72f else 1f
+            val speed = JOYSTICK_MAX_SPEED_DP_PER_S * magnitude * magnitude * speedMultiplier * magnetFactor
             val distance = speed * density * dtMs / 1000f
             dx += joystickX / rawMagnitude * distance
             dy += joystickY / rawMagnitude * distance

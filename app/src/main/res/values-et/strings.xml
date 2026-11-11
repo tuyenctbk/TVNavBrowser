@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">NaviTV Browser</string>
     <string name="bookmarks">Järjehoidjad</string>
@@ -177,4 +177,48 @@
     <string name="settings_mouse_speed_normal">Tavaline (vaikimisi)</string>
     <string name="settings_mouse_speed_fast">Kiire</string>
     <string name="settings_mouse_speed_changed">Hiirekursori kiirus:%1$s</string>
+    <string name="donation_title">Support Development</string>
+    <string name="donation_subtitle">100% Independent, Offline &amp; Privacy-Focused. Help us keep NaviTV Browser fast and ad-free!</string>
+    <string name="donation_header_btn_desc">Support NaviTV Development</string>
+    <string name="donation_active_supporter">Active Supporter</string>
+    <string name="donation_active_supporter_desc">Thank you for supporting NaviTV Browser! All donation banners are permanently disabled.</string>
+    <string name="donation_tab_google_play">Google Play</string>
+    <string name="donation_tab_paypal">PayPal &amp; QR</string>
+    <string name="donation_tab_kofi">Ko-fi</string>
+    <string name="donation_method_google_play">Google Play In-App Purchase</string>
+    <string name="donation_method_paypal">PayPal &amp; Live QR Code</string>
+    <string name="donation_method_kofi">Support via Ko-fi Platform</string>
+    <string name="donation_tier_1">Tier 1: Coffee Supporter ($1.99)</string>
+    <string name="donation_tier_2">Tier 2: Fan Supporter ($4.99)</string>
+    <string name="donation_tier_3">Tier 3: VIP Supporter ($19.99)</string>
+    <string name="donation_paypal_desc">Scan the QR code with your phone camera or PayPal app to donate directly via paypal.me/navitvbrowser.</string>
+    <string name="donation_address_copied">Link copied to clipboard!</string>
+    <string name="donation_open_paypal">Open PayPal Link</string>
+    <string name="donation_open_kofi">Open Ko-fi Page</string>
+    <string name="donation_qr_scan_hint">Scan QR code with your mobile device</string>
+    <string name="donation_banner_title">Enjoying NaviTV Browser?</string>
+    <string name="donation_banner_msg">If NaviTV Browser saved your day, consider supporting independent developer efforts with a small tip!</string>
+    <string name="donation_banner_action">Support Development</string>
+    <string name="donation_banner_dismiss">Maybe Later</string>
+    <string name="donation_post_op_title">Task Successfully Completed!</string>
+    <string name="donation_post_op_msg">Buy the developer a coffee if this saved your day!</string>
+    <string name="donation_milestone_title">%1$d Tasks Completed! 🎉</string>
+    <string name="donation_milestone_msg">You\'ve reached a major milestone! Thank you for using NaviTV Browser. Consider supporting independent development to keep updates coming.</string>
+    <string name="donation_thank_you">Thank you for your generous support!</string>
+    <string name="donation_simulation_success">Thank you! You are now an Active Supporter!</string>
+    <string name="donation_preset_3">$3</string>
+    <string name="donation_preset_5">$5</string>
+    <string name="donation_preset_10">$10</string>
+    <string name="donation_preset_any">Custom Amount</string>
+    <string name="ai_reading_time_format">⏱ ~%1$d min read (%2$d words)</string>
+    <string name="tts_read_aloud">Read Aloud</string>
+    <string name="tts_stop_reading">Stop Reading</string>
+    <string name="tts_reading_aloud">Reading aloud…</string>
+    <string name="tts_unavailable">Text-to-speech is unavailable on this device</string>
+    <string name="qr_open_on_phone_btn">Open on Phone (QR)</string>
+    <string name="qr_open_on_phone_title">Open Page on Your Phone</string>
+    <string name="qr_open_on_phone_msg">Scan this QR code with your phone camera to continue browsing this page on mobile:</string>
+    <string name="site_zoom_changed">Page text zoom: %1$d%% (saved for this site)</string>
+    <string name="dashboard_quick_search_label">Quick Search:</string>
+    <string name="dashboard_all_portals">✨ All Portals</string>
 </resources>
