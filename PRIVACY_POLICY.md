@@ -19,7 +19,7 @@ Information We Collect
 
 2. Automatically collected information
 - Usage analytics (Firebase Analytics): events about app usage, screens, feature usage, and crash reports (Firebase Crashlytics).
-- Advertising identifiers: if the App includes ads (Google Mobile Ads / AdMob), Google may collect the Advertising ID (AAID) for ad personalization and measurement.
+- Note: The App does NOT request or collect the Android Advertising ID (AD_ID permission is removed as of v2.9.9).
 
 3. Device and technical information
 - Device model, OS version, language settings, and similar device-level information to help debug and improve the App.
