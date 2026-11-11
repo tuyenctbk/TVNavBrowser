@@ -1,33 +1,68 @@
-*.iml
-.gradle
-/local.properties
-/.idea/
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+# Built application binaries and package bundles
+*.apk
+*.apks
+*.aab
+*.dex
+*.dm
+*.class
 
-# Keystores & sensitive keys
+# Gradle build cache and outputs
+.gradle/
+.gradle*
+build/
+/build/
+*/build/
+
+# Kotlin compilation and session data
+.kotlin/
+kotlin*
+
+# IDE and Editor configuration
+*.iml
+*.ipr
+*.iws
+.idea/
+/.idea/
+.vscode/*
+!.vscode/settings.json
+
+# C++ / NDK native build artifacts
+.cxx/
+.externalNativeBuild/
+
+# Local SDK & environment configurations
+local.properties
+/local.properties
+captures/
+*.hprof
+
+# Keystores & sensitive signing keys
 *.keystore
 !debug.keystore.template
 *.jks
 common_release_key.jks
+*.p12
+*.pem
 
-# Agent Artifacts
+# OS-generated files & metadata
+.DS_Store
+**/.DS_Store
+._*
+Thumbs.db
+ehthumbs.db
+
+# Agent Artifacts & Scratch directories
 *.artifact.md
 .artifacts/
 .artifacts
 scratch/
 
-# Build artifacts
-*.apk
-*.aab
-
-# Temp files and scripts
+# Logs, crash dumps, and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+*.zip.*
 *.sh
 *.py
-*.zip.*
-.gradle*
-kotlin*
