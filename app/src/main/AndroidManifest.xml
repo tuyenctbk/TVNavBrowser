@@ -5,8 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <!-- Android TV supported; touchscreen/leanback configured for compatibility -->
     <uses-feature
@@ -61,15 +59,6 @@
         android:enableOnBackInvokedCallback="true"
         android:hardwareAccelerated="true">
 
-        <property
-            android:name="android.adservices.AD_SERVICES_CONFIG"
-            android:resource="@xml/gma_ad_services_config"
-            tools:replace="android:resource" />
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id" />
-
         <activity
             android:name=".LauncherActivity"
             android:banner="@drawable/app_banner"
@@ -96,11 +85,6 @@
             android:screenOrientation="landscape" />
 
         <activity
-            android:name=".OnboardingActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
-
-        <activity
             android:name=".BookmarksActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
@@ -119,14 +103,6 @@
             android:name=".ReadLaterReaderActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
-
-        <service
-            android:name=".util.MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
         <provider
             android:name="androidx.startup.InitializationProvider"

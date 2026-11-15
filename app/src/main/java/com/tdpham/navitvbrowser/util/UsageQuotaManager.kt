@@ -68,6 +68,7 @@ object UsageQuotaManager {
 
     /** Free daily cloud AI allowance (Tier 3 local summarizer & Q&A is always unlimited). */
     const val DAILY_BASE_ALLOWANCE = 15
+    const val SUPPORTER_BASE_ALLOWANCE = 30
     const val GRACE_CREDIT_PACK_AMOUNT = 3
     const val SOFT_NUDGE_THRESHOLD_RATIO = 0.80f
 
@@ -93,10 +94,12 @@ object UsageQuotaManager {
         val bonusGraceCredits: Int,
         val graceClaimed: Boolean,
         val ecoLiteMode: Boolean,
-        val fallbackCascadeCount: Int
+        val fallbackCascadeCount: Int,
+        val isSupporter: Boolean = false
     ) {
         val totalUsed: Int get() = summaryUsed + chatUsed + voiceUsed
-        val totalAllowance: Int get() = DAILY_BASE_ALLOWANCE + bonusGraceCredits
+        val baseAllowance: Int get() = if (isSupporter) SUPPORTER_BASE_ALLOWANCE else DAILY_BASE_ALLOWANCE
+        val totalAllowance: Int get() = baseAllowance + bonusGraceCredits
         val remainingCredits: Int get() = (totalAllowance - totalUsed).coerceAtLeast(0)
         val usageRatio: Float get() = if (totalAllowance > 0) totalUsed.toFloat() / totalAllowance else 1f
         val isAtOrAboveSoftNudge: Boolean get() = usageRatio >= SOFT_NUDGE_THRESHOLD_RATIO && remainingCredits > 0
@@ -138,6 +141,7 @@ object UsageQuotaManager {
             .map { prefs ->
                 val today = currentDateIso()
                 val storedDate = prefs[DS_DATE_ISO] ?: ""
+                val supporter = DonationManager.isSupporter(appContext)
                 if (storedDate != today) {
                     val preservedEco = prefs[DS_ECO_LITE_MODE] ?: getSnapshot(appContext).ecoLiteMode
                     val rolledOver = QuotaSnapshot(
@@ -148,7 +152,8 @@ object UsageQuotaManager {
                         bonusGraceCredits = 0,
                         graceClaimed = false,
                         ecoLiteMode = preservedEco,
-                        fallbackCascadeCount = prefs[DS_FALLBACK_CASCADE_COUNT] ?: 0
+                        fallbackCascadeCount = prefs[DS_FALLBACK_CASCADE_COUNT] ?: 0,
+                        isSupporter = supporter
                     )
                     persistLocalMirror(appContext, rolledOver)
                     rolledOver
@@ -161,7 +166,8 @@ object UsageQuotaManager {
                         bonusGraceCredits = prefs[DS_BONUS_GRACE_CREDITS] ?: 0,
                         graceClaimed = prefs[DS_GRACE_CLAIMED] ?: false,
                         ecoLiteMode = prefs[DS_ECO_LITE_MODE] ?: false,
-                        fallbackCascadeCount = prefs[DS_FALLBACK_CASCADE_COUNT] ?: 0
+                        fallbackCascadeCount = prefs[DS_FALLBACK_CASCADE_COUNT] ?: 0,
+                        isSupporter = supporter
                     )
                 }
             }
@@ -287,8 +293,15 @@ object UsageQuotaManager {
             bonusGraceCredits = prefs.getInt(KEY_BONUS_GRACE_CREDITS, 0),
             graceClaimed = prefs.getBoolean(KEY_GRACE_CLAIMED, false),
             ecoLiteMode = prefs.getBoolean(KEY_ECO_LITE_MODE, false),
-            fallbackCascadeCount = prefs.getInt(KEY_FALLBACK_CASCADE_COUNT, 0)
+            fallbackCascadeCount = prefs.getInt(KEY_FALLBACK_CASCADE_COUNT, 0),
+            isSupporter = DonationManager.isSupporter(context)
         )
+    }
+
+    @Synchronized
+    fun refreshSupporterAllowance(context: Context) {
+        val snap = getSnapshot(context)
+        persistLocalMirror(context, snap)
     }
 
     /**

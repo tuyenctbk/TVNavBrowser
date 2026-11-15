@@ -66,7 +66,6 @@ import com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
 import com.tdpham.navitvbrowser.ui.InputHelper
 import com.tdpham.navitvbrowser.ui.VirtualCursorController
-import com.tdpham.navitvbrowser.util.AdsHelper
 import com.tdpham.navitvbrowser.util.WebViewMemoryManager
 import com.tdpham.navitvbrowser.util.AiHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
@@ -460,10 +459,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        findViewById<FrameLayout>(R.id.adContainer)?.let {
-            AdsHelper.initAds(this, it)
-        }
-
         com.tdpham.navitvbrowser.util.DonationManager.initOrRecordLaunch(this)
         setupDonationAndEngagement()
 
@@ -601,7 +596,6 @@ class MainActivity : ComponentActivity() {
         }
         resetInactivityTimer()
         com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
-        AdsHelper.onResume()
     }
 
     override fun onPause() {
@@ -614,7 +608,6 @@ class MainActivity : ComponentActivity() {
             webView.onPause()
         }
         handler.removeCallbacks(autoFullscreenRunnable)
-        AdsHelper.onPause()
         super.onPause()
     }
 
@@ -676,7 +669,6 @@ class MainActivity : ComponentActivity() {
             webView.webViewClient = WebViewClient()
             webView.destroy()
         }
-        AdsHelper.onDestroy()
         super.onDestroy()
     }
 
@@ -932,8 +924,6 @@ class MainActivity : ComponentActivity() {
                 if (view != null) {
                     imm.hideSoftInputFromWindow(view.windowToken, 0)
                 }
-                
-                updateAdContainerVisibility()
 
                 if (isGameModeActive) {
                     toggleGameMode(false)
@@ -953,7 +943,6 @@ class MainActivity : ComponentActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 progressBar.isVisible = false
-                updateAdContainerVisibility()
                 injectFocusStyle(view)
                 injectGameModeBridge(view)
                 if (AppPreferences.isForceDarkModeEnabled(this@MainActivity)) {
@@ -1412,7 +1401,6 @@ class MainActivity : ComponentActivity() {
             } else if (!enabled && webView.hasFocus()) {
                 urlInput.requestFocus()
             }
-            updateAdContainerVisibility()
 
             FirebaseInitializer.logEvent(
                 if (enabled) "mouse_mode_on" else "mouse_mode_off",
@@ -1528,7 +1516,6 @@ class MainActivity : ComponentActivity() {
             gameModeOverlay.visibility = View.GONE
             virtualCursor.setEnabled(true)
             updateMouseModeButtonUi(true)
-            updateAdContainerVisibility()
             Toast.makeText(this, R.string.game_mode_disabled, Toast.LENGTH_SHORT).show()
             FirebaseInitializer.logEvent("game_mode_disabled", null)
         }
@@ -1823,8 +1810,12 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 com.tdpham.navitvbrowser.util.UsageQuotaManager.observeQuotaSnapshot(this@MainActivity)
                     .collectLatest { snap ->
-                        btnSummarize.contentDescription =
-                            "${getString(R.string.nav_summarize)} (${snap.remainingCredits}/${snap.totalAllowance})"
+                        btnSummarize.contentDescription = getString(
+                            R.string.nav_summarize_quota_desc,
+                            getString(R.string.nav_summarize),
+                            snap.remainingCredits,
+                            snap.totalAllowance
+                        )
                         refreshAiQuotaOverlayUi(lastSummaryTier, snap)
                     }
             }
@@ -2162,29 +2153,11 @@ class MainActivity : ComponentActivity() {
         view?.evaluateJavascript(js, null)
     }
 
-    private fun updateAdContainerVisibility() {
-        val container = findViewById<View>(R.id.adContainer) ?: return
-        if (isFullscreenMode) {
-            container.visibility = View.GONE
-            return
-        }
-        val url = webView.url
-        val isDashboard = url == "file:///android_asset/dashboard.html" || url.isNullOrEmpty()
-        
-        // Auto-hide guides row if virtual mouse is active or not on dashboard
-        if (isDashboard && !virtualCursor.isEnabled) {
-            container.visibility = View.VISIBLE
-        } else {
-            container.visibility = View.GONE
-        }
-    }
-
     private fun toggleFullscreen(enabled: Boolean) {
         if (isFullscreenMode == enabled) return
         isFullscreenMode = enabled
 
         toolbarContainer.visibility = if (enabled) View.GONE else View.VISIBLE
-        updateAdContainerVisibility()
 
         val iconRes = if (enabled) R.drawable.ic_nav_fullscreen_exit else R.drawable.ic_nav_fullscreen
         btnFullscreen.setImageResource(iconRes)
@@ -2385,7 +2358,7 @@ class MainActivity : ComponentActivity() {
                 result.onSuccess { response ->
                     handleCoreOperationCompleted()
                     lastSummaryTier = response.usedTier
-                    val formattedAnswer = "❓ $question\n\n${response.text}"
+                    val formattedAnswer = getString(R.string.ai_question_answer_format, question, response.text)
                     showSummaryDialog(formattedAnswer, response.usedTier)
                 }.onFailure {
                     Toast.makeText(this@MainActivity, getString(R.string.ai_error_generic), Toast.LENGTH_SHORT).show()

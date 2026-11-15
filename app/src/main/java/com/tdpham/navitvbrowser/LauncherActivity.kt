@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.webkit.WebViewCompat
 import com.tdpham.navitvbrowser.util.AppPreferences
-import com.tdpham.navitvbrowser.util.RatingHelper
 
 class LauncherActivity : ComponentActivity() {
 
@@ -20,19 +19,15 @@ class LauncherActivity : ComponentActivity() {
             return
         }
 
-        val onboardingComplete = AppPreferences.isOnboardingComplete(this)
-
-        val target = if (onboardingComplete) {
-            MainActivity::class.java
-        } else {
-            OnboardingActivity::class.java
+        // Zero-friction Time-to-Value: land directly in the TV Browser & Portal Dashboard
+        if (!AppPreferences.isOnboardingComplete(this)) {
+            AppPreferences.setOnboardingComplete(this, true)
         }
-        startActivity(Intent(this, target))
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
     private fun isWebViewAvailable(): Boolean {
-        // First try the standard AndroidX way
         try {
             if (WebViewCompat.getCurrentWebViewPackage(this) != null) {
                 return true
@@ -41,8 +36,6 @@ class LauncherActivity : ComponentActivity() {
             // Fall through to fallback
         }
 
-        // Fallback: try to instantiate CookieManager or access WebView settings.
-        // This works on most devices even if the package isn't explicitly reported.
         return try {
             android.webkit.CookieManager.getInstance()
             true

@@ -8,20 +8,7 @@
     <string name="bookmark_exists">Already bookmarked</string>
     <string name="bookmarks_empty">No bookmarks yet. Save pages with the ☆ button.</string>
     <string name="history_empty">No browsing history yet.</string>
-    <string name="url_row_format">%1$s\n%2$s</string>
-
-    <string name="onboarding_step">Step %1$d of %2$d</string>
-    <string name="onboarding_next">Next</string>
-    <string name="onboarding_skip">Skip</string>
-    <string name="onboarding_get_started">Get Started</string>
-    <string name="onboarding_title_1">Welcome to NaviTV Browser</string>
-    <string name="onboarding_message_1">Browse the web on Android TV with your remote, keyboard, mouse, or touchpad. Use the D-pad to move between buttons and into the page.</string>
-    <string name="onboarding_title_2">Mouse and pointer mode</string>
-    <string name="onboarding_message_2">Turn on Mouse mode to move a pointer with the D-pad and click with OK. Plug in a USB or Bluetooth mouse anytime — it works instantly.</string>
-    <string name="onboarding_title_3">Save your favorites</string>
-    <string name="onboarding_message_3">Use the star button to bookmark pages. Open saved bookmarks and history from the toolbar at any time.</string>
-    <string name="onboarding_title_4">You are all set</string>
-    <string name="onboarding_message_4">History is saved automatically. Visit Settings to change your homepage, block website ads, or clear data.</string>
+    <string name="url_row_format" translatable="false">%1$s\n%2$s</string>
 
     <string name="rating_title">Enjoying NaviTV Browser?</string>
     <string name="rating_message">If you like the app, please consider rating it. It helps us improve!</string>
@@ -30,7 +17,7 @@
     <string name="rating_no_thanks">No, thanks</string>
 
     <string name="settings_homepage_label">Homepage URL</string>
-    <string name="settings_homepage_hint">https://www.google.com</string>
+    <string name="settings_homepage_hint" translatable="false">https://www.google.com</string>
     <string name="settings_save_homepage">Save Homepage</string>
     <string name="settings_block_embedded_ads">Block website ads</string>
     <string name="settings_block_embedded_ads_summary">Automatically hide embedded ads inside web pages. Does not affect the app banner ad.</string>
@@ -170,20 +157,10 @@
     <string name="nav_home">Home</string>
     <string name="memory_warning_low_ram">Low memory optimization: WebView cache trimmed</string>
 
-    <!-- Tips & Guides -->
-    <string name="ad_tip_header">NaviTV Tips</string>
-    <string name="ad_badge">AD</string>
-    <string name="guide_badge">GUIDE</string>
-    <string name="tip_icon_desc">Navigation Tip</string>
     <string name="chip_icon">Bookmark chip</string>
     <string name="list_item_icon">Item icon</string>
     <string name="action_delete">Delete</string>
     <string name="app_logo_desc">NaviTV Browser Logo</string>
-    <string name="ad_tip_1">Plug in a USB or Bluetooth mouse for easy web navigation!</string>
-    <string name="ad_tip_2">Click the Mic button and speak to search or dictate URLs!</string>
-    <string name="ad_tip_3">Long-press OK on dashboard shortcuts to remove them!</string>
-    <string name="ad_tip_4">Enable Web Ad Blocker in Settings to speed up page loads!</string>
-    <string name="ad_tip_5">Press Back on remote to clear focus and dismiss keypads.</string>
     <string name="settings_clear_history_confirm">Are you sure you want to clear all browsing history?</string>
     <string name="settings_clear_bookmarks_confirm">Are you sure you want to clear all bookmarks?</string>
     <string name="settings_clear_cache_confirm">Are you sure you want to clear browser cache and temporary files?</string>
@@ -207,9 +184,9 @@
     <string name="donation_header_btn_desc">Support NaviTV Development</string>
     <string name="donation_active_supporter">Active Supporter</string>
     <string name="donation_active_supporter_desc">Thank you for supporting NaviTV Browser! All donation banners are permanently disabled.</string>
-    <string name="donation_tab_google_play">Google Play</string>
-    <string name="donation_tab_paypal">PayPal &amp; QR</string>
-    <string name="donation_tab_kofi">Ko-fi</string>
+    <string name="donation_tab_google_play" translatable="false">Google Play</string>
+    <string name="donation_tab_paypal" translatable="false">PayPal &amp; QR</string>
+    <string name="donation_tab_kofi" translatable="false">Ko-fi</string>
     <string name="donation_method_google_play">Google Play In-App Purchase</string>
     <string name="donation_method_paypal">PayPal &amp; Live QR Code</string>
     <string name="donation_method_kofi">Support via Ko-fi Platform</string>
@@ -231,9 +208,9 @@
     <string name="donation_milestone_msg">You\'ve reached a major milestone! Thank you for using NaviTV Browser. Consider supporting independent development to keep updates coming.</string>
     <string name="donation_thank_you">Thank you for your generous support!</string>
     <string name="donation_simulation_success">Thank you! You are now an Active Supporter!</string>
-    <string name="donation_preset_3">$3</string>
-    <string name="donation_preset_5">$5</string>
-    <string name="donation_preset_10">$10</string>
+    <string name="donation_preset_3" translatable="false">$3</string>
+    <string name="donation_preset_5" translatable="false">$5</string>
+    <string name="donation_preset_10" translatable="false">$10</string>
     <string name="donation_preset_any">Custom Amount</string>
 
     <!-- TTS Read Aloud, QR Phone Handoff, Per-Site Zoom & Dashboard -->
@@ -264,4 +241,7 @@
     <string name="ai_quick_ask_facts">📊 Key Facts &amp; Numbers</string>
     <string name="ai_quick_ask_actions">✅ Action Steps</string>
     <string name="ai_asking_question">Analyzing page to answer your question…</string>
+    <string name="nav_summarize_quota_desc" translatable="false">%1$s (%2$d/%3$d)</string>
+    <string name="ai_question_answer_format" translatable="false">❓ %1$s\n\n%2$s</string>
+    <string name="settings_eco_lite_ai_live_format" translatable="false">%1$s (%2$d/%3$d · %4$dh %5$dm)</string>
 </resources>

@@ -87,13 +87,13 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.messaging)
+    // implementation(libs.firebase.messaging)
     implementation(libs.firebase.remoteconfig)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
 
-    // Google Mobile Ads (AdMob)
-    implementation(libs.google.admob)
+    // Google Mobile Ads (AdMob) — disabled to keep browser 100% ad-free & lightweight
+    // implementation(libs.google.admob)
 
     // WebView AndroidX support
     implementation(libs.androidx.webkit)

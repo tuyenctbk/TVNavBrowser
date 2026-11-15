@@ -313,7 +313,14 @@ class SettingsActivity : ComponentActivity() {
                         switchEcoLiteAi.isChecked = snap.ecoLiteMode
                     }
                     val (hours, mins) = com.tdpham.navitvbrowser.util.UsageQuotaManager.getTimeUntilReset()
-                    switchEcoLiteAi.text = "${getString(R.string.settings_eco_lite_ai)} (${snap.remainingCredits}/${snap.totalAllowance} · ${hours}h ${mins}m)"
+                    switchEcoLiteAi.text = getString(
+                        R.string.settings_eco_lite_ai_live_format,
+                        getString(R.string.settings_eco_lite_ai),
+                        snap.remainingCredits,
+                        snap.totalAllowance,
+                        hours,
+                        mins
+                    )
                 }
         }
 

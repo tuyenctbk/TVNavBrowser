@@ -292,13 +292,6 @@
             android:id="@+id/donationBanner"
             layout="@layout/view_donation_banner" />
 
-        <FrameLayout
-            android:id="@+id/adContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="80dp" />
-
     </LinearLayout>
 
     <FrameLayout

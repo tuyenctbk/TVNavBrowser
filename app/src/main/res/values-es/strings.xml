@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Navegador NaviTV</string>
     <string name="bookmarks">Marcadores</string>
@@ -8,26 +7,12 @@
     <string name="bookmark_exists">Ya está en marcadores</string>
     <string name="bookmarks_empty">Sin marcadores aún. Guarde páginas con el botón ☆.</string>
     <string name="history_empty">Sin historial de navegación aún.</string>
-    <string name="url_row_format">%1$s\n%2$s</string>
-    <string name="onboarding_step">Paso %1$d de %2$d</string>
-    <string name="onboarding_next">Siguiente</string>
-    <string name="onboarding_skip">Omitir</string>
-    <string name="onboarding_get_started">Comenzar</string>
-    <string name="onboarding_title_1">Bienvenido a NaviTV Browser</string>
-    <string name="onboarding_message_1">Navegue por la web en Android TV con su control remoto, teclado, mouse o panel táctil. Use el D-pad para navegar.</string>
-    <string name="onboarding_title_2">Modo de mouse y puntero</string>
-    <string name="onboarding_message_2">Active el modo Mouse para mover el puntero con el D-pad y hacer clic con OK. Conecte un mouse USB o Bluetooth en cualquier momento.</string>
-    <string name="onboarding_title_3">Guarde sus favoritos</string>
-    <string name="onboarding_message_3">Use el botón de estrella para guardar páginas. Abra marcadores e historial desde la barra de herramientas.</string>
-    <string name="onboarding_title_4">Todo listo</string>
-    <string name="onboarding_message_4">El historial se guarda automáticamente. Visite Ajustes para cambiar su página de inicio, bloquear anuncios o borrar datos.</string>
     <string name="rating_title">¿Te gusta NaviTV Browser?</string>
     <string name="rating_message">Si le gusta la aplicación, considere calificarla. ¡Nos ayuda a mejorar!</string>
     <string name="rating_rate">Calificar</string>
     <string name="rating_remind_later">Recordarme más tarde</string>
     <string name="rating_no_thanks">No, gracias</string>
     <string name="settings_homepage_label">URL de la página de inicio</string>
-    <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">Guardar página de inicio</string>
     <string name="settings_block_embedded_ads">Bloquear anuncios web</string>
     <string name="settings_block_embedded_ads_summary">Oculta automáticamente los anuncios integrados dentro de las páginas web.</string>
@@ -149,19 +134,10 @@
     <string name="read_later_delete_msg">¿Está seguro de que desea eliminar \"%1$s\" de Leer más tarde?</string>
     <string name="nav_home">Inicio</string>
     <string name="memory_warning_low_ram">Optimización de memoria baja: Caché de WebView liberada</string>
-    <string name="ad_tip_header">Consejos de NaviTV</string>
-    <string name="ad_badge">ANUNCIO</string>
-    <string name="guide_badge">GUÍA</string>
-    <string name="tip_icon_desc">Consejo de navegación</string>
     <string name="chip_icon">Etiqueta de marcador</string>
     <string name="list_item_icon">Icono de elemento</string>
     <string name="action_delete">Eliminar</string>
     <string name="app_logo_desc">Logo de NaviTV Browser</string>
-    <string name="ad_tip_1">¡Conecte un ratón USB o Bluetooth para navegar fácilmente por la web!</string>
-    <string name="ad_tip_2">¡Haga clic en el botón de micrófono y hable para buscar o dictar URLs!</string>
-    <string name="ad_tip_3">¡Mantenga presionado OK en los accesos directos del panel para eliminarlos!</string>
-    <string name="ad_tip_4">¡Active el bloqueador de anuncios en Ajustes para cargar páginas más rápido!</string>
-    <string name="ad_tip_5">Presione Atrás en el control remoto para quitar el foco y cerrar teclados.</string>
     <string name="settings_clear_history_confirm">¿Está seguro de que desea borrar todo el historial de navegación?</string>
     <string name="settings_clear_bookmarks_confirm">¿Está seguro de que desea borrar todos los marcadores?</string>
     <string name="settings_clear_cache_confirm">¿Está seguro de que desea borrar la memoria caché y los archivos temporales?</string>
@@ -182,9 +158,6 @@
     <string name="donation_header_btn_desc">Apoyar el desarrollo de NaviTV</string>
     <string name="donation_active_supporter">Colaborador Activo</string>
     <string name="donation_active_supporter_desc">¡Gracias por apoyar a NaviTV Browser! Todos los avisos de donación están desactivados.</string>
-    <string name="donation_tab_google_play">Google Play</string>
-    <string name="donation_tab_paypal">PayPal y QR</string>
-    <string name="donation_tab_kofi">Ko-fi</string>
     <string name="donation_method_google_play">Compra integrada de Google Play</string>
     <string name="donation_method_paypal">PayPal y Código QR en vivo</string>
     <string name="donation_method_kofi">Apoyar mediante Ko-fi</string>
@@ -206,9 +179,6 @@
     <string name="donation_milestone_msg">¡Has alcanzado un gran hito! Gracias por usar NaviTV Browser. Considera apoyar el desarrollo independiente.</string>
     <string name="donation_thank_you">¡Gracias por tu generoso apoyo!</string>
     <string name="donation_simulation_success">¡Gracias! ¡Ahora eres un Colaborador Activo!</string>
-    <string name="donation_preset_3">$3</string>
-    <string name="donation_preset_5">$5</string>
-    <string name="donation_preset_10">$10</string>
     <string name="donation_preset_any">Importe personalizado</string>
     <string name="ai_reading_time_format">⏱ ~%1$d min de lectura (%2$d palabras)</string>
     <string name="tts_read_aloud">Leer en voz alta</string>

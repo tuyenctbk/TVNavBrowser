@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Navigateur NaviTV</string>
     <string name="bookmarks">Favoris</string>
@@ -8,26 +7,12 @@
     <string name="bookmark_exists">Déjà dans les favoris</string>
     <string name="bookmarks_empty">Aucun favori pour le moment. Enregistrez des pages avec le bouton ☆.</string>
     <string name="history_empty">Aucun historique de navigation pour le moment.</string>
-    <string name="url_row_format">%1$s\n%2$s</string>
-    <string name="onboarding_step">Étape %1$d sur %2$d</string>
-    <string name="onboarding_next">Suivant</string>
-    <string name="onboarding_skip">Passer</string>
-    <string name="onboarding_get_started">Commencer</string>
-    <string name="onboarding_title_1">Bienvenue sur le Navigateur NaviTV</string>
-    <string name="onboarding_message_1">Naviguez sur le Web sur Android TV avec votre télécommande, clavier, souris ou pavé tactile. Utilisez le pavé directionnel.</string>
-    <string name="onboarding_title_2">Mode souris et pointeur</string>
-    <string name="onboarding_message_2">Activez le mode Souris pour déplacer le pointeur avec le pavé directionnel et cliquer avec OK. Branchez une souris USB ou Bluetooth à tout moment.</string>
-    <string name="onboarding_title_3">Enregistrez vos favoris</string>
-    <string name="onboarding_message_3">Utilisez le bouton étoile pour ajouter des pages à vos favoris. Accédez aux favoris et à l\'historique depuis la barre d\'outils.</string>
-    <string name="onboarding_title_4">Tout est prêt</string>
-    <string name="onboarding_message_4">L\'historique est enregistré automatiquement. Allez dans Paramètres pour modifier la page d\'accueil, bloquer les publicités ou effacer les données.</string>
     <string name="rating_title">Vous appréciez le Navigateur NaviTV ?</string>
     <string name="rating_message">Si vous appréciez l\'application, merci de lui attribuer une note. Cela nous aide à nous améliorer !</string>
     <string name="rating_rate">Noter</string>
     <string name="rating_remind_later">Me rappeler plus tard</string>
     <string name="rating_no_thanks">Non, merci</string>
     <string name="settings_homepage_label">URL de la page d\'accueil</string>
-    <string name="settings_homepage_hint">https://www.google.com</string>
     <string name="settings_save_homepage">Enregistrer la page d\'accueil</string>
     <string name="settings_block_embedded_ads">Bloquer les publicités web</string>
     <string name="settings_block_embedded_ads_summary">Masque automatiquement les publicités intégrées aux pages Web.</string>
@@ -149,19 +134,10 @@
     <string name="read_later_delete_msg">Êtes-vous sûr de vouloir supprimer « %1$s » de Lire plus tard ?</string>
     <string name="nav_home">Accueil</string>
     <string name="memory_warning_low_ram">Optimisation mémoire : Cache WebView libéré</string>
-    <string name="ad_tip_header">Astuces NaviTV</string>
-    <string name="ad_badge">ANNONCE</string>
-    <string name="guide_badge">GUIDE</string>
-    <string name="tip_icon_desc">Astuce de navigation</string>
     <string name="chip_icon">Pastille de favori</string>
     <string name="list_item_icon">Icône d\'élément</string>
     <string name="action_delete">Supprimer</string>
     <string name="app_logo_desc">Logo du Navigateur NaviTV</string>
-    <string name="ad_tip_1">Branchez une souris USB ou Bluetooth pour naviguer facilement sur le Web !</string>
-    <string name="ad_tip_2">Cliquez sur le micro et parlez pour rechercher ou dicter des adresses !</string>
-    <string name="ad_tip_3">Maintenez la touche OK enfoncée sur les raccourcis pour les supprimer !</string>
-    <string name="ad_tip_4">Activez le bloqueur de pubs dans Paramètres pour accélérer le chargement !</string>
-    <string name="ad_tip_5">Appuyez sur Retour sur la télécommande pour quitter le focus et fermer le clavier.</string>
     <string name="settings_clear_history_confirm">Voulez-vous vraiment effacer tout l\'historique de navigation ?</string>
     <string name="settings_clear_bookmarks_confirm">Voulez-vous vraiment effacer tous les favoris ?</string>
     <string name="settings_clear_cache_confirm">Voulez-vous vraiment vider le cache et les fichiers temporaires ?</string>
@@ -182,9 +158,6 @@
     <string name="donation_header_btn_desc">Soutenir le développement de NaviTV</string>
     <string name="donation_active_supporter">Contributeur actif</string>
     <string name="donation_active_supporter_desc">Merci de soutenir NaviTV Browser ! Toutes les bannières de don sont désactivées.</string>
-    <string name="donation_tab_google_play">Google Play</string>
-    <string name="donation_tab_paypal">PayPal et QR</string>
-    <string name="donation_tab_kofi">Ko-fi</string>
     <string name="donation_method_google_play">Achat intégré Google Play</string>
     <string name="donation_method_paypal">PayPal et QR Code en direct</string>
     <string name="donation_method_kofi">Soutenir via la plateforme Ko-fi</string>
@@ -206,9 +179,6 @@
     <string name="donation_milestone_msg">Vous avez franchi une étape importante ! Merci d\'utiliser NaviTV Browser.</string>
     <string name="donation_thank_you">Merci pour votre généreux soutien !</string>
     <string name="donation_simulation_success">Merci ! Vous êtes maintenant un Contributeur actif !</string>
-    <string name="donation_preset_3">3 $</string>
-    <string name="donation_preset_5">5 $</string>
-    <string name="donation_preset_10">10 $</string>
     <string name="donation_preset_any">Montant libre</string>
     <string name="ai_reading_time_format">⏱ ~%1$d min de lecture (%2$d mots)</string>
     <string name="tts_read_aloud">Lire à voix haute</string>

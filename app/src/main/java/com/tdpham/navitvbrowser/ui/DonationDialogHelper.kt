@@ -72,6 +72,7 @@ object DonationDialogHelper {
 
         val handlePlayDonation = { tierName: String ->
             DonationManager.setSupporter(activity, true, tierName)
+            com.tdpham.navitvbrowser.util.UsageQuotaManager.refreshSupporterAllowance(activity)
             Toast.makeText(activity, R.string.donation_simulation_success, Toast.LENGTH_LONG).show()
             refreshSupporterStatus()
             onSupporterStateChanged?.invoke()
