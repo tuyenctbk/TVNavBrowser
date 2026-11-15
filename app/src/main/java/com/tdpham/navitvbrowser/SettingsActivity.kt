@@ -38,6 +38,13 @@ class SettingsActivity : ComponentActivity() {
 
         val sectionBg = ThemeHelper.getSettingsSectionBackground(this)
         val badgeBg = ThemeHelper.getStepBadgeBackground(this)
+        val itemBg = ThemeHelper.getFocusableItemBackground(this)
+        val btnSettingsBack: android.widget.ImageButton = findViewById(R.id.btnSettingsBack)
+        btnSettingsBack.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
+        btnSettingsBack.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
+        FocusAnimationHelper.apply(btnSettingsBack)
+        btnSettingsBack.setOnClickListener { finish() }
+
         listOf(
             R.id.themeSectionContainer,
             R.id.mouseSpeedSectionContainer,
@@ -47,9 +54,23 @@ class SettingsActivity : ComponentActivity() {
             R.id.preferencesSectionContainer,
             R.id.supportSectionContainer,
             R.id.dataSectionContainer
-        ).forEach { findViewById<View>(it)?.setBackgroundResource(sectionBg) }
+        ).forEachIndexed { idx, id ->
+            findViewById<View>(id)?.let { section ->
+                section.setBackgroundResource(sectionBg)
+                FocusAnimationHelper.animateEntrance(section, idx)
+            }
+        }
 
-        findViewById<Button>(R.id.btnSupportDevelopment)?.setOnClickListener {
+        listOf(
+            R.id.cardThemeDark,
+            R.id.cardThemeLight,
+            R.id.cardMouseSpeedSlow,
+            R.id.cardMouseSpeedNormal,
+            R.id.cardMouseSpeedFast
+        ).forEach { findViewById<View>(it)?.setBackgroundResource(itemBg) }
+
+        val btnSupportDevelopment = findViewById<Button>(R.id.btnSupportDevelopment)
+        btnSupportDevelopment?.setOnClickListener {
             com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this)
         }
 
@@ -224,6 +245,7 @@ class SettingsActivity : ComponentActivity() {
             val id = etSyncUserId.text.toString().trim()
             if (id.isNotEmpty()) {
                 AppPreferences.setSyncUserId(this, id)
+                com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
                 Toast.makeText(this, R.string.sync_user_id_saved, Toast.LENGTH_SHORT).show()
             }
         }
@@ -234,6 +256,7 @@ class SettingsActivity : ComponentActivity() {
         btnTriggerCloudSync.setOnClickListener {
             Toast.makeText(this, R.string.sync_bookmarks_syncing, Toast.LENGTH_SHORT).show()
             lifecycleScope.launch {
+                com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this@SettingsActivity)
                 val result = com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@SettingsActivity, bookmarkRepo)
                 result.onSuccess { count ->
                     Toast.makeText(this@SettingsActivity, getString(R.string.sync_bookmarks_success, count), Toast.LENGTH_LONG).show()
@@ -270,13 +293,38 @@ class SettingsActivity : ComponentActivity() {
             Toast.makeText(this, msgRes, Toast.LENGTH_SHORT).show()
         }
 
+        val switchEcoLiteAi: Switch = findViewById(R.id.switchEcoLiteAi)
+        switchEcoLiteAi.isChecked = com.tdpham.navitvbrowser.util.UsageQuotaManager.isEcoLiteMode(this)
+        switchEcoLiteAi.setOnCheckedChangeListener { _, isChecked ->
+            if (com.tdpham.navitvbrowser.util.UsageQuotaManager.isEcoLiteMode(this) != isChecked) {
+                com.tdpham.navitvbrowser.util.UsageQuotaManager.setEcoLiteMode(this, isChecked)
+                Toast.makeText(
+                    this,
+                    if (isChecked) R.string.ai_eco_lite_on else R.string.ai_eco_lite_off,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        lifecycleScope.launch {
+            com.tdpham.navitvbrowser.util.UsageQuotaManager.observeQuotaSnapshot(this@SettingsActivity)
+                .collect { snap ->
+                    if (switchEcoLiteAi.isChecked != snap.ecoLiteMode) {
+                        switchEcoLiteAi.isChecked = snap.ecoLiteMode
+                    }
+                    val (hours, mins) = com.tdpham.navitvbrowser.util.UsageQuotaManager.getTimeUntilReset()
+                    switchEcoLiteAi.text = "${getString(R.string.settings_eco_lite_ai)} (${snap.remainingCredits}/${snap.totalAllowance} · ${hours}h ${mins}m)"
+                }
+        }
+
         FocusAnimationHelper.applyAll(
             cardThemeDark, cardThemeLight,
             cardMouseSpeedSlow, cardMouseSpeedNormal, cardMouseSpeedFast,
             btnSaveHomepage, btnClearHistory, btnClearBookmarks, btnClearCache, etHomepage,
-            switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen,
+            switchBlockEmbeddedAds, switchForceDarkMode, switchAutoFullscreen, switchEcoLiteAi,
             btnAddAdRule, etCustomAdRule, etSyncUserId, btnSaveSyncId, btnTriggerCloudSync
         )
+        btnSupportDevelopment?.let { FocusAnimationHelper.apply(it) }
 
         val saveHomepageAction = {
             val url = etHomepage.text.toString().trim()

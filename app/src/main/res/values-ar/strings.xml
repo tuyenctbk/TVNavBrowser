@@ -221,4 +221,20 @@
     <string name="site_zoom_changed">تكبير النص لهذا الموقع: %1$d%%</string>
     <string name="dashboard_quick_search_label">Quick Search:</string>
     <string name="dashboard_all_portals">✨ All Portals</string>
+    <string name="ai_tier_1_status">⚡ Standard Cloud AI · %1$d/%2$d free today · Resets in %3$dh %4$dm</string>
+    <string name="ai_tier_2_status">🍃 Eco Lite AI · %1$d/%2$d free today · Resets in %3$dh %4$dm</string>
+    <string name="ai_tier_3_status">📱 On-Device Smart Engine (0 Cloud Credits · Unlimited) · Cloud resets in %1$dh %2$dm</string>
+    <string name="ai_soft_nudge_hint">You\'ve used 80%%+ of today\'s standard cloud allowance. Turn on Eco Lite Mode to stretch quota 3× further!</string>
+    <string name="ai_eco_lite_on">🍃 Eco Lite: ON</string>
+    <string name="ai_eco_lite_off">🍃 Eco Lite: OFF</string>
+    <string name="ai_claim_grace_btn">🎁 Claim +3 Free Credits</string>
+    <string name="ai_grace_claimed_toast">+3 Free Grace Credits unlocked for today!</string>
+    <string name="settings_eco_lite_ai">Eco Lite AI Mode (Stretch Free Quota 3×)</string>
+    <string name="settings_eco_lite_ai_summary">Use high-speed lightweight Gemini Flash-Lite and on-device fallback to save free daily cloud credits.</string>
+    <string name="ai_ask_page_hint">اسأل أي شيء عن هذه الصفحة…</string>
+    <string name="ai_ask_page_send">اسأل الذكاء الاصطناعي</string>
+    <string name="ai_quick_ask_takeaways">🎯 النقاط الرئيسية</string>
+    <string name="ai_quick_ask_facts">📊 الحقائق والأرقام</string>
+    <string name="ai_quick_ask_actions">✅ خطوات العمل</string>
+    <string name="ai_asking_question">جارٍ تحليل الصفحة للإجابة على سؤالك…</string>
 </resources>

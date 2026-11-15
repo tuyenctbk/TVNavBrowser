@@ -42,6 +42,12 @@ class HistoryActivity : ComponentActivity() {
 
         container = findViewById(R.id.historyContainer)
         emptyView = findViewById(R.id.tvEmpty)
+        val btnHistoryBack: ImageButton = findViewById(R.id.btnHistoryBack)
+        btnHistoryBack.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
+        btnHistoryBack.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
+        FocusAnimationHelper.apply(btnHistoryBack)
+        btnHistoryBack.setOnClickListener { finish() }
+
         val db = BrowserDatabase.getInstance(applicationContext)
         repository = HistoryRepository(db.historyDao())
 
@@ -59,7 +65,7 @@ class HistoryActivity : ComponentActivity() {
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
 
         val inflater = LayoutInflater.from(this)
-        list.forEach { history ->
+        list.forEachIndexed { index, history ->
             val row = inflater.inflate(R.layout.item_url_row, container, false)
             val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
             val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
@@ -78,6 +84,7 @@ class HistoryActivity : ComponentActivity() {
 
             FocusAnimationHelper.apply(row)
             FocusAnimationHelper.apply(btnDeleteRow)
+            FocusAnimationHelper.animateEntrance(row, index)
 
             row.setOnClickListener {
                 FirebaseInitializer.logEvent("history_opened", mapOf("host" to UrlUtils.hostOf(history.url)))

@@ -44,6 +44,11 @@ class ReadLaterActivity : ComponentActivity() {
         container = findViewById(R.id.readLaterContainer)
         emptyView = findViewById(R.id.tvEmpty)
         btnClearAll = findViewById(R.id.btnClearAllReadLater)
+        val btnReadLaterBack: ImageButton = findViewById(R.id.btnReadLaterBack)
+        btnReadLaterBack.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
+        btnReadLaterBack.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
+        FocusAnimationHelper.apply(btnReadLaterBack)
+        btnReadLaterBack.setOnClickListener { finish() }
 
         val db = BrowserDatabase.getInstance(applicationContext)
         repository = ReadLaterRepository(db.readLaterDao())
@@ -78,7 +83,7 @@ class ReadLaterActivity : ComponentActivity() {
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
 
         val inflater = LayoutInflater.from(this)
-        list.forEach { article ->
+        list.forEachIndexed { index, article ->
             val row = inflater.inflate(R.layout.item_read_later, container, false)
             val tvTitle = row.findViewById<TextView>(R.id.tvTitle)
             val tvExcerpt = row.findViewById<TextView>(R.id.tvExcerpt)
@@ -101,6 +106,7 @@ class ReadLaterActivity : ComponentActivity() {
 
             FocusAnimationHelper.apply(row)
             FocusAnimationHelper.apply(btnDelete)
+            FocusAnimationHelper.animateEntrance(row, index)
 
             row.setOnClickListener {
                 startActivity(

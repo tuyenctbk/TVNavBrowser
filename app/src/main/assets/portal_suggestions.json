@@ -98,6 +98,16 @@
       "headerBadge": "FUN & CASUAL",
       "items": [
         {
+          "title": "Neon Runner TV",
+          "badge": "OFFLINE",
+          "badgeClass": "badge-game",
+          "desc": "Built-in D-pad cyber runner · Plays 100% offline",
+          "url": "file:///android_asset/offline_game.html",
+          "cardClass": "card-retro",
+          "fill": "#00E5FF",
+          "path": "M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+        },
+        {
           "title": "Radio Garden",
           "badge": "GLOBE",
           "badgeClass": "badge-live",

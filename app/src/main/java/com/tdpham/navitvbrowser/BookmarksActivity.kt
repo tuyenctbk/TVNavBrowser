@@ -42,9 +42,15 @@ class BookmarksActivity : ComponentActivity() {
 
         container = findViewById(R.id.bookmarksContainer)
         emptyView = findViewById(R.id.tvEmpty)
+        val btnBookmarksBack: ImageButton = findViewById(R.id.btnBookmarksBack)
         val btnSyncBookmarks: android.widget.Button = findViewById(R.id.btnSyncBookmarks)
         val db = BrowserDatabase.getInstance(applicationContext)
         repository = BookmarkRepository(db.bookmarkDao())
+
+        btnBookmarksBack.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
+        btnBookmarksBack.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
+        FocusAnimationHelper.apply(btnBookmarksBack)
+        btnBookmarksBack.setOnClickListener { finish() }
 
         FocusAnimationHelper.apply(btnSyncBookmarks)
         btnSyncBookmarks.setOnClickListener {
@@ -62,13 +68,6 @@ class BookmarksActivity : ComponentActivity() {
         lifecycleScope.launch {
             // Auto-sync from cloud on launch if enabled
             com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@BookmarksActivity, repository)
-            if (repository.getAllBookmarksList().isEmpty()) {
-                repository.addBookmark("YouTube HD", "https://www.youtube.com")
-                repository.addBookmark("Wikipedia - Free Encyclopedia", "https://en.wikipedia.org")
-                repository.addBookmark("Radio Garden - Live World Radio", "https://radio.garden")
-                repository.addBookmark("Pluto TV - Free Live Channels", "https://pluto.tv")
-                repository.addBookmark("Retro Games Arcade", "https://www.retrogames.cc")
-            }
         }
 
         lifecycleScope.launch {
@@ -85,7 +84,7 @@ class BookmarksActivity : ComponentActivity() {
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
 
         val inflater = LayoutInflater.from(this)
-        list.forEach { bookmark ->
+        list.forEachIndexed { index, bookmark ->
             val row = inflater.inflate(R.layout.item_url_row, container, false)
             val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
             val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
@@ -104,6 +103,7 @@ class BookmarksActivity : ComponentActivity() {
 
             FocusAnimationHelper.apply(row)
             FocusAnimationHelper.apply(btnDeleteRow)
+            FocusAnimationHelper.animateEntrance(row, index)
 
             row.setOnClickListener {
                 FirebaseInitializer.logEvent("bookmark_opened", mapOf("host" to UrlUtils.hostOf(bookmark.url)))

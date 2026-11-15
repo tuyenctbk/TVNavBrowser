@@ -20,11 +20,26 @@
         android:focusableInTouchMode="false"
         android:padding="24dp">
 
-        <TextView
-            style="@style/ScreenTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnSettingsBack"
+                style="@style/ToolbarIconButton"
+                android:src="@drawable/ic_nav_back"
+                android:contentDescription="@string/nav_back" />
+
+            <TextView
+                style="@style/ScreenTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="@string/settings" />
+        </LinearLayout>
 
         <!-- Interface Theme (Light / Dark) Selection Section -->
         <LinearLayout
@@ -630,6 +645,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/settings_auto_fullscreen_summary"
+                android:textSize="12sp" />
+
+            <Switch
+                android:id="@+id/switchEcoLiteAi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:focusable="true"
+                android:text="@string/settings_eco_lite_ai"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                style="@style/ScreenSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/settings_eco_lite_ai_summary"
                 android:textSize="12sp" />
         </LinearLayout>
 

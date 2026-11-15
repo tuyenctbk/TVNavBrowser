@@ -16,10 +16,17 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/btnBookmarksBack"
+                style="@style/ToolbarIconButton"
+                android:src="@drawable/ic_nav_back"
+                android:contentDescription="@string/nav_back" />
+
             <TextView
                 style="@style/ScreenTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:text="@string/bookmarks" />
 

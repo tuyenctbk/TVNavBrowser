@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Trình Duyệt NaviTV</string>
     <string name="bookmarks">Dấu trang</string>
@@ -221,4 +221,20 @@
     <string name="site_zoom_changed">Cỡ chữ trang web: %1$d%% (đã lưu cho trang này)</string>
     <string name="dashboard_quick_search_label">Tìm nhanh:</string>
     <string name="dashboard_all_portals">✨ Tất cả cổng</string>
+    <string name="ai_tier_1_status">⚡ AI Đám mây Tiêu chuẩn · Còn %1$d/%2$d lượt hôm nay · Đặt lại sau %3$dg %4$dp</string>
+    <string name="ai_tier_2_status">🍃 AI Eco Lite · Còn %1$d/%2$d lượt hôm nay · Đặt lại sau %3$dg %4$dp</string>
+    <string name="ai_tier_3_status">📱 AI Nội bộ trên TV (0 tín dụng đám mây · Không giới hạn) · Đặt lại sau %1$dg %2$dp</string>
+    <string name="ai_soft_nudge_hint">Bạn đã dùng hơn 80%% hạn mức hôm nay. Hãy bật Chế độ Eco Lite để tiết kiệm gấp 3 lần!</string>
+    <string name="ai_eco_lite_on">🍃 Eco Lite: BẬT</string>
+    <string name="ai_eco_lite_off">🍃 Eco Lite: TẮT</string>
+    <string name="ai_claim_grace_btn">🎁 Nhận +3 lượt miễn phí</string>
+    <string name="ai_grace_claimed_toast">Đã mở khóa +3 lượt AI miễn phí cho hôm nay!</string>
+    <string name="settings_eco_lite_ai">Chế độ AI Eco Lite (Tiết kiệm hạn mức 3×)</string>
+    <string name="settings_eco_lite_ai_summary">Sử dụng mô hình Gemini Flash-Lite siêu tốc và AI trên thiết bị để tiết kiệm lượt miễn phí hàng ngày.</string>
+    <string name="ai_ask_page_hint">Hỏi bất kỳ điều gì về trang này…</string>
+    <string name="ai_ask_page_send">Hỏi AI</string>
+    <string name="ai_quick_ask_takeaways">🎯 Ý chính quan trọng</string>
+    <string name="ai_quick_ask_facts">📊 Số liệu &amp; Sự kiện</string>
+    <string name="ai_quick_ask_actions">✅ Các bước thực hiện</string>
+    <string name="ai_asking_question">Đang phân tích trang để trả lời câu hỏi…</string>
 </resources>

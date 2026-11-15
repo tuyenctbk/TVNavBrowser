@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Navegador NaviTV</string>
     <string name="bookmarks">Favoritos</string>
@@ -221,4 +221,20 @@
     <string name="site_zoom_changed">Zoom de texto da página: %1$d%% (salvo para este site)</string>
     <string name="dashboard_quick_search_label">Busca Rápida:</string>
     <string name="dashboard_all_portals">✨ Todos os Portais</string>
+    <string name="ai_tier_1_status">⚡ IA Padrão na Nuvem · %1$d/%2$d grátis hoje · Reinicia em %3$dh %4$dm</string>
+    <string name="ai_tier_2_status">🍃 IA Eco Lite · %1$d/%2$d grátis hoje · Reinicia em %3$dh %4$dm</string>
+    <string name="ai_tier_3_status">📱 Motor Inteligente Local (0 créditos na nuvem · Ilimitado) · Reinicia em %1$dh %2$dm</string>
+    <string name="ai_soft_nudge_hint">Você usou mais de 80%% da cota diária. Ative o Modo Eco Lite para render 3× mais!</string>
+    <string name="ai_eco_lite_on">🍃 Eco Lite: ATIVO</string>
+    <string name="ai_eco_lite_off">🍃 Eco Lite: INATIVO</string>
+    <string name="ai_claim_grace_btn">🎁 Resgatar +3 Créditos Grátis</string>
+    <string name="ai_grace_claimed_toast">+3 Créditos de Cortesia desbloqueados para hoje!</string>
+    <string name="settings_eco_lite_ai">Modo IA Eco Lite (Multiplica a cota grátis por 3×)</string>
+    <string name="settings_eco_lite_ai_summary">Usa o modelo rápido Gemini Flash-Lite e resumo local para economizar créditos diários na nuvem.</string>
+    <string name="ai_ask_page_hint">Pergunte qualquer coisa sobre esta página…</string>
+    <string name="ai_ask_page_send">Perguntar à IA</string>
+    <string name="ai_quick_ask_takeaways">🎯 Principais conclusões</string>
+    <string name="ai_quick_ask_facts">📊 Fatos e números</string>
+    <string name="ai_quick_ask_actions">✅ Passos de ação</string>
+    <string name="ai_asking_question">Analisando a página para responder à sua pergunta…</string>
 </resources>

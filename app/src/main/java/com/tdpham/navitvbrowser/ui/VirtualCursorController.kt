@@ -78,7 +78,7 @@ class VirtualCursorController(
         if (isHoveringInteractive == hovering) return
         isHoveringInteractive = hovering
         if (isEnabled && cursor.visibility == View.VISIBLE) {
-            val targetScale = if (hovering) 1.14f else 1f
+            val targetScale = if (hovering) 1.16f else 1f
             cursor.animate().scaleX(targetScale).scaleY(targetScale).setDuration(110).start()
         }
     }
@@ -109,9 +109,6 @@ class VirtualCursorController(
 
     private var joystickX = 0f
     private var joystickY = 0f
-
-    private var selectPending = false
-    private var selectLongFired = false
 
     private var hasPlacedCursor = false
     private var lastHoverTime = 0L
@@ -165,7 +162,6 @@ class VirtualCursorController(
         } else {
             stopMotion()
             cancelPendingClick()
-            selectPending = false
             mainHandler.removeCallbacks(idleFadeRunnable)
             cursor.animate().cancel()
             cursor.visibility = View.GONE
@@ -236,7 +232,8 @@ class VirtualCursorController(
         if (holdingUp) dy -= 1f
         if (holdingDown) dy += 1f
         if (dx == 0f && dy == 0f) return
-        val step = TAP_STEP_DP * density * (0.7f + 0.3f * speedMultiplier)
+        val magnetStepFactor = if (isHoveringInteractive) 0.75f else 1f
+        val step = TAP_STEP_DP * density * (0.7f + 0.3f * speedMultiplier) * magnetStepFactor
         applyMove(dx * step, dy * step, 0L)
     }
 
@@ -545,7 +542,6 @@ class VirtualCursorController(
     fun onPause() {
         stopMotion()
         cancelPendingClick()
-        selectPending = false
         mainHandler.removeCallbacks(idleFadeRunnable)
     }
 
@@ -564,7 +560,11 @@ class VirtualCursorController(
     }
 
     private fun animatePress(pressed: Boolean) {
-        val target = if (pressed) 0.82f else 1f
+        val target = when {
+            pressed -> 0.82f
+            isHoveringInteractive -> 1.16f
+            else -> 1f
+        }
         cursor.animate().scaleX(target).scaleY(target).setDuration(if (pressed) 70 else 120).start()
     }
 

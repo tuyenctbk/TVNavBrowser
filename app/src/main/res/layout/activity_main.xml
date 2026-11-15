@@ -140,7 +140,7 @@
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_nav_summarize"
                 android:nextFocusLeft="@id/btnShowHistory"
-                android:nextFocusRight="@id/btnGameMode"
+                android:nextFocusRight="@id/btnMouseMode"
                 android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_summarize" />
 
@@ -353,6 +353,29 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
+                <Button
+                    android:id="@+id/btnClaimGraceCredits"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/ai_claim_grace_btn"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnToggleEcoLite"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/ai_eco_lite_off"
+                    android:textSize="12sp" />
+
                 <ImageButton
                     android:id="@+id/btnCloseSummaryIcon"
                     style="@style/ToolbarIconButton"
@@ -360,10 +383,18 @@
                     android:contentDescription="@string/ai_summary_close" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tvAiQuotaStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp" />
+
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
-                android:layout_marginTop="16dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
                 android:background="#20000000"
                 android:padding="12dp">
 
@@ -376,10 +407,86 @@
                     android:textSize="15sp" />
             </ScrollView>
 
+            <!-- Context-Aware "Ask This Page" Quick Prompts & Input -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnQuickAskTakeaways"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/ai_quick_ask_takeaways"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnQuickAskFacts"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/ai_quick_ask_facts"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnQuickAskActions"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/ai_quick_ask_actions"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etAskPageQuestion"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_url_bar"
+                    android:hint="@string/ai_ask_page_hint"
+                    android:imeOptions="actionSend"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnSendAskPage"
+                    style="@style/ToolbarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="8dp"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="@string/ai_ask_page_send"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:gravity="end"
                 android:orientation="horizontal">
 

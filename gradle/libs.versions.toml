@@ -18,6 +18,7 @@ firebaseVertexAi = "16.1.0"
 okhttp = "4.12.0"
 playReviewVersion = "2.0.2"
 zxing = "3.5.3"
+datastorePreferences = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,7 @@ kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", versio
 play-review = { group = "com.google.android.play", name = "review", version.ref = "playReviewVersion" }
 play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReviewVersion" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -141,12 +141,23 @@ class MainActivity : ComponentActivity() {
     // Dedicated AI Summary Overlay Views
     private lateinit var summaryOverlayContainer: FrameLayout
     private lateinit var tvSummaryTitle: TextView
+    private lateinit var tvAiQuotaStatus: TextView
     private lateinit var tvSummaryContent: TextView
+    private lateinit var btnClaimGraceCredits: Button
+    private lateinit var btnToggleEcoLite: Button
     private lateinit var btnSpeakSummary: Button
     private lateinit var btnShareSummaryQr: Button
     private lateinit var btnCopySummary: Button
     private lateinit var btnCloseSummary: Button
     private lateinit var btnCloseSummaryIcon: ImageButton
+    private lateinit var etAskPageQuestion: EditText
+    private lateinit var btnSendAskPage: Button
+    private lateinit var btnQuickAskTakeaways: Button
+    private lateinit var btnQuickAskFacts: Button
+    private lateinit var btnQuickAskActions: Button
+    private var lastExtractedPageText: String = ""
+    private var lastSummaryTier: com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier =
+        com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier.TIER_1_PRIMARY_CLOUD
     private var ttsHelper: com.tdpham.navitvbrowser.util.TtsHelper? = null
 
     // Voice Overlay Views
@@ -257,12 +268,70 @@ class MainActivity : ComponentActivity() {
         // Summary Overlay
         summaryOverlayContainer = findViewById(R.id.summaryOverlayContainer)
         tvSummaryTitle = findViewById(R.id.tvSummaryTitle)
+        tvAiQuotaStatus = findViewById(R.id.tvAiQuotaStatus)
         tvSummaryContent = findViewById(R.id.tvSummaryContent)
+        btnClaimGraceCredits = findViewById(R.id.btnClaimGraceCredits)
+        btnToggleEcoLite = findViewById(R.id.btnToggleEcoLite)
         btnSpeakSummary = findViewById(R.id.btnSpeakSummary)
         btnShareSummaryQr = findViewById(R.id.btnShareSummaryQr)
         btnCopySummary = findViewById(R.id.btnCopySummary)
         btnCloseSummary = findViewById(R.id.btnCloseSummary)
         btnCloseSummaryIcon = findViewById(R.id.btnCloseSummaryIcon)
+        etAskPageQuestion = findViewById(R.id.etAskPageQuestion)
+        btnSendAskPage = findViewById(R.id.btnSendAskPage)
+        btnQuickAskTakeaways = findViewById(R.id.btnQuickAskTakeaways)
+        btnQuickAskFacts = findViewById(R.id.btnQuickAskFacts)
+        btnQuickAskActions = findViewById(R.id.btnQuickAskActions)
+
+        listOf(
+            btnQuickAskTakeaways,
+            btnQuickAskFacts,
+            btnQuickAskActions,
+            btnSendAskPage
+        ).forEach { FocusAnimationHelper.apply(it) }
+
+        btnQuickAskTakeaways.setOnClickListener {
+            askQuestionAboutCurrentPage(getString(R.string.ai_quick_ask_takeaways))
+        }
+        btnQuickAskFacts.setOnClickListener {
+            askQuestionAboutCurrentPage(getString(R.string.ai_quick_ask_facts))
+        }
+        btnQuickAskActions.setOnClickListener {
+            askQuestionAboutCurrentPage(getString(R.string.ai_quick_ask_actions))
+        }
+        btnSendAskPage.setOnClickListener {
+            val q = etAskPageQuestion.text.toString().trim()
+            if (q.isNotBlank()) {
+                askQuestionAboutCurrentPage(q)
+            }
+        }
+        etAskPageQuestion.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEND ||
+                actionId == EditorInfo.IME_ACTION_DONE ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
+                val q = etAskPageQuestion.text.toString().trim()
+                if (q.isNotBlank()) {
+                    askQuestionAboutCurrentPage(q)
+                }
+                true
+            } else {
+                false
+            }
+        }
+
+        btnToggleEcoLite.setOnClickListener {
+            val nextEco = !com.tdpham.navitvbrowser.util.UsageQuotaManager.isEcoLiteMode(this)
+            com.tdpham.navitvbrowser.util.UsageQuotaManager.setEcoLiteMode(this, nextEco)
+            refreshAiQuotaOverlayUi(lastSummaryTier)
+        }
+
+        btnClaimGraceCredits.setOnClickListener {
+            if (com.tdpham.navitvbrowser.util.UsageQuotaManager.claimDailyGraceCredits(this)) {
+                Toast.makeText(this, R.string.ai_grace_claimed_toast, Toast.LENGTH_SHORT).show()
+                refreshAiQuotaOverlayUi(lastSummaryTier)
+            }
+        }
 
         ttsHelper = com.tdpham.navitvbrowser.util.TtsHelper(this) { speaking ->
             if (::btnSpeakSummary.isInitialized) {
@@ -293,8 +362,19 @@ class MainActivity : ComponentActivity() {
         }
         val closeOverlayAction = {
             ttsHelper?.stop()
-            summaryOverlayContainer.visibility = View.GONE
-            webView.requestFocus()
+            val card = summaryOverlayContainer.findViewById<View>(R.id.cardSummary)
+            if (card != null) {
+                card.animate().alpha(0f).scaleX(0.94f).scaleY(0.94f).setDuration(140L).withEndAction {
+                    summaryOverlayContainer.visibility = View.GONE
+                    card.alpha = 1f
+                    card.scaleX = 1f
+                    card.scaleY = 1f
+                    webView.requestFocus()
+                }.start()
+            } else {
+                summaryOverlayContainer.visibility = View.GONE
+                webView.requestFocus()
+            }
         }
         btnCloseSummary.setOnClickListener { closeOverlayAction() }
         btnCloseSummaryIcon.setOnClickListener { closeOverlayAction() }
@@ -341,7 +421,9 @@ class MainActivity : ComponentActivity() {
         updateInputHint()
         updateNavButtonsState()
         setupBookmarkBarFlow()
+        setupQuotaLedgerFlow()
         setupBookmarkBarAutoHide()
+        com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
 
         // Init Dark Mode from preferences
         isDarkModeActive = AppPreferences.isForceDarkModeEnabled(this)
@@ -460,7 +542,12 @@ class MainActivity : ComponentActivity() {
 
         summaryOverlayContainer.findViewById<View>(R.id.cardSummary)?.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
         tvSummaryTitle.setTextColor(accentColor)
+        tvAiQuotaStatus.setTextColor(ThemeHelper.getTextSecondaryColor(this))
         tvSummaryContent.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        btnClaimGraceCredits.setBackgroundResource(btnBg)
+        btnClaimGraceCredits.setTextColor(accentColor)
+        btnToggleEcoLite.setBackgroundResource(btnBg)
+        btnToggleEcoLite.setTextColor(ThemeHelper.getTextPrimaryColor(this))
         btnSpeakSummary.setBackgroundResource(btnBg)
         btnSpeakSummary.setTextColor(ThemeHelper.getTextPrimaryColor(this))
         btnShareSummaryQr.setBackgroundResource(btnBg)
@@ -471,6 +558,18 @@ class MainActivity : ComponentActivity() {
         btnCloseSummary.setTextColor(ThemeHelper.getTextPrimaryColor(this))
         btnCloseSummaryIcon.setBackgroundResource(btnBg)
         btnCloseSummaryIcon.imageTintList = iconTint
+
+        if (::donationBannerView.isInitialized) {
+            donationBannerView.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
+            donationBannerView.findViewById<Button>(R.id.btnBannerSupport)?.apply {
+                setBackgroundResource(btnBg)
+                setTextColor(ThemeHelper.getTextPrimaryColor(this@MainActivity))
+            }
+            donationBannerView.findViewById<ImageButton>(R.id.btnBannerDismiss)?.apply {
+                setBackgroundResource(btnBg)
+                imageTintList = iconTint
+            }
+        }
 
         // Ensure dashboard.html reflects the active theme immediately
         webView.evaluateJavascript("if (typeof applyTheme === 'function') { applyTheme($isLight); }", null)
@@ -501,6 +600,7 @@ class MainActivity : ComponentActivity() {
             webView.onResume()
         }
         resetInactivityTimer()
+        com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
         AdsHelper.onResume()
     }
 
@@ -559,6 +659,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        com.tdpham.navitvbrowser.util.UsageQuotaManager.stopRealtimeSync()
         ttsHelper?.shutdown()
         ttsHelper = null
         try {
@@ -813,6 +914,7 @@ class MainActivity : ComponentActivity() {
                 progressBar.isVisible = true
                 progressBar.progress = 0
                 isWebViewInputFocused = false
+                lastExtractedPageText = ""
                 virtualCursor.setHoveringInteractive(false)
 
                 val host = UrlUtils.hostOf(url.orEmpty())
@@ -836,7 +938,7 @@ class MainActivity : ComponentActivity() {
                 if (isGameModeActive) {
                     toggleGameMode(false)
                 }
-                btnGameMode.visibility = View.GONE
+                setGameModeButtonVisible(false)
 
                 view?.evaluateJavascript("window.__tvnavAdBlockerApplied = false;", null)
                 injectFocusStyle(view)
@@ -1379,6 +1481,7 @@ class MainActivity : ComponentActivity() {
             btnShowBookmarks, btnShowHistory, btnSettings,
             btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize,
             btnGameMode, btnMouseMode, btnDonate,
+            btnClaimGraceCredits, btnToggleEcoLite,
             btnSpeakSummary, btnShareSummaryQr, btnCopySummary, btnCloseSummary, btnCloseSummaryIcon
         )
         FocusAnimationHelper.apply(urlInput) { _, hasFocus ->
@@ -1412,7 +1515,7 @@ class MainActivity : ComponentActivity() {
         if (target) {
             virtualCursor.setEnabled(false)
             updateMouseModeButtonUi(false)
-            btnGameMode.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accent))
+            btnGameMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
             gameModeOverlay.alpha = 1f
             gameModeOverlay.visibility = View.VISIBLE
             tvGameModeStatus.text = getString(R.string.game_mode_active_hint)
@@ -1421,7 +1524,7 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, R.string.game_mode_enabled, Toast.LENGTH_SHORT).show()
             FirebaseInitializer.logEvent("game_mode_enabled", null)
         } else {
-            btnGameMode.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.text_primary))
+            btnGameMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
             gameModeOverlay.visibility = View.GONE
             virtualCursor.setEnabled(true)
             updateMouseModeButtonUi(true)
@@ -1429,6 +1532,12 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, R.string.game_mode_disabled, Toast.LENGTH_SHORT).show()
             FirebaseInitializer.logEvent("game_mode_disabled", null)
         }
+    }
+
+    private fun setGameModeButtonVisible(visible: Boolean) {
+        btnGameMode.visibility = if (visible) View.VISIBLE else View.GONE
+        btnSummarize.nextFocusRightId = if (visible) R.id.btnGameMode else R.id.btnMouseMode
+        btnMouseMode.nextFocusLeftId = if (visible) R.id.btnGameMode else R.id.btnSummarize
     }
 
     private fun injectGameModeBridge(view: WebView?) {
@@ -1456,7 +1565,7 @@ class MainActivity : ComponentActivity() {
 
     private fun updateGameModeAvailability(url: String? = webView.url) {
         if (isGameModeActive) {
-            btnGameMode.visibility = View.VISIBLE
+            setGameModeButtonVisible(true)
             return
         }
 
@@ -1472,12 +1581,19 @@ class MainActivity : ComponentActivity() {
         }
 
         if (hasGamepad) {
-            btnGameMode.visibility = View.VISIBLE
+            setGameModeButtonVisible(true)
             return
         }
 
         // 2. Show if URL is on known web game portals
         val pageUrl = url?.lowercase().orEmpty()
+        if (pageUrl.endsWith("offline_game.html")) {
+            setGameModeButtonVisible(true)
+            if (!isGameModeActive) {
+                toggleGameMode(true)
+            }
+            return
+        }
         val isGameSite = pageUrl.contains("poki.com") ||
                 pageUrl.contains("crazygames.com") ||
                 pageUrl.contains("itch.io") ||
@@ -1487,7 +1603,7 @@ class MainActivity : ComponentActivity() {
                 pageUrl.contains("arcade")
 
         if (isGameSite) {
-            btnGameMode.visibility = View.VISIBLE
+            setGameModeButtonVisible(true)
             return
         }
 
@@ -1498,7 +1614,7 @@ class MainActivity : ComponentActivity() {
             val hasCanvas = result?.equals("true", ignoreCase = true) == true
             runOnUiThread {
                 if (!isFinishing && !isDestroyed && !isGameModeActive) {
-                    btnGameMode.visibility = if (hasCanvas) View.VISIBLE else View.GONE
+                    setGameModeButtonVisible(hasCanvas)
                 }
             }
         }
@@ -1602,7 +1718,7 @@ class MainActivity : ComponentActivity() {
 
     private fun loadTypedUrl(input: String) {
         if (input.isBlank()) return
-        val url = UrlUtils.resolveInput(input)
+        val url = if (input.startsWith(TRUSTED_ASSET_PREFIX)) input else UrlUtils.resolveInput(input)
         val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
         urlInput.clearFocus()
@@ -1702,6 +1818,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun setupQuotaLedgerFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                com.tdpham.navitvbrowser.util.UsageQuotaManager.observeQuotaSnapshot(this@MainActivity)
+                    .collectLatest { snap ->
+                        btnSummarize.contentDescription =
+                            "${getString(R.string.nav_summarize)} (${snap.remainingCredits}/${snap.totalAllowance})"
+                        refreshAiQuotaOverlayUi(lastSummaryTier, snap)
+                    }
+            }
+        }
+    }
+
     private fun populateBookmarkBar(list: List<BookmarkEntity>) {
         bookmarkBarContainer.removeAllViews()
         if (list.isEmpty()) {
@@ -1787,8 +1916,8 @@ class MainActivity : ComponentActivity() {
         isDarkModeActive = enabled
         AppPreferences.setForceDarkModeEnabled(this, enabled)
         btnDarkMode.imageTintList = ColorStateList.valueOf(
-            if (enabled) ContextCompat.getColor(this, R.color.accent)
-            else ContextCompat.getColor(this, R.color.text_primary)
+            if (enabled) ThemeHelper.getAccentColor(this)
+            else ThemeHelper.getTextPrimaryColor(this)
         )
 
         // WebSettingsCompat Force Dark if supported
@@ -1897,7 +2026,11 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, getString(R.string.voice_command_executed, getString(R.string.nav_home)), Toast.LENGTH_SHORT).show()
                 val home = resolveHomepage()
                 webView.loadUrl(home)
-                urlInput.setText(home)
+                if (isDashboardOrAssetUrl(home)) {
+                    urlInput.setText("")
+                } else {
+                    urlInput.setText(home)
+                }
             }
             lower == "dark mode" || lower == "night mode" || lower == "toggle dark mode" -> {
                 applyDarkMode(!isDarkModeActive)
@@ -1940,6 +2073,12 @@ class MainActivity : ComponentActivity() {
             }
             lower == "qr code" || lower == "send to phone" || lower == "open on phone" -> {
                 com.tdpham.navitvbrowser.util.ShareHelper.showPageQrDialog(this, webView.url, webView.title)
+            }
+            lower.startsWith("ask ") && !isDashboardOrAssetUrl(webView.url.orEmpty()) -> {
+                val question = command.drop(4).trim()
+                if (question.isNotBlank()) {
+                    askQuestionAboutCurrentPage(question)
+                }
             }
             else -> {
                 urlInput.setText(command)
@@ -2209,15 +2348,17 @@ class MainActivity : ComponentActivity() {
             }
 
             val truncatedText = if (cleanText.length > 4000) cleanText.take(4000) + "..." else cleanText
+            lastExtractedPageText = truncatedText
 
             lifecycleScope.launch {
-                val result = AiHelper.getSummaryWithFailover(this@MainActivity, truncatedText)
+                val result = AiHelper.getSummaryDetailed(this@MainActivity, truncatedText)
                 progressToast.cancel()
                 
-                result.onSuccess { summary ->
+                result.onSuccess { response ->
                     EngagementHelper.recordAiSummary(this@MainActivity)
                     handleCoreOperationCompleted()
-                    showSummaryDialog(summary)
+                    lastSummaryTier = response.usedTier
+                    showSummaryDialog(response.text, response.usedTier)
                 }.onFailure { error ->
                     val message = when (error.message) {
                         "API_KEY_MISSING" -> getString(R.string.ai_error_key_missing)
@@ -2230,10 +2371,102 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun showSummaryDialog(summary: String) {
+    private fun askQuestionAboutCurrentPage(question: String) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(etAskPageQuestion.windowToken, 0)
+        etAskPageQuestion.setText("")
+
+        fun runQuestionWithPageText(pageText: String) {
+            val progressToast = Toast.makeText(this, getString(R.string.ai_asking_question), Toast.LENGTH_SHORT)
+            progressToast.show()
+            lifecycleScope.launch {
+                val result = AiHelper.askPageQuestionDetailed(this@MainActivity, question, pageText)
+                progressToast.cancel()
+                result.onSuccess { response ->
+                    handleCoreOperationCompleted()
+                    lastSummaryTier = response.usedTier
+                    val formattedAnswer = "❓ $question\n\n${response.text}"
+                    showSummaryDialog(formattedAnswer, response.usedTier)
+                }.onFailure {
+                    Toast.makeText(this@MainActivity, getString(R.string.ai_error_generic), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        if (lastExtractedPageText.isNotBlank()) {
+            runQuestionWithPageText(lastExtractedPageText)
+            return
+        }
+
+        val js = "(function() { return document.body ? document.body.innerText.slice(0, 4000) : ''; })();"
+        webView.evaluateJavascript(js) { raw ->
+            val clean = try {
+                if (raw.isNullOrBlank() || raw == "null") ""
+                else JSONObject("{\"t\":$raw}").getString("t")
+            } catch (_: Exception) {
+                raw?.trim('"').orEmpty()
+            }.trim()
+            if (clean.isBlank()) {
+                Toast.makeText(this, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
+            } else {
+                lastExtractedPageText = clean
+                runQuestionWithPageText(clean)
+            }
+        }
+    }
+
+    private fun refreshAiQuotaOverlayUi(
+        usedTier: com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier,
+        snap: com.tdpham.navitvbrowser.util.UsageQuotaManager.QuotaSnapshot =
+            com.tdpham.navitvbrowser.util.UsageQuotaManager.getSnapshot(this)
+    ) {
+        val (hours, mins) = com.tdpham.navitvbrowser.util.UsageQuotaManager.getTimeUntilReset()
+
+        btnToggleEcoLite.text = getString(
+            if (snap.ecoLiteMode) R.string.ai_eco_lite_on else R.string.ai_eco_lite_off
+        )
+        btnClaimGraceCredits.visibility = if ((snap.isExhausted || usedTier == com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST) && !snap.graceClaimed) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+
+        val statusBase = when (usedTier) {
+            com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier.TIER_1_PRIMARY_CLOUD ->
+                getString(R.string.ai_tier_1_status, snap.remainingCredits, snap.totalAllowance, hours, mins)
+            com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier.TIER_2_ECONOMY_LITE ->
+                getString(R.string.ai_tier_2_status, snap.remainingCredits, snap.totalAllowance, hours, mins)
+            com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST ->
+                getString(R.string.ai_tier_3_status, hours, mins)
+        }
+
+        tvAiQuotaStatus.text = if (snap.isAtOrAboveSoftNudge && !snap.ecoLiteMode) {
+            "$statusBase\n${getString(R.string.ai_soft_nudge_hint)}"
+        } else {
+            statusBase
+        }
+    }
+
+    private fun showSummaryDialog(
+        summary: String,
+        usedTier: com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier = com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier.TIER_1_PRIMARY_CLOUD
+    ) {
         tvSummaryContent.text = summary
+        refreshAiQuotaOverlayUi(usedTier)
         summaryOverlayContainer.visibility = View.VISIBLE
-        btnCopySummary.requestFocus()
+        val card = summaryOverlayContainer.findViewById<View>(R.id.cardSummary)
+        if (card != null) {
+            card.alpha = 0f
+            card.scaleX = 0.92f
+            card.scaleY = 0.92f
+            card.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(200L)
+                .start()
+        }
+        btnSpeakSummary.requestFocus()
     }
 
     private fun setupDonationAndEngagement() {
@@ -2247,6 +2480,9 @@ class MainActivity : ComponentActivity() {
         donationBannerView = findViewById(R.id.donationBanner)
         val btnBannerSupport = donationBannerView.findViewById<Button>(R.id.btnBannerSupport)
         val btnBannerDismiss = donationBannerView.findViewById<ImageButton>(R.id.btnBannerDismiss)
+
+        btnBannerSupport?.let { FocusAnimationHelper.apply(it) }
+        btnBannerDismiss?.let { FocusAnimationHelper.apply(it) }
 
         btnBannerSupport?.setOnClickListener {
             com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {

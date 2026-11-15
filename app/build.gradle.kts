@@ -13,8 +13,8 @@ android {
         applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
         targetSdk = 36
-        versionCode = 37
-        versionName = "3.0.0"
+        versionCode = 39
+        versionName = "3.2.0"
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -76,6 +76,7 @@ dependencies {
     // Lifecycle & ViewModel
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.datastore.preferences)
 
     // Room Database
     implementation(libs.androidx.room.runtime)

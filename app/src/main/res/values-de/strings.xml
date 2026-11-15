@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NaviTV-Browser</string>
     <string name="bookmarks">Lesezeichen</string>
@@ -221,4 +221,20 @@
     <string name="site_zoom_changed">Textzoom der Seite: %1$d%% (für diese Website gespeichert)</string>
     <string name="dashboard_quick_search_label">Schnellsuche:</string>
     <string name="dashboard_all_portals">✨ Alle Portale</string>
+    <string name="ai_tier_1_status">⚡ Standard-Cloud-KI · %1$d/%2$d heute frei · Reset in %3$d Std. %4$d Min.</string>
+    <string name="ai_tier_2_status">🍃 Eco-Lite-KI · %1$d/%2$d heute frei · Reset in %3$d Std. %4$d Min.</string>
+    <string name="ai_tier_3_status">📱 Lokale Smart-Engine (0 Cloud-Credits · Unbegrenzt) · Reset in %1$d Std. %2$d Min.</string>
+    <string name="ai_soft_nudge_hint">Über 80%% des Tageskontingents genutzt. Aktivieren Sie Eco Lite für 3× mehr Reichweite!</string>
+    <string name="ai_eco_lite_on">🍃 Eco Lite: EIN</string>
+    <string name="ai_eco_lite_off">🍃 Eco Lite: AUS</string>
+    <string name="ai_claim_grace_btn">🎁 +3 Gratis-Credits holen</string>
+    <string name="ai_grace_claimed_toast">+3 Gratis-Credits für heute freigeschaltet!</string>
+    <string name="settings_eco_lite_ai">Eco-Lite-KI-Modus (Freikontingent 3× strecken)</string>
+    <string name="settings_eco_lite_ai_summary">Nutzt das schnelle Gemini Flash-Lite Modell und lokale Zusammenfassung zum Sparen von Cloud-Credits.</string>
+    <string name="ai_ask_page_hint">Frage etwas zu dieser Seite…</string>
+    <string name="ai_ask_page_send">KI fragen</string>
+    <string name="ai_quick_ask_takeaways">🎯 Wichtigste Punkte</string>
+    <string name="ai_quick_ask_facts">📊 Fakten &amp; Zahlen</string>
+    <string name="ai_quick_ask_actions">✅ Handlungsschritte</string>
+    <string name="ai_asking_question">Seite wird analysiert, um deine Frage zu beantworten…</string>
 </resources>
