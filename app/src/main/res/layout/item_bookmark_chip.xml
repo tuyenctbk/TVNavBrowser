@@ -8,6 +8,7 @@
     android:background="?attr/focusableItemBackground"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:nextFocusDown="@id/webView"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingStart="12dp"

@@ -125,9 +125,10 @@ class ReadLaterReaderActivity : ComponentActivity() {
             currentArticle = article
             displayArticle(article)
 
-            // Mark as read automatically when opened
+            // Mark as read automatically when opened and sync in-memory state
             if (!article.isRead) {
                 withContext(Dispatchers.IO) { repository.markAsRead(article.id, true) }
+                currentArticle = article.copy(isRead = true)
             }
         }
 

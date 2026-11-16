@@ -29,6 +29,7 @@ class HistoryActivity : ComponentActivity() {
     private lateinit var container: LinearLayout
     private lateinit var emptyView: TextView
     private lateinit var repository: HistoryRepository
+    private var hasRenderedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeHelper.applyTheme(this)
@@ -61,12 +62,19 @@ class HistoryActivity : ComponentActivity() {
     }
 
     private fun renderHistory(list: List<HistoryEntity>) {
+        val focusedIndex = (0 until container.childCount).firstOrNull { i ->
+            val child = container.getChildAt(i)
+            child.hasFocus() || child.findFocus() != null
+        } ?: -1
+        val hadRowFocus = focusedIndex >= 0
+
         container.removeAllViews()
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
 
         val inflater = LayoutInflater.from(this)
         list.forEachIndexed { index, history ->
             val row = inflater.inflate(R.layout.item_url_row, container, false)
+            val rowContent = row.findViewById<android.view.View>(R.id.rowContent)
             val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
             val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
             val tvRowUrl = row.findViewById<TextView>(R.id.tvRowUrl)
@@ -78,19 +86,21 @@ class HistoryActivity : ComponentActivity() {
             tvRowTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
             tvRowUrl.text = history.url
             tvRowUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
-            row.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            rowContent.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
             btnDeleteRow.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
             btnDeleteRow.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
 
-            FocusAnimationHelper.apply(row)
+            FocusAnimationHelper.apply(rowContent)
             FocusAnimationHelper.apply(btnDeleteRow)
-            FocusAnimationHelper.animateEntrance(row, index)
+            if (!hasRenderedOnce) {
+                FocusAnimationHelper.animateEntrance(row, index)
+            }
 
-            row.setOnClickListener {
+            rowContent.setOnClickListener {
                 FirebaseInitializer.logEvent("history_opened", mapOf("host" to UrlUtils.hostOf(history.url)))
                 openUrl(history.url)
             }
-            row.setOnLongClickListener {
+            rowContent.setOnLongClickListener {
                 confirmDeleteHistory(history)
                 true
             }
@@ -98,6 +108,12 @@ class HistoryActivity : ComponentActivity() {
                 confirmDeleteHistory(history)
             }
             container.addView(row)
+        }
+        hasRenderedOnce = true
+
+        if (hadRowFocus && container.childCount > 0) {
+            val targetIdx = focusedIndex.coerceIn(0, container.childCount - 1)
+            container.getChildAt(targetIdx)?.findViewById<android.view.View>(R.id.rowContent)?.requestFocus()
         }
     }
 

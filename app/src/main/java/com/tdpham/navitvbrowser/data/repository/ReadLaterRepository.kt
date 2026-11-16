@@ -14,7 +14,14 @@ class ReadLaterRepository(private val readLaterDao: ReadLaterDao) {
     suspend fun saveArticle(title: String, url: String, contentHtml: String, excerpt: String): Long {
         val existing = readLaterDao.getArticleByUrl(url)
         if (existing != null) {
-            readLaterDao.insertArticle(existing.copy(title = title, contentHtml = contentHtml, excerpt = excerpt))
+            readLaterDao.insertArticle(
+                existing.copy(
+                    title = title,
+                    contentHtml = contentHtml,
+                    excerpt = excerpt,
+                    timestamp = System.currentTimeMillis()
+                )
+            )
             return existing.id
         }
         return readLaterDao.insertArticle(

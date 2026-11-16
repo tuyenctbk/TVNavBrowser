@@ -29,6 +29,7 @@ class BookmarksActivity : ComponentActivity() {
     private lateinit var container: LinearLayout
     private lateinit var emptyView: TextView
     private lateinit var repository: BookmarkRepository
+    private var hasRenderedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeHelper.applyTheme(this)
@@ -80,12 +81,19 @@ class BookmarksActivity : ComponentActivity() {
     }
 
     private fun renderBookmarks(list: List<BookmarkEntity>) {
+        val focusedIndex = (0 until container.childCount).firstOrNull { i ->
+            val child = container.getChildAt(i)
+            child.hasFocus() || child.findFocus() != null
+        } ?: -1
+        val hadRowFocus = focusedIndex >= 0
+
         container.removeAllViews()
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
 
         val inflater = LayoutInflater.from(this)
         list.forEachIndexed { index, bookmark ->
             val row = inflater.inflate(R.layout.item_url_row, container, false)
+            val rowContent = row.findViewById<android.view.View>(R.id.rowContent)
             val ivRowIcon = row.findViewById<ImageView>(R.id.ivRowIcon)
             val tvRowTitle = row.findViewById<TextView>(R.id.tvRowTitle)
             val tvRowUrl = row.findViewById<TextView>(R.id.tvRowUrl)
@@ -97,19 +105,21 @@ class BookmarksActivity : ComponentActivity() {
             tvRowTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
             tvRowUrl.text = bookmark.url
             tvRowUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
-            row.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            rowContent.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
             btnDeleteRow.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
             btnDeleteRow.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
 
-            FocusAnimationHelper.apply(row)
+            FocusAnimationHelper.apply(rowContent)
             FocusAnimationHelper.apply(btnDeleteRow)
-            FocusAnimationHelper.animateEntrance(row, index)
+            if (!hasRenderedOnce) {
+                FocusAnimationHelper.animateEntrance(row, index)
+            }
 
-            row.setOnClickListener {
+            rowContent.setOnClickListener {
                 FirebaseInitializer.logEvent("bookmark_opened", mapOf("host" to UrlUtils.hostOf(bookmark.url)))
                 openUrl(bookmark.url)
             }
-            row.setOnLongClickListener {
+            rowContent.setOnLongClickListener {
                 confirmDeleteBookmark(bookmark)
                 true
             }
@@ -117,6 +127,12 @@ class BookmarksActivity : ComponentActivity() {
                 confirmDeleteBookmark(bookmark)
             }
             container.addView(row)
+        }
+        hasRenderedOnce = true
+
+        if (hadRowFocus && container.childCount > 0) {
+            val targetIdx = focusedIndex.coerceIn(0, container.childCount - 1)
+            container.getChildAt(targetIdx)?.findViewById<android.view.View>(R.id.rowContent)?.requestFocus()
         }
     }
 

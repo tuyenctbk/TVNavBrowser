@@ -65,6 +65,7 @@ object UsageQuotaManager {
     private val DS_GRACE_CLAIMED = booleanPreferencesKey(KEY_GRACE_CLAIMED)
     private val DS_ECO_LITE_MODE = booleanPreferencesKey(KEY_ECO_LITE_MODE)
     private val DS_FALLBACK_CASCADE_COUNT = intPreferencesKey(KEY_FALLBACK_CASCADE_COUNT)
+    private val DS_IS_SUPPORTER = booleanPreferencesKey("is_supporter")
 
     /** Free daily cloud AI allowance (Tier 3 local summarizer & Q&A is always unlimited). */
     const val DAILY_BASE_ALLOWANCE = 15
@@ -120,8 +121,11 @@ object UsageQuotaManager {
         } catch (_: Exception) {
             null
         }
-        if (!authUid.isNullOrEmpty()) return authUid
-        return AppPreferences.getSyncUserId(context).trim()
+        if (!authUid.isNullOrEmpty()) {
+            val safeUid = AppPreferences.sanitizeSyncUserId(authUid)
+            if (safeUid.isNotEmpty()) return safeUid
+        }
+        return AppPreferences.sanitizeSyncUserId(AppPreferences.getSyncUserId(context))
     }
 
     /**
@@ -141,7 +145,7 @@ object UsageQuotaManager {
             .map { prefs ->
                 val today = currentDateIso()
                 val storedDate = prefs[DS_DATE_ISO] ?: ""
-                val supporter = DonationManager.isSupporter(appContext)
+                val supporter = prefs[DS_IS_SUPPORTER] ?: DonationManager.isSupporter(appContext)
                 if (storedDate != today) {
                     val preservedEco = prefs[DS_ECO_LITE_MODE] ?: getSnapshot(appContext).ecoLiteMode
                     val rolledOver = QuotaSnapshot(
@@ -217,14 +221,8 @@ object UsageQuotaManager {
                 val local = getSnapshot(appContext)
 
                 if (remoteDate != today) {
-                    // Remote ledger is from a previous day -> automatic rollover reset preserving ecoLiteMode
-                    val remoteEco = snapshot.getBoolean("ecoLiteMode") ?: local.ecoLiteMode
-                    val resetSnap = local.copy(
-                        dateIso = today,
-                        ecoLiteMode = remoteEco
-                    )
-                    persistLocalMirror(appContext, resetSnap)
-                    syncToFirestoreAsync(appContext, resetSnap)
+                    // Remote ledger is from a previous day -> push current day's local snapshot (already rolled over by getSnapshot)
+                    syncToFirestoreAsync(appContext, local)
                 } else {
                     val remoteSummary = (snapshot.getLong("summaryUsed") ?: 0L).toInt().coerceAtLeast(0)
                     val remoteChat = (snapshot.getLong("chatUsed") ?: 0L).toInt().coerceAtLeast(0)
@@ -242,7 +240,8 @@ object UsageQuotaManager {
                         bonusGraceCredits = max(local.bonusGraceCredits, remoteBonus),
                         graceClaimed = local.graceClaimed || remoteGraceClaimed,
                         ecoLiteMode = remoteEco,
-                        fallbackCascadeCount = max(local.fallbackCascadeCount, remoteCascade)
+                        fallbackCascadeCount = max(local.fallbackCascadeCount, remoteCascade),
+                        isSupporter = DonationManager.isSupporter(appContext)
                     )
                     if (merged != local) {
                         persistLocalMirror(appContext, merged)
@@ -268,7 +267,7 @@ object UsageQuotaManager {
         val storedDate = prefs.getString(KEY_DATE_ISO, "") ?: ""
 
         if (storedDate != today) {
-            // Automatic Rollover Reset: reset daily counters & graceClaimed, preserve ecoLiteMode
+            // Automatic Rollover Reset: reset daily counters & graceClaimed, preserve ecoLiteMode & supporter state
             val preservedEco = prefs.getBoolean(KEY_ECO_LITE_MODE, false)
             val cascadeCount = prefs.getInt(KEY_FALLBACK_CASCADE_COUNT, 0)
             val rolled = QuotaSnapshot(
@@ -279,7 +278,8 @@ object UsageQuotaManager {
                 bonusGraceCredits = 0,
                 graceClaimed = false,
                 ecoLiteMode = preservedEco,
-                fallbackCascadeCount = cascadeCount
+                fallbackCascadeCount = cascadeCount,
+                isSupporter = DonationManager.isSupporter(context)
             )
             persistLocalMirror(context, rolled)
             return rolled
@@ -302,6 +302,7 @@ object UsageQuotaManager {
     fun refreshSupporterAllowance(context: Context) {
         val snap = getSnapshot(context)
         persistLocalMirror(context, snap)
+        AiHelper.clearCache()
     }
 
     /**
@@ -382,6 +383,7 @@ object UsageQuotaManager {
         )
         persistLocalMirror(context, updated)
         syncToFirestoreAsync(context, updated)
+        AiHelper.clearCache()
         return true
     }
 
@@ -434,6 +436,7 @@ object UsageQuotaManager {
                     prefs[DS_GRACE_CLAIMED] = snapshot.graceClaimed
                     prefs[DS_ECO_LITE_MODE] = snapshot.ecoLiteMode
                     prefs[DS_FALLBACK_CASCADE_COUNT] = snapshot.fallbackCascadeCount
+                    prefs[DS_IS_SUPPORTER] = snapshot.isSupporter
                 }
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to update DataStore mirror: ${e.message}")

@@ -20,7 +20,7 @@
     <string name="settings_homepage_hint" translatable="false">https://www.google.com</string>
     <string name="settings_save_homepage">Save Homepage</string>
     <string name="settings_block_embedded_ads">Block website ads</string>
-    <string name="settings_block_embedded_ads_summary">Automatically hide embedded ads inside web pages. Does not affect the app banner ad.</string>
+    <string name="settings_block_embedded_ads_summary">Automatically hide embedded ads and tracking pop-ups inside visited web pages.</string>
     <string name="settings_block_ads_enabled">Website ad blocking enabled</string>
     <string name="settings_block_ads_disabled">Website ad blocking disabled</string>
     <string name="settings_homepage_empty">Please enter a homepage URL</string>

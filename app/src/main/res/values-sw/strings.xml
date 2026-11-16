@@ -154,7 +154,7 @@
     <string name="settings_mouse_speed_fast">Haraka</string>
     <string name="settings_mouse_speed_changed">Kasi ya pointer ya panya:%1$s</string>
     <string name="donation_title">Saidia Uendelezaji</string>
-    <string name="donation_subtitle">100% Huru, Nje ya Mtandao na Inayojali Faragha. Tusaidie kuweka NaviTV Browser haraka na bila matangazo!</string>
+    <string name="donation_subtitle" formatted="false">100% Huru, Nje ya Mtandao na Inayojali Faragha. Tusaidie kuweka NaviTV Browser haraka na bila matangazo!</string>
     <string name="donation_header_btn_desc">Saidia Uendelezaji wa NaviTV</string>
     <string name="donation_active_supporter">Mfadhili Hai</string>
     <string name="donation_active_supporter_desc">Asante kwa kuunga mkono NaviTV Browser! Mabango yote ya mchango yamezimwa kabisa.</string>

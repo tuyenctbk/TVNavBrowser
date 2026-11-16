@@ -154,7 +154,7 @@
     <string name="settings_mouse_speed_fast">Cepat</string>
     <string name="settings_mouse_speed_changed">Kelajuan penunjuk tetikus:%1$s</string>
     <string name="donation_title">Sokong Pembangunan</string>
-    <string name="donation_subtitle">100% Bebas, Luar Talian &amp; Fokus Privasi. Bantu kami memastikan NaviTV Browser kekal pantas dan bebas iklan!</string>
+    <string name="donation_subtitle" formatted="false">100% Bebas, Luar Talian &amp; Fokus Privasi. Bantu kami memastikan NaviTV Browser kekal pantas dan bebas iklan!</string>
     <string name="donation_header_btn_desc">Sokong Pembangunan NaviTV</string>
     <string name="donation_active_supporter">Penyokong Aktif</string>
     <string name="donation_active_supporter_desc">Terima kasih kerana menyokong NaviTV Browser! Semua sepanduk derma telah dinyahaktifkan secara kekal.</string>

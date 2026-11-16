@@ -30,6 +30,7 @@ class ReadLaterActivity : ComponentActivity() {
     private lateinit var emptyView: TextView
     private lateinit var btnClearAll: Button
     private lateinit var repository: ReadLaterRepository
+    private var hasRenderedOnce = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeHelper.applyTheme(this)
@@ -79,12 +80,21 @@ class ReadLaterActivity : ComponentActivity() {
     }
 
     private fun renderArticles(list: List<ReadLaterEntity>) {
+        val focusedIndex = (0 until container.childCount).firstOrNull { i ->
+            val child = container.getChildAt(i)
+            child.hasFocus() || child.findFocus() != null
+        } ?: -1
+        val hadRowFocus = focusedIndex >= 0
+
         container.removeAllViews()
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
+        btnClearAll.isEnabled = list.isNotEmpty()
+        btnClearAll.alpha = if (list.isNotEmpty()) 1.0f else 0.4f
 
         val inflater = LayoutInflater.from(this)
         list.forEachIndexed { index, article ->
             val row = inflater.inflate(R.layout.item_read_later, container, false)
+            val rowContent = row.findViewById<android.view.View>(R.id.rowContent)
             val tvTitle = row.findViewById<TextView>(R.id.tvTitle)
             val tvExcerpt = row.findViewById<TextView>(R.id.tvExcerpt)
             val tvUrl = row.findViewById<TextView>(R.id.tvUrl)
@@ -97,23 +107,29 @@ class ReadLaterActivity : ComponentActivity() {
             tvExcerpt.setTextColor(ThemeHelper.getTextSecondaryColor(this))
             tvUrl.text = article.url
             tvUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
-            row.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
+            rowContent.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
             btnDelete.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
             btnDelete.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
             tvReadBadge.text = if (article.isRead) getString(R.string.read_later_read) else getString(R.string.read_later_unread)
             tvReadBadge.setTextColor(ThemeHelper.getAccentColor(this))
             tvReadBadge.setBackgroundResource(ThemeHelper.getStepBadgeBackground(this))
 
-            FocusAnimationHelper.apply(row)
+            FocusAnimationHelper.apply(rowContent)
             FocusAnimationHelper.apply(btnDelete)
-            FocusAnimationHelper.animateEntrance(row, index)
+            if (!hasRenderedOnce) {
+                FocusAnimationHelper.animateEntrance(row, index)
+            }
 
-            row.setOnClickListener {
+            rowContent.setOnClickListener {
                 startActivity(
                     Intent(this, ReadLaterReaderActivity::class.java).apply {
                         putExtra(ReadLaterReaderActivity.EXTRA_ARTICLE_ID, article.id)
                     }
                 )
+            }
+            rowContent.setOnLongClickListener {
+                confirmDeleteArticle(article)
+                true
             }
 
             btnDelete.setOnClickListener {
@@ -121,6 +137,12 @@ class ReadLaterActivity : ComponentActivity() {
             }
 
             container.addView(row)
+        }
+        hasRenderedOnce = true
+
+        if (hadRowFocus && container.childCount > 0) {
+            val targetIdx = focusedIndex.coerceIn(0, container.childCount - 1)
+            container.getChildAt(targetIdx)?.findViewById<android.view.View>(R.id.rowContent)?.requestFocus()
         }
     }
 

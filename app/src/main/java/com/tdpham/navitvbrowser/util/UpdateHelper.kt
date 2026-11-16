@@ -48,8 +48,12 @@ object UpdateHelper {
                 } catch (_: Exception) {
                     try {
                         activity.startActivity(Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=${activity.packageName}".toUri()))
-                    } catch (_: Exception) {
-                        Toast.makeText(activity, R.string.error_generic_app, Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            activity,
+                            activity.getString(R.string.error_generic_app, e.message ?: "Play Store"),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }

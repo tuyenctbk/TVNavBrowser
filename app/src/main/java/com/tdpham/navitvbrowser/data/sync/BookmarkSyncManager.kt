@@ -9,12 +9,19 @@ import com.tdpham.navitvbrowser.data.repository.BookmarkRepository
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.security.MessageDigest
 
 object BookmarkSyncManager {
     private const val TAG = "BookmarkSyncManager"
+    private val syncMutex = Mutex()
+
+    private fun resolveSafeUserId(context: Context): String {
+        return AppPreferences.sanitizeSyncUserId(AppPreferences.getSyncUserId(context))
+    }
 
     private fun getDocumentId(url: String): String {
         return try {
@@ -30,49 +37,63 @@ object BookmarkSyncManager {
         if (!AppPreferences.isFirestoreSyncEnabled(context)) {
             return@withContext Result.success(0)
         }
-        val userId = AppPreferences.getSyncUserId(context)
-        try {
-            val db = FirebaseFirestore.getInstance()
-            val collectionRef = db.collection("users").document(userId).collection("bookmarks")
-            
-            // 1. Fetch remote bookmarks
-            val snapshot = collectionRef.get().await()
-            var newCount = 0
-            for (doc in snapshot.documents) {
-                val title = doc.getString("title") ?: continue
-                val url = doc.getString("url") ?: continue
-                // Remote data is untrusted (the sync id is shared); never import javascript:/data: URLs
-                if (!UrlUtils.isBrowsableUrl(url)) continue
+        val userId = resolveSafeUserId(context)
+        if (userId.isEmpty()) return@withContext Result.success(0)
 
-                val added = repository.addBookmark(title, url)
-                if (added) newCount++
+        syncMutex.withLock {
+            try {
+                val db = FirebaseFirestore.getInstance()
+                val collectionRef = db.collection("users").document(userId).collection("bookmarks")
+
+                // 1. Fetch remote bookmarks
+                val snapshot = collectionRef.get().await()
+                val remoteUrls = HashSet<String>(snapshot.size())
+                var newCount = 0
+                for (doc in snapshot.documents) {
+                    val title = doc.getString("title") ?: ""
+                    val url = doc.getString("url")?.trim() ?: continue
+                    // Remote data is untrusted (the sync id is shared); never import javascript:/data:/file: URLs
+                    if (!UrlUtils.isBrowsableUrl(url) || url.startsWith("file:///")) continue
+                    remoteUrls.add(url)
+
+                    val added = repository.addBookmark(title, url)
+                    if (added) newCount++
+                }
+
+                // 2. Upload any local bookmarks not yet in Firestore using WriteBatch (chunked <= 400)
+                val localBookmarks = repository.getAllBookmarksList()
+                    .filter { UrlUtils.isBrowsableUrl(it.url) && !it.url.startsWith("file:///") && it.url !in remoteUrls }
+
+                localBookmarks.chunked(400).forEach { chunk ->
+                    val batch = db.batch()
+                    for (local in chunk) {
+                        val docId = getDocumentId(local.url)
+                        val data = mapOf(
+                            "title" to local.title,
+                            "url" to local.url,
+                            "timestamp" to local.timestamp,
+                            "userId" to userId
+                        )
+                        batch.set(collectionRef.document(docId), data, SetOptions.merge())
+                    }
+                    batch.commit().await()
+                }
+
+                Log.d(TAG, "Synced bookmarks successfully. New added: $newCount")
+                Result.success(newCount)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error syncing bookmarks to Firestore", e)
+                Result.failure(e)
             }
-
-            // 2. Upload any local bookmarks not yet in Firestore
-            val localBookmarks = repository.getAllBookmarksList()
-            for (local in localBookmarks) {
-                val docId = getDocumentId(local.url)
-                val data = mapOf(
-                    "title" to local.title,
-                    "url" to local.url,
-                    "timestamp" to local.timestamp,
-                    "userId" to userId
-                )
-                collectionRef.document(docId).set(data, SetOptions.merge()).await()
-            }
-
-            Log.d(TAG, "Synced bookmarks successfully. New added: $newCount")
-            Result.success(newCount)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error syncing bookmarks to Firestore", e)
-            Result.failure(e)
         }
     }
 
     suspend fun pushBookmark(context: Context, bookmark: BookmarkEntity) = withContext(Dispatchers.IO) {
         if (!AppPreferences.isFirestoreSyncEnabled(context)) return@withContext
+        if (!UrlUtils.isBrowsableUrl(bookmark.url) || bookmark.url.startsWith("file:///")) return@withContext
+        val userId = resolveSafeUserId(context)
+        if (userId.isEmpty()) return@withContext
         try {
-            val userId = AppPreferences.getSyncUserId(context)
             val db = FirebaseFirestore.getInstance()
             val docId = getDocumentId(bookmark.url)
             val data = mapOf(
@@ -92,8 +113,9 @@ object BookmarkSyncManager {
 
     suspend fun deleteBookmark(context: Context, bookmark: BookmarkEntity) = withContext(Dispatchers.IO) {
         if (!AppPreferences.isFirestoreSyncEnabled(context)) return@withContext
+        val userId = resolveSafeUserId(context)
+        if (userId.isEmpty()) return@withContext
         try {
-            val userId = AppPreferences.getSyncUserId(context)
             val db = FirebaseFirestore.getInstance()
             val docId = getDocumentId(bookmark.url)
             db.collection("users").document(userId).collection("bookmarks")
@@ -108,19 +130,22 @@ object BookmarkSyncManager {
     /** Deletes every bookmark stored in the cloud for this sync id. */
     suspend fun clearRemoteBookmarks(context: Context) = withContext(Dispatchers.IO) {
         if (!AppPreferences.isFirestoreSyncEnabled(context)) return@withContext
-        try {
-            val userId = AppPreferences.getSyncUserId(context)
-            val db = FirebaseFirestore.getInstance()
-            val snapshot = db.collection("users").document(userId).collection("bookmarks")
-                .get().await()
-            // Firestore batches are limited to 500 operations
-            snapshot.documents.chunked(400).forEach { chunk ->
-                val batch = db.batch()
-                chunk.forEach { batch.delete(it.reference) }
-                batch.commit().await()
+        val userId = resolveSafeUserId(context)
+        if (userId.isEmpty()) return@withContext
+        syncMutex.withLock {
+            try {
+                val db = FirebaseFirestore.getInstance()
+                val snapshot = db.collection("users").document(userId).collection("bookmarks")
+                    .get().await()
+                // Firestore batches are limited to 500 operations
+                snapshot.documents.chunked(400).forEach { chunk ->
+                    val batch = db.batch()
+                    chunk.forEach { batch.delete(it.reference) }
+                    batch.commit().await()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error clearing remote bookmarks", e)
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error clearing remote bookmarks", e)
         }
     }
 }

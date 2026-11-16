@@ -74,6 +74,7 @@
     <style name="DialogButton.Light" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/light_accent</item>
         <item name="android:focusable">true</item>
+        <item name="android:background">@drawable/bg_toolbar_btn_light</item>
         <item name="android:padding">8dp</item>
     </style>
 

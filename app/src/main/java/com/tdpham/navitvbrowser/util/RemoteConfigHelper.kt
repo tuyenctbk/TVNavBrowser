@@ -24,39 +24,43 @@ object RemoteConfigHelper {
     private var cachedAdBlockSet: Set<String>? = null
 
     fun fetchAndActivate() {
-        val remoteConfig = Firebase.remoteConfig
-        remoteConfig.setConfigSettingsAsync(
-            remoteConfigSettings { minimumFetchIntervalInSeconds = 3600 }
-        )
-        remoteConfig.setDefaultsAsync(mapOf(
-            KEY_HOMEPAGE to DEFAULT_HOMEPAGE,
-            KEY_ADBLOCK_LIST to "",
-            KEY_LATEST_VERSION to 0,
-            KEY_UPDATE_URL to "",
-            KEY_ADS_ENABLED to true,
-            KEY_ADS_MIN_DAYS to 15L,
-            KEY_ADS_MIN_OPENS to 3L,
-            KEY_SAFE_BROWSING to true,
-            KEY_AI_MODEL_NAME to DEFAULT_AI_MODEL,
-            KEY_AI_LITE_MODEL_NAME to DEFAULT_AI_LITE_MODEL
-        ))
-        remoteConfig.fetchAndActivate().addOnCompleteListener {
-            synchronized(this) {
-                cachedAdBlockSet = null
+        try {
+            val remoteConfig = Firebase.remoteConfig
+            remoteConfig.setConfigSettingsAsync(
+                remoteConfigSettings { minimumFetchIntervalInSeconds = 3600 }
+            )
+            remoteConfig.setDefaultsAsync(mapOf(
+                KEY_HOMEPAGE to DEFAULT_HOMEPAGE,
+                KEY_ADBLOCK_LIST to "",
+                KEY_LATEST_VERSION to 0,
+                KEY_UPDATE_URL to "",
+                KEY_ADS_ENABLED to true,
+                KEY_ADS_MIN_DAYS to 15L,
+                KEY_ADS_MIN_OPENS to 3L,
+                KEY_SAFE_BROWSING to true,
+                KEY_AI_MODEL_NAME to DEFAULT_AI_MODEL,
+                KEY_AI_LITE_MODEL_NAME to DEFAULT_AI_LITE_MODEL
+            ))
+            remoteConfig.fetchAndActivate().addOnCompleteListener {
+                synchronized(this) {
+                    cachedAdBlockSet = null
+                }
             }
+        } catch (_: Exception) {
+            // Safe fallback on devices without Google Play Services / Firebase init
         }
     }
 
     fun getHomepageUrl(): String {
-        val url = Firebase.remoteConfig.getString(KEY_HOMEPAGE)
+        val url = runCatching { Firebase.remoteConfig.getString(KEY_HOMEPAGE) }.getOrDefault("")
         return url.ifBlank { DEFAULT_HOMEPAGE }
     }
 
     fun getAdBlockSet(): Set<String> {
         return cachedAdBlockSet ?: synchronized(this) {
             cachedAdBlockSet ?: run {
-                val raw = Firebase.remoteConfig.getString(KEY_ADBLOCK_LIST)
-                val set = if (raw.isBlank()) emptySet() else raw.split(",").map { it.trim().lowercase() }.toSet()
+                val raw = runCatching { Firebase.remoteConfig.getString(KEY_ADBLOCK_LIST) }.getOrDefault("")
+                val set = if (raw.isBlank()) emptySet() else raw.split(",").map { it.trim().lowercase() }.filter { it.isNotEmpty() }.toSet()
                 cachedAdBlockSet = set
                 set
             }
@@ -64,36 +68,36 @@ object RemoteConfigHelper {
     }
 
     fun getLatestVersionCode(): Int {
-        return Firebase.remoteConfig.getLong(KEY_LATEST_VERSION).toInt()
+        return runCatching { Firebase.remoteConfig.getLong(KEY_LATEST_VERSION).toInt() }.getOrDefault(0)
     }
 
     fun getUpdateUrl(): String {
-        return Firebase.remoteConfig.getString(KEY_UPDATE_URL)
+        return runCatching { Firebase.remoteConfig.getString(KEY_UPDATE_URL) }.getOrDefault("")
     }
 
     fun isAdsEnabled(): Boolean {
-        return Firebase.remoteConfig.getBoolean(KEY_ADS_ENABLED)
+        return runCatching { Firebase.remoteConfig.getBoolean(KEY_ADS_ENABLED) }.getOrDefault(true)
     }
 
     fun getMinDays(): Int {
-        return Firebase.remoteConfig.getLong(KEY_ADS_MIN_DAYS).toInt()
+        return runCatching { Firebase.remoteConfig.getLong(KEY_ADS_MIN_DAYS).toInt() }.getOrDefault(15)
     }
 
     fun getMinOpens(): Int {
-        return Firebase.remoteConfig.getLong(KEY_ADS_MIN_OPENS).toInt()
+        return runCatching { Firebase.remoteConfig.getLong(KEY_ADS_MIN_OPENS).toInt() }.getOrDefault(3)
     }
 
     fun isSafeBrowsingEnabled(): Boolean {
-        return Firebase.remoteConfig.getBoolean(KEY_SAFE_BROWSING)
+        return runCatching { Firebase.remoteConfig.getBoolean(KEY_SAFE_BROWSING) }.getOrDefault(true)
     }
 
     fun getAiModelName(): String {
-        val model = Firebase.remoteConfig.getString(KEY_AI_MODEL_NAME)
+        val model = runCatching { Firebase.remoteConfig.getString(KEY_AI_MODEL_NAME) }.getOrDefault("")
         return model.ifBlank { DEFAULT_AI_MODEL }
     }
 
     fun getAiLiteModelName(): String {
-        val model = Firebase.remoteConfig.getString(KEY_AI_LITE_MODEL_NAME)
+        val model = runCatching { Firebase.remoteConfig.getString(KEY_AI_LITE_MODEL_NAME) }.getOrDefault("")
         return model.ifBlank { DEFAULT_AI_LITE_MODEL }
     }
 }

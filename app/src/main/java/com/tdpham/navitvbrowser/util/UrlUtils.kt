@@ -18,17 +18,27 @@ object UrlUtils {
 
     fun isBrowsableUrl(url: String): Boolean {
         if (url.isBlank()) return false
-        val lower = url.lowercase()
-        return !lower.startsWith("about:") &&
-            !lower.startsWith("chrome-error:") &&
-            !lower.startsWith("data:") &&
-            !lower.startsWith("javascript:") &&
-            !lower.startsWith("blob:")
+        val trimmed = url.trim()
+        val lower = trimmed.lowercase()
+        return lower.startsWith("http://") ||
+            lower.startsWith("https://") ||
+            lower.startsWith(ASSET_PREFIX)
     }
 
     /** Returns the host of [url], or an empty string if it cannot be parsed. */
-    fun hostOf(url: String): String =
-        runCatching { URI(url).host }.getOrNull().orEmpty()
+    fun hostOf(url: String): String {
+        val trimmed = url.trim()
+        if (trimmed.isEmpty()) return ""
+        val uriHost = runCatching { URI(trimmed).host }.getOrNull()
+        if (!uriHost.isNullOrBlank()) return uriHost
+        // Fallback for real-world URLs containing unencoded query characters (e.g. spaces or pipes)
+        val schemeEnd = trimmed.indexOf("://")
+        if (schemeEnd <= 0) return ""
+        val afterScheme = trimmed.substring(schemeEnd + 3)
+        val authority = afterScheme.substringBefore('/').substringBefore('?').substringBefore('#')
+        val hostPart = authority.substringAfterLast('@').substringBefore(':')
+        return if (hostPart.contains('.') && hostPart.none { it.isWhitespace() }) hostPart else ""
+    }
 
     /**
      * Turns raw user input from the URL bar into a loadable URL: explicit http(s) URLs and

@@ -13,6 +13,9 @@ class UrlUtilsTest {
         assertTrue(UrlUtils.isBrowsableUrl("https://example.com"))
         assertTrue(UrlUtils.isBrowsableUrl("http://example.com/test"))
         assertTrue(UrlUtils.isBrowsableUrl("file:///android_asset/homepage.html"))
+        org.junit.Assert.assertFalse(UrlUtils.isBrowsableUrl("file:///etc/passwd"))
+        org.junit.Assert.assertFalse(UrlUtils.isBrowsableUrl("intent://scan/#Intent;end"))
+        org.junit.Assert.assertFalse(UrlUtils.isBrowsableUrl("javascript:alert(1)"))
 
         assertFalse(UrlUtils.isBrowsableUrl(""))
         assertFalse(UrlUtils.isBrowsableUrl("   "))
@@ -26,6 +29,7 @@ class UrlUtilsTest {
     fun testHostOf() {
         assertEquals("google.com", UrlUtils.hostOf("https://google.com/search?q=android"))
         assertEquals("sub.domain.co.uk", UrlUtils.hostOf("http://sub.domain.co.uk:8080/path"))
+        assertEquals("example.com", UrlUtils.hostOf("https://example.com/search?q=hello world|foo"))
         assertEquals("", UrlUtils.hostOf("not a valid url"))
         assertEquals("", UrlUtils.hostOf(""))
     }

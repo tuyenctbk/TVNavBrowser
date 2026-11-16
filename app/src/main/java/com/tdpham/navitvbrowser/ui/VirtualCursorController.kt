@@ -99,6 +99,7 @@ class VirtualCursorController(
     private var isClickPending = false
     private var pendingDownRunnable: Runnable? = null
     private var pendingUpRunnable: Runnable? = null
+    private val resetPressRunnable = Runnable { animatePress(false) }
 
     private var holdingUp = false
     private var holdingDown = false
@@ -162,7 +163,9 @@ class VirtualCursorController(
         } else {
             stopMotion()
             cancelPendingClick()
+            mainHandler.removeCallbacks(resetPressRunnable)
             mainHandler.removeCallbacks(idleFadeRunnable)
+            setHoveringInteractive(false)
             cursor.animate().cancel()
             cursor.visibility = View.GONE
         }
@@ -240,9 +243,10 @@ class VirtualCursorController(
     private fun handleSelectKey(event: KeyEvent) {
         wakeCursor()
         if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+            mainHandler.removeCallbacks(resetPressRunnable)
             animatePress(true)
             simulateClick()
-            mainHandler.postDelayed({ animatePress(false) }, 110L)
+            mainHandler.postDelayed(resetPressRunnable, 110L)
         }
     }
 
@@ -499,7 +503,11 @@ class VirtualCursorController(
      * players react to the pointer like they would on a desktop.
      */
     private fun dispatchHover(force: Boolean) {
-        if (!isEnabled || !isHotspotOverWebView()) return
+        if (!isEnabled) return
+        if (!isHotspotOverWebView()) {
+            if (isHoveringInteractive) setHoveringInteractive(false)
+            return
+        }
         val now = SystemClock.uptimeMillis()
         if (!force && now - lastHoverTime < HOVER_INTERVAL_MS) return
         lastHoverTime = now
@@ -542,7 +550,13 @@ class VirtualCursorController(
     fun onPause() {
         stopMotion()
         cancelPendingClick()
+        mainHandler.removeCallbacks(resetPressRunnable)
         mainHandler.removeCallbacks(idleFadeRunnable)
+    }
+
+    fun onDestroy() {
+        onPause()
+        mainHandler.removeCallbacksAndMessages(null)
     }
 
     private fun wakeCursor() {

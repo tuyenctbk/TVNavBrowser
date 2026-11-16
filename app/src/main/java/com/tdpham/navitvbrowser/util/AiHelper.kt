@@ -172,20 +172,28 @@ object AiHelper {
     @Volatile
     private var lastCacheEntry: CacheEntry? = null
 
+    fun clearCache() {
+        lastCacheEntry = null
+    }
+
     suspend fun getSummaryDetailed(context: Context, text: String): Result<AiGenerationResponse> {
         val cleanInput = text.trim()
         if (cleanInput.isEmpty()) return Result.failure(Exception("EMPTY_TEXT"))
 
-        // 1. Check 45-second Fingerprint Deduplication Cache (0 tokens on double-tap)
+        val preferredTier = UsageQuotaManager.resolvePreferredTier(context)
+
+        // 1. Check 45-second Fingerprint Deduplication Cache (0 tokens on double-tap).
+        // Bypass a cached Tier-3 offline result if cloud credits were just unlocked (e.g. grace pack / supporter).
         val fingerprint = cleanInput.hashCode()
         val now = SystemClock.elapsedRealtime()
         lastCacheEntry?.let { cached ->
-            if (cached.fingerprint == fingerprint && (now - cached.timestampMs) <= CACHE_TTL_MS) {
+            val canUpgradeFromOffline = cached.response.usedTier == AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST &&
+                preferredTier != AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST
+            if (cached.fingerprint == fingerprint && (now - cached.timestampMs) <= CACHE_TTL_MS && !canUpgradeFromOffline) {
                 return Result.success(cached.response.copy(fromCache = true))
             }
         }
 
-        val preferredTier = UsageQuotaManager.resolvePreferredTier(context)
         var cascadedFromPrimary = false
 
         // 2. Tier 1: Primary Standard Model (when quota < 80% and Eco Lite is off)
@@ -256,15 +264,16 @@ object AiHelper {
             return Result.failure(Exception("EMPTY_TEXT"))
         }
 
-        val fingerprint = (cleanQuestion.lowercase() + "||" + cleanPage.take(1500)).hashCode()
+        val fingerprint = (cleanQuestion.lowercase() + "||" + cleanPage.hashCode()).hashCode()
+        val preferredTier = UsageQuotaManager.resolvePreferredTier(context)
         val now = SystemClock.elapsedRealtime()
         lastCacheEntry?.let { cached ->
-            if (cached.fingerprint == fingerprint && (now - cached.timestampMs) <= CACHE_TTL_MS) {
+            val canUpgradeFromOffline = cached.response.usedTier == AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST &&
+                preferredTier != AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST
+            if (cached.fingerprint == fingerprint && (now - cached.timestampMs) <= CACHE_TTL_MS && !canUpgradeFromOffline) {
                 return Result.success(cached.response.copy(fromCache = true))
             }
         }
-
-        val preferredTier = UsageQuotaManager.resolvePreferredTier(context)
         var cascadedFromPrimary = false
 
         // Tier 1: Primary Standard Model

@@ -18,6 +18,7 @@ object AppPreferences {
     private const val KEY_MOUSE_SPEED = "mouse_speed"
     private const val KEY_SITE_DESKTOP_PREFIX = "site_desktop_"
     private const val KEY_SITE_ZOOM_PREFIX = "site_zoom_"
+    const val DASHBOARD_ASSET_URL = "file:///android_asset/dashboard.html"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
     const val THEME_DARK = "dark"
@@ -44,15 +45,16 @@ object AppPreferences {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getStringSet(KEY_CUSTOM_AD_RULES, emptySet()) ?: emptySet()
 
-    fun addCustomAdRule(context: Context, rule: String) {
+    fun addCustomAdRule(context: Context, rule: String): Boolean {
         val trimmed = rule.trim().lowercase()
-        if (trimmed.isEmpty()) return
+        if (trimmed.length < 3) return false
         val current = getCustomAdRules(context).toMutableSet()
         current.add(trimmed)
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
             .putStringSet(KEY_CUSTOM_AD_RULES, current)
             .apply()
+        return true
     }
 
     fun removeCustomAdRule(context: Context, rule: String) {
@@ -76,20 +78,32 @@ object AppPreferences {
             .apply()
     }
 
+    fun sanitizeSyncUserId(raw: String): String {
+        return raw.trim().replace(Regex("[^a-zA-Z0-9_-]"), "_").take(64)
+    }
+
     fun getSyncUserId(context: Context): String {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         var userId = prefs.getString(KEY_SYNC_USER_ID, null)
         if (userId.isNullOrBlank()) {
             userId = "tv_user_" + java.util.UUID.randomUUID().toString().take(8)
             prefs.edit().putString(KEY_SYNC_USER_ID, userId).apply()
+        } else {
+            val clean = sanitizeSyncUserId(userId)
+            if (clean != userId && clean.isNotEmpty()) {
+                prefs.edit().putString(KEY_SYNC_USER_ID, clean).apply()
+                return clean
+            }
         }
         return userId
     }
 
     fun setSyncUserId(context: Context, userId: String) {
+        val clean = sanitizeSyncUserId(userId)
+        if (clean.isEmpty()) return
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .edit()
-            .putString(KEY_SYNC_USER_ID, userId.trim())
+            .putString(KEY_SYNC_USER_ID, clean)
             .apply()
     }
 
@@ -106,7 +120,7 @@ object AppPreferences {
 
     fun getHomepage(context: Context): String =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .getString(KEY_HOMEPAGE, DEFAULT_HOMEPAGE) ?: DEFAULT_HOMEPAGE
+            .getString(KEY_HOMEPAGE, DASHBOARD_ASSET_URL) ?: DASHBOARD_ASSET_URL
 
     fun setHomepage(context: Context, url: String) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -116,15 +130,29 @@ object AppPreferences {
             .apply()
     }
 
+    fun clearCustomHomepage(context: Context) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .remove(KEY_HOMEPAGE)
+            .putBoolean(KEY_HOMEPAGE_CUSTOM, false)
+            .apply()
+    }
+
     fun hasCustomHomepage(context: Context): Boolean =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getBoolean(KEY_HOMEPAGE_CUSTOM, false)
 
     fun resolveHomepage(context: Context): String {
         if (hasCustomHomepage(context)) {
-            return getHomepage(context)
+            val custom = getHomepage(context)
+            if (custom.isNotBlank()) return custom
         }
-        return RemoteConfigHelper.getHomepageUrl().ifBlank { DEFAULT_HOMEPAGE }
+        val remoteUrl = RemoteConfigHelper.getHomepageUrl()
+        return if (remoteUrl.isNotBlank() && remoteUrl != DEFAULT_HOMEPAGE) {
+            remoteUrl
+        } else {
+            DASHBOARD_ASSET_URL
+        }
     }
 
     @Volatile

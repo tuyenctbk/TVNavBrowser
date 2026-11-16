@@ -14,13 +14,16 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.tdpham.navitvbrowser.data.db.BrowserDatabase
 import com.tdpham.navitvbrowser.ui.FocusAnimationHelper
 import com.tdpham.navitvbrowser.ui.ThemeHelper
 import com.tdpham.navitvbrowser.util.AppPreferences
 import com.tdpham.navitvbrowser.util.EmbeddedAdBlocker
 import com.tdpham.navitvbrowser.util.FirebaseInitializer
+import com.tdpham.navitvbrowser.util.UrlUtils
 import com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -221,10 +224,11 @@ class SettingsActivity : ComponentActivity() {
         val addRuleAction = {
             val rule = etCustomAdRule.text.toString().trim()
             if (rule.isNotEmpty()) {
-                AppPreferences.addCustomAdRule(this, rule)
-                etCustomAdRule.setText("")
-                Toast.makeText(this, getString(R.string.settings_adblock_rule_added, rule), Toast.LENGTH_SHORT).show()
-                refreshCustomRules()
+                if (AppPreferences.addCustomAdRule(this, rule)) {
+                    etCustomAdRule.setText("")
+                    Toast.makeText(this, getString(R.string.settings_adblock_rule_added, rule.lowercase()), Toast.LENGTH_SHORT).show()
+                    refreshCustomRules()
+                }
             }
         }
         btnAddAdRule.setOnClickListener { addRuleAction() }
@@ -243,8 +247,10 @@ class SettingsActivity : ComponentActivity() {
         etSyncUserId.setText(AppPreferences.getSyncUserId(this))
         btnSaveSyncId.setOnClickListener {
             val id = etSyncUserId.text.toString().trim()
-            if (id.isNotEmpty()) {
-                AppPreferences.setSyncUserId(this, id)
+            val cleanId = AppPreferences.sanitizeSyncUserId(id)
+            if (cleanId.isNotEmpty()) {
+                AppPreferences.setSyncUserId(this, cleanId)
+                etSyncUserId.setText(cleanId)
                 com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
                 Toast.makeText(this, R.string.sync_user_id_saved, Toast.LENGTH_SHORT).show()
             }
@@ -266,7 +272,11 @@ class SettingsActivity : ComponentActivity() {
             }
         }
 
-        etHomepage.setText(AppPreferences.getHomepage(this))
+        if (AppPreferences.hasCustomHomepage(this)) {
+            etHomepage.setText(AppPreferences.getHomepage(this))
+        } else {
+            etHomepage.setText("")
+        }
         switchBlockEmbeddedAds.isChecked = AppPreferences.isBlockEmbeddedAdsEnabled(this)
         switchBlockEmbeddedAds.setOnCheckedChangeListener { _, isChecked ->
             AppPreferences.setBlockEmbeddedAdsEnabled(this, isChecked)
@@ -307,21 +317,23 @@ class SettingsActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch {
-            com.tdpham.navitvbrowser.util.UsageQuotaManager.observeQuotaSnapshot(this@SettingsActivity)
-                .collect { snap ->
-                    if (switchEcoLiteAi.isChecked != snap.ecoLiteMode) {
-                        switchEcoLiteAi.isChecked = snap.ecoLiteMode
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                com.tdpham.navitvbrowser.util.UsageQuotaManager.observeQuotaSnapshot(this@SettingsActivity)
+                    .collect { snap ->
+                        if (switchEcoLiteAi.isChecked != snap.ecoLiteMode) {
+                            switchEcoLiteAi.isChecked = snap.ecoLiteMode
+                        }
+                        val (hours, mins) = com.tdpham.navitvbrowser.util.UsageQuotaManager.getTimeUntilReset()
+                        switchEcoLiteAi.text = getString(
+                            R.string.settings_eco_lite_ai_live_format,
+                            getString(R.string.settings_eco_lite_ai),
+                            snap.remainingCredits,
+                            snap.totalAllowance,
+                            hours,
+                            mins
+                        )
                     }
-                    val (hours, mins) = com.tdpham.navitvbrowser.util.UsageQuotaManager.getTimeUntilReset()
-                    switchEcoLiteAi.text = getString(
-                        R.string.settings_eco_lite_ai_live_format,
-                        getString(R.string.settings_eco_lite_ai),
-                        snap.remainingCredits,
-                        snap.totalAllowance,
-                        hours,
-                        mins
-                    )
-                }
+            }
         }
 
         FocusAnimationHelper.applyAll(
@@ -336,15 +348,26 @@ class SettingsActivity : ComponentActivity() {
         val saveHomepageAction = {
             val url = etHomepage.text.toString().trim()
             if (url.isEmpty()) {
-                Toast.makeText(this, R.string.settings_homepage_empty, Toast.LENGTH_SHORT).show()
-            } else {
-                val normalized = if (url.startsWith("http://") || url.startsWith("https://")) {
-                    url
+                if (AppPreferences.hasCustomHomepage(this)) {
+                    AppPreferences.clearCustomHomepage(this)
+                    Toast.makeText(this, R.string.nav_returning_home, Toast.LENGTH_SHORT).show()
                 } else {
-                    "https://$url"
+                    Toast.makeText(this, R.string.settings_homepage_empty, Toast.LENGTH_SHORT).show()
                 }
-                AppPreferences.setHomepage(this, normalized)
-                FirebaseInitializer.logEvent("settings_homepage_saved", mapOf("host" to com.tdpham.navitvbrowser.util.UrlUtils.hostOf(normalized)))
+            } else {
+                val normalized = when {
+                    url.equals(AppPreferences.DASHBOARD_ASSET_URL, ignoreCase = true) ||
+                        url.equals("dashboard", ignoreCase = true) -> AppPreferences.DASHBOARD_ASSET_URL
+                    else -> UrlUtils.resolveInput(url)
+                }
+                if (normalized == AppPreferences.DASHBOARD_ASSET_URL) {
+                    AppPreferences.clearCustomHomepage(this)
+                    etHomepage.setText("")
+                } else {
+                    AppPreferences.setHomepage(this, normalized)
+                    etHomepage.setText(normalized)
+                }
+                FirebaseInitializer.logEvent("settings_homepage_saved", mapOf("host" to UrlUtils.hostOf(normalized)))
                 Toast.makeText(this, R.string.settings_homepage_saved, Toast.LENGTH_SHORT).show()
             }
         }
@@ -402,9 +425,13 @@ class SettingsActivity : ComponentActivity() {
                 .setPositiveButton(R.string.settings_clear_cache) { _, _ ->
                     lifecycleScope.launch {
                         try {
-                            com.tdpham.navitvbrowser.util.WebViewCacheManager.clearEntireCache(applicationContext)
-                            FirebaseInitializer.logEvent("settings_cache_cleared")
-                            Toast.makeText(this@SettingsActivity, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()
+                            val cleared = com.tdpham.navitvbrowser.util.WebViewCacheManager.clearEntireCache(applicationContext)
+                            if (cleared) {
+                                FirebaseInitializer.logEvent("settings_cache_cleared")
+                                Toast.makeText(this@SettingsActivity, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this@SettingsActivity, R.string.settings_cache_failed, Toast.LENGTH_SHORT).show()
+                            }
                         } catch (_: Exception) {
                             Toast.makeText(this@SettingsActivity, R.string.settings_cache_failed, Toast.LENGTH_SHORT).show()
                         }

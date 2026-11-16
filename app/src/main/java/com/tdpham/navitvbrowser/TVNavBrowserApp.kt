@@ -15,9 +15,13 @@ class TVNavBrowserApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        FirebaseApp.initializeApp(this)
-        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-        Firebase.analytics.logEvent("app_open", null)
+        try {
+            FirebaseApp.initializeApp(this)
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            Firebase.analytics.logEvent("app_open", null)
+        } catch (_: Exception) {
+            // Safe fallback on AOSP / de-Googled Android TV boxes without GMS
+        }
 
         // Offload background maintenance to IO thread to prevent cold start ANRs
         CoroutineScope(Dispatchers.IO).launch {

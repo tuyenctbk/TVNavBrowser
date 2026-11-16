@@ -136,6 +136,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var customViewContainer: FrameLayout
 
     private var isGameModeActive = false
+    private var mouseModeBeforeGameMode = true
+    private var activeJoystickGameKey: Triple<String, String, Int>? = null
+    private var isVoiceListening = false
 
     // Dedicated AI Summary Overlay Views
     private lateinit var summaryOverlayContainer: FrameLayout
@@ -166,6 +169,7 @@ class MainActivity : ComponentActivity() {
 
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
+    private var mainWebChromeClient: WebChromeClient? = null
 
     private var realBookmarks: List<BookmarkEntity> = emptyList()
     private lateinit var virtualCursor: VirtualCursorController
@@ -178,7 +182,13 @@ class MainActivity : ComponentActivity() {
     private var isDarkModeActive = false
     private var currentAppliedTheme: String = ""
     private val autoFullscreenRunnable = Runnable {
-        if (!isFinishing && !isDestroyed && !isFullscreenMode && !urlInput.hasFocus() && summaryOverlayContainer.visibility != View.VISIBLE) {
+        if (!isFinishing && !isDestroyed && !isFullscreenMode &&
+            !urlInput.hasFocus() &&
+            !isViewInToolbarOrBookmarkBar(currentFocus) &&
+            summaryOverlayContainer.visibility != View.VISIBLE &&
+            voiceOverlay.visibility != View.VISIBLE &&
+            customView == null
+        ) {
             toggleFullscreen(enabled = true)
         }
     }
@@ -322,11 +332,13 @@ class MainActivity : ComponentActivity() {
         btnToggleEcoLite.setOnClickListener {
             val nextEco = !com.tdpham.navitvbrowser.util.UsageQuotaManager.isEcoLiteMode(this)
             com.tdpham.navitvbrowser.util.UsageQuotaManager.setEcoLiteMode(this, nextEco)
+            AiHelper.clearCache()
             refreshAiQuotaOverlayUi(lastSummaryTier)
         }
 
         btnClaimGraceCredits.setOnClickListener {
             if (com.tdpham.navitvbrowser.util.UsageQuotaManager.claimDailyGraceCredits(this)) {
+                AiHelper.clearCache()
                 Toast.makeText(this, R.string.ai_grace_claimed_toast, Toast.LENGTH_SHORT).show()
                 refreshAiQuotaOverlayUi(lastSummaryTier)
             }
@@ -424,9 +436,9 @@ class MainActivity : ComponentActivity() {
         setupBookmarkBarAutoHide()
         com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
 
-        // Init Dark Mode from preferences
+        // Init Dark Mode from preferences (update UI state without clobbering asset CSS yet)
         isDarkModeActive = AppPreferences.isForceDarkModeEnabled(this)
-        applyDarkMode(isDarkModeActive)
+        applyDarkMode(isDarkModeActive, showToast = false)
 
         val recovering = recoverToHomepage
         recoverToHomepage = false
@@ -464,7 +476,11 @@ class MainActivity : ComponentActivity() {
 
         if (AppPreferences.isOnboardingComplete(this)) {
             EngagementHelper.recordLaunch(this)
-            SmartPromptHelper.maybeShowNextPrompt(this)
+            SmartPromptHelper.maybeShowNextPrompt(this) {
+                com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
+                    updateDonationUi()
+                }
+            }
         }
 
         applyInterfaceTheme()
@@ -505,6 +521,12 @@ class MainActivity : ComponentActivity() {
                                 child.id == R.id.btnDarkMode && isDarkModeActive -> {
                                     child.imageTintList = ColorStateList.valueOf(accentColor)
                                 }
+                                child.id == R.id.btnDesktopMode && isCurrentPageDesktopMode() -> {
+                                    child.imageTintList = ColorStateList.valueOf(accentColor)
+                                }
+                                child.id == R.id.btnBookmark && isCurrentPageBookmarked() -> {
+                                    child.imageTintList = ColorStateList.valueOf(accentColor)
+                                }
                                 child.id == R.id.btnDonate -> {
                                     val donateTint = if (com.tdpham.navitvbrowser.util.DonationManager.isSupporter(this@MainActivity)) {
                                         Color.parseColor("#4CAF50")
@@ -539,6 +561,17 @@ class MainActivity : ComponentActivity() {
         tvSummaryTitle.setTextColor(accentColor)
         tvAiQuotaStatus.setTextColor(ThemeHelper.getTextSecondaryColor(this))
         tvSummaryContent.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        etAskPageQuestion.setBackgroundResource(ThemeHelper.getUrlBarBackground(this))
+        etAskPageQuestion.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        etAskPageQuestion.setHintTextColor(ThemeHelper.getTextSecondaryColor(this))
+        listOf(btnQuickAskTakeaways, btnQuickAskFacts, btnQuickAskActions, btnSendAskPage).forEach { btn ->
+            btn.setBackgroundResource(btnBg)
+            btn.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        }
+        voiceOverlay.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
+        tvVoiceStatus.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+        gameModeOverlay.setBackgroundResource(if (isLight) R.drawable.bg_input_hint_light else R.drawable.bg_input_hint)
+        tvGameModeStatus.setTextColor(accentColor)
         btnClaimGraceCredits.setBackgroundResource(btnBg)
         btnClaimGraceCredits.setTextColor(accentColor)
         btnToggleEcoLite.setBackgroundResource(btnBg)
@@ -653,6 +686,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         com.tdpham.navitvbrowser.util.UsageQuotaManager.stopRealtimeSync()
+        handler.removeCallbacksAndMessages(null)
+        if (::tvInputHint.isInitialized) {
+            tvInputHint.removeCallbacks(hideInputHintRunnable)
+        }
+        autocompleteJob?.cancel()
+        if (::virtualCursor.isInitialized) {
+            virtualCursor.onDestroy()
+        }
         ttsHelper?.shutdown()
         ttsHelper = null
         try {
@@ -673,13 +714,14 @@ class MainActivity : ComponentActivity() {
     }
 
     @Suppress("RestrictedApi")
+    @SuppressLint("GestureBackNavigation")
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         resetInactivityTimer()
 
         // 1. Dedicated Game Mode handling for TV gamers
         if (isGameModeActive) {
             if (event.keyCode == KeyEvent.KEYCODE_BACK) {
-                if (event.action == KeyEvent.ACTION_UP) {
+                if (event.action == KeyEvent.ACTION_UP && !event.isCanceled) {
                     toggleGameMode(false)
                 }
                 return true
@@ -692,7 +734,8 @@ class MainActivity : ComponentActivity() {
         if (event.action == KeyEvent.ACTION_DOWN) {
             when (event.keyCode) {
                 KeyEvent.KEYCODE_DPAD_UP -> {
-                    if (isFullscreenMode && (webView.scrollY <= 10 || !virtualCursor.isEnabled)) {
+                    val cursorAtTopEdge = !virtualCursor.isEnabled || ivCursor.y <= 16f
+                    if (isFullscreenMode && cursorAtTopEdge) {
                         toggleFullscreen(false)
                         urlInput.requestFocus()
                         return true
@@ -769,7 +812,7 @@ class MainActivity : ComponentActivity() {
         return true
     }
 
-    @SuppressLint("MissingSuperCall")
+    @SuppressLint("MissingSuperCall", "GestureBackNavigation")
     override fun onKeyLongPress(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             val homepage = resolveHomepage()
@@ -795,17 +838,37 @@ class MainActivity : ComponentActivity() {
             val x = event.getAxisValue(MotionEvent.AXIS_X)
             val y = event.getAxisValue(MotionEvent.AXIS_Y)
             if (isGameModeActive) {
-                // Analog stick in Game Mode maps to Arrow keys for canvas games
+                // Analog stick in Game Mode maps to Arrow keys (emitting keydown on press/switch and keyup on release)
                 val absX = Math.abs(x)
                 val absY = Math.abs(y)
                 if (absX > 0.35f || absY > 0.35f) {
-                    val (code, key, keyCodeNum) = if (absX > absY) {
+                    val nextKey = if (absX > absY) {
                         if (x > 0) Triple("ArrowRight", "ArrowRight", 39) else Triple("ArrowLeft", "ArrowLeft", 37)
                     } else {
                         if (y > 0) Triple("ArrowDown", "ArrowDown", 40) else Triple("ArrowUp", "ArrowUp", 38)
                     }
-                    val js = "if (window.__tvnavSendGameKey) window.__tvnavSendGameKey('$code', '$key', $keyCodeNum, true);"
-                    webView.evaluateJavascript(js, null)
+                    if (activeJoystickGameKey != nextKey) {
+                        activeJoystickGameKey?.let { prev ->
+                            webView.evaluateJavascript(
+                                "if (window.__tvnavSendGameKey) window.__tvnavSendGameKey('${prev.first}', '${prev.second}', ${prev.third}, false);",
+                                null
+                            )
+                        }
+                        activeJoystickGameKey = nextKey
+                        webView.evaluateJavascript(
+                            "if (window.__tvnavSendGameKey) window.__tvnavSendGameKey('${nextKey.first}', '${nextKey.second}', ${nextKey.third}, true);",
+                            null
+                        )
+                    }
+                    return true
+                } else {
+                    activeJoystickGameKey?.let { prev ->
+                        activeJoystickGameKey = null
+                        webView.evaluateJavascript(
+                            "if (window.__tvnavSendGameKey) window.__tvnavSendGameKey('${prev.first}', '${prev.second}', ${prev.third}, false);",
+                            null
+                        )
+                    }
                     return true
                 }
             } else if (virtualCursor.isEnabled) {
@@ -836,8 +899,9 @@ class MainActivity : ComponentActivity() {
         settings.domStorageEnabled = true
         @Suppress("DEPRECATION")
         settings.databaseEnabled = true
-        settings.allowFileAccess = true
-        settings.allowContentAccess = true
+        // Bundled file:///android_asset/ stays accessible with allowFileAccess = false, while local filesystem file:// is hardened
+        settings.allowFileAccess = false
+        settings.allowContentAccess = false
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.useWideViewPort = true
@@ -859,9 +923,14 @@ class MainActivity : ComponentActivity() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val uri = request?.url ?: return false
                 val scheme = uri.scheme?.lowercase() ?: return false
-                if (scheme != "http" && scheme != "https" && scheme != "file" && scheme != "about") {
+                val fullUrl = uri.toString()
+                if (scheme == "file") {
+                    // Only permit bundled app assets; block arbitrary local filesystem file:// navigation
+                    return !fullUrl.startsWith(TRUSTED_ASSET_PREFIX)
+                }
+                if (scheme != "http" && scheme != "https" && scheme != "about") {
                     try {
-                        val intent = Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME)
+                        val intent = Intent.parseUri(fullUrl, Intent.URI_INTENT_SCHEME)
                         if (intent != null) {
                             intent.addCategory(Intent.CATEGORY_BROWSABLE)
                             intent.component = null
@@ -909,15 +978,18 @@ class MainActivity : ComponentActivity() {
                 lastExtractedPageText = ""
                 virtualCursor.setHoveringInteractive(false)
 
-                val host = UrlUtils.hostOf(url.orEmpty())
-                if (host.isNotBlank() && !isDashboardOrAssetUrl(url.orEmpty())) {
+                val urlStr = url.orEmpty()
+                val host = UrlUtils.hostOf(urlStr)
+                if (host.isNotBlank() && !isDashboardOrAssetUrl(urlStr)) {
                     val savedZoom = AppPreferences.getSiteTextZoom(this@MainActivity, host)
                     view?.settings?.textZoom = savedZoom
                     val wantDesktop = AppPreferences.getSiteDesktopMode(this@MainActivity, host)
                     applySiteDesktopSetting(wantDesktop)
                 } else {
                     view?.settings?.textZoom = 100
+                    applySiteDesktopSetting(true)
                 }
+                updateBookmarkButtonState(urlStr)
                 
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
@@ -945,8 +1017,11 @@ class MainActivity : ComponentActivity() {
                 progressBar.isVisible = false
                 injectFocusStyle(view)
                 injectGameModeBridge(view)
-                if (AppPreferences.isForceDarkModeEnabled(this@MainActivity)) {
+                val pageUrlStr = url.orEmpty()
+                if (AppPreferences.isForceDarkModeEnabled(this@MainActivity) && !isDashboardOrAssetUrl(pageUrlStr)) {
                     injectDarkMode(view)
+                } else {
+                    view?.evaluateJavascript(darkModeScript(false), null)
                 }
                 val isLight = ThemeHelper.isLightTheme(this@MainActivity)
                 view?.evaluateJavascript("if (typeof applyTheme === 'function') { applyTheme($isLight); }", null)
@@ -959,8 +1034,9 @@ class MainActivity : ComponentActivity() {
 
                 virtualCursor.showIfEnabled()
                 updateGameModeAvailability(url)
-                if (!UrlUtils.isBrowsableUrl(url.orEmpty())) return
-                if (isDashboardOrAssetUrl(url.orEmpty())) {
+                updateBookmarkButtonState(pageUrlStr)
+                if (!UrlUtils.isBrowsableUrl(pageUrlStr)) return
+                if (isDashboardOrAssetUrl(pageUrlStr)) {
                     urlInput.setText("")
                 } else {
                     urlInput.setText(url)
@@ -981,7 +1057,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        webView.webChromeClient = object : WebChromeClient() {
+        val chromeClient = object : WebChromeClient() {
             override fun onCreateWindow(
                 view: WebView?,
                 isDialog: Boolean,
@@ -989,15 +1065,51 @@ class MainActivity : ComponentActivity() {
                 resultMsg: Message?
             ): Boolean {
                 if (resultMsg == null) return false
+                // Block non-user-initiated popups when AdBlocker is enabled
+                if (!isUserGesture && AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
+                    return false
+                }
                 val transport = resultMsg.obj as? WebView.WebViewTransport ?: return false
                 val tempWebView = WebView(this@MainActivity)
+                var destroyed = false
+                fun cleanupTempWebView() {
+                    if (destroyed) return
+                    destroyed = true
+                    tempWebView.stopLoading()
+                    tempWebView.webViewClient = WebViewClient()
+                    tempWebView.destroy()
+                }
+                // Guarantee cleanup even if the popup fails to trigger a top-level redirect
+                handler.postDelayed({ cleanupTempWebView() }, 5000L)
+
                 tempWebView.webViewClient = object : WebViewClient() {
-                    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                        val targetUrl = request?.url?.toString()
-                        if (!targetUrl.isNullOrBlank()) {
-                            webView.loadUrl(targetUrl)
+                    override fun shouldOverrideUrlLoading(popupView: WebView?, request: WebResourceRequest?): Boolean {
+                        val targetUrl = request?.url?.toString().orEmpty()
+                        val isHttpOrHttps = targetUrl.startsWith("http://", ignoreCase = true) ||
+                            targetUrl.startsWith("https://", ignoreCase = true)
+                        if (isHttpOrHttps) {
+                            val blockedByAdBlock = AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity) &&
+                                EmbeddedAdBlocker.shouldBlockUrl(targetUrl)
+                            if (!blockedByAdBlock) {
+                                webView.loadUrl(targetUrl)
+                            }
                         }
+                        cleanupTempWebView()
                         return true
+                    }
+
+                    override fun onPageStarted(popupView: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+                        val targetUrl = url.orEmpty()
+                        if (targetUrl.isNotBlank() && targetUrl != "about:blank") {
+                            val isHttpOrHttps = targetUrl.startsWith("http://", ignoreCase = true) ||
+                                targetUrl.startsWith("https://", ignoreCase = true)
+                            if (isHttpOrHttps &&
+                                !(AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity) && EmbeddedAdBlocker.shouldBlockUrl(targetUrl))
+                            ) {
+                                webView.loadUrl(targetUrl)
+                            }
+                            cleanupTempWebView()
+                        }
                     }
                 }
                 transport.webView = tempWebView
@@ -1044,14 +1156,21 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        mainWebChromeClient = chromeClient
+        webView.webChromeClient = chromeClient
 
         webView.setDownloadListener { url, userAgent, contentDisposition, mimetype, _ ->
             if (url.isNullOrBlank()) return@setDownloadListener
+            val isHttp = url.startsWith("http://", ignoreCase = true) || url.startsWith("https://", ignoreCase = true)
+            if (!isHttp) {
+                Toast.makeText(this@MainActivity, getString(R.string.error_generic_app, url.take(32)), Toast.LENGTH_SHORT).show()
+                return@setDownloadListener
+            }
             try {
                 val fileName = android.webkit.URLUtil.guessFileName(url, contentDisposition, mimetype)
                 val request = android.app.DownloadManager.Request(android.net.Uri.parse(url)).apply {
-                    setMimeType(mimetype)
-                    addRequestHeader("User-Agent", userAgent)
+                    if (!mimetype.isNullOrBlank()) setMimeType(mimetype)
+                    if (!userAgent.isNullOrBlank()) addRequestHeader("User-Agent", userAgent)
                     android.webkit.CookieManager.getInstance().getCookie(url)?.let { cookie ->
                         addRequestHeader("cookie", cookie)
                     }
@@ -1066,7 +1185,9 @@ class MainActivity : ComponentActivity() {
             } catch (_: Exception) {
                 try {
                     startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)))
-                } catch (_: Exception) {}
+                } catch (e: Exception) {
+                    Toast.makeText(this@MainActivity, getString(R.string.error_generic_app, e.message ?: "Download failed"), Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -1116,9 +1237,9 @@ class MainActivity : ComponentActivity() {
             true
         }
         btnBookmark.setOnClickListener {
-            val title = webView.title ?: ""
-            val url = webView.url ?: urlInput.text.toString()
-            if (!UrlUtils.isBrowsableUrl(url)) return@setOnClickListener
+            val url = (webView.url ?: urlInput.text.toString()).trim()
+            if (!UrlUtils.isBrowsableUrl(url) || isDashboardOrAssetUrl(url)) return@setOnClickListener
+            val title = webView.title.orEmpty().ifBlank { url }
             lifecycleScope.launch {
                 val added = withContext(Dispatchers.IO) {
                     bookmarkRepo.addBookmark(title = title, url = url)
@@ -1126,6 +1247,7 @@ class MainActivity : ComponentActivity() {
                 val message = if (added) R.string.bookmark_saved else R.string.bookmark_exists
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
                 if (added) {
+                    updateBookmarkButtonState(url)
                     BookmarkSyncManager.pushBookmark(this@MainActivity, BookmarkEntity(title = title, url = url))
                     EngagementHelper.recordBookmarkAdded(this@MainActivity)
                     handleCoreOperationCompleted()
@@ -1159,8 +1281,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun saveCurrentPageForOfflineReading() {
-        val url = webView.url ?: urlInput.text.toString()
-        if (!UrlUtils.isBrowsableUrl(url)) return
+        val url = (webView.url ?: urlInput.text.toString()).trim()
+        if (!UrlUtils.isBrowsableUrl(url) || isDashboardOrAssetUrl(url)) return
 
         webView.evaluateJavascript(
             "(function() { return JSON.stringify({title: document.title || '', text: document.body ? document.body.innerText : ''}); })();"
@@ -1324,20 +1446,41 @@ class MainActivity : ComponentActivity() {
         showBookmarkBar()
     }
 
+    private fun isCurrentPageDesktopMode(): Boolean {
+        return ::webView.isInitialized && webView.settings.userAgentString?.contains("Windows NT") == true
+    }
+
+    private fun isCurrentPageBookmarked(urlOverride: String? = null): Boolean {
+        val activeUrl = (urlOverride ?: if (::webView.isInitialized) webView.url else null)?.trim().orEmpty()
+        if (activeUrl.isEmpty() || isDashboardOrAssetUrl(activeUrl)) return false
+        return realBookmarks.any { it.url == activeUrl }
+    }
+
+    private fun updateBookmarkButtonState(urlOverride: String? = null) {
+        if (!::btnBookmark.isInitialized) return
+        val tint = if (isCurrentPageBookmarked(urlOverride)) {
+            ThemeHelper.getAccentColor(this)
+        } else {
+            ThemeHelper.getTextPrimaryColor(this)
+        }
+        btnBookmark.imageTintList = ColorStateList.valueOf(tint)
+    }
+
     private fun applySiteDesktopSetting(wantDesktop: Boolean) {
         val settings = webView.settings
         val currentlyDesktop = settings.userAgentString?.contains("Windows NT") == true
+        btnDesktopMode.imageTintList = ColorStateList.valueOf(
+            if (wantDesktop) ThemeHelper.getAccentColor(this) else ThemeHelper.getTextPrimaryColor(this)
+        )
         if (currentlyDesktop == wantDesktop) return
         if (wantDesktop) {
             settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             settings.useWideViewPort = true
             settings.loadWithOverviewMode = true
-            btnDesktopMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
         } else {
             settings.userAgentString = null
             settings.useWideViewPort = false
             settings.loadWithOverviewMode = false
-            btnDesktopMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
         }
     }
 
@@ -1365,6 +1508,7 @@ class MainActivity : ComponentActivity() {
         val nextZoom = when {
             currentZoom < 120 -> 125
             currentZoom < 145 -> 150
+            currentZoom < 170 -> 175
             else -> 100
         }
         webView.settings.textZoom = nextZoom
@@ -1501,6 +1645,7 @@ class MainActivity : ComponentActivity() {
         handler.removeCallbacks(hideGameModeHudRunnable)
 
         if (target) {
+            mouseModeBeforeGameMode = virtualCursor.isEnabled
             virtualCursor.setEnabled(false)
             updateMouseModeButtonUi(false)
             btnGameMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
@@ -1512,10 +1657,11 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, R.string.game_mode_enabled, Toast.LENGTH_SHORT).show()
             FirebaseInitializer.logEvent("game_mode_enabled", null)
         } else {
+            activeJoystickGameKey = null
             btnGameMode.imageTintList = ColorStateList.valueOf(ThemeHelper.getTextPrimaryColor(this))
             gameModeOverlay.visibility = View.GONE
-            virtualCursor.setEnabled(true)
-            updateMouseModeButtonUi(true)
+            virtualCursor.setEnabled(mouseModeBeforeGameMode)
+            updateMouseModeButtonUi(mouseModeBeforeGameMode)
             Toast.makeText(this, R.string.game_mode_disabled, Toast.LENGTH_SHORT).show()
             FirebaseInitializer.logEvent("game_mode_disabled", null)
         }
@@ -1532,8 +1678,19 @@ class MainActivity : ComponentActivity() {
             (function() {
                 if (window.__tvnavGameBridgeReady) return;
                 window.__tvnavGameBridgeReady = true;
+                window.__tvnavLastNativeKey = {};
+                ['keydown', 'keyup'].forEach(function(evtType) {
+                    window.addEventListener(evtType, function(e) {
+                        if (e.isTrusted && !e.__tvnavSynthetic) {
+                            window.__tvnavLastNativeKey[evtType + '_' + e.keyCode] = Date.now();
+                        }
+                    }, true);
+                });
                 window.__tvnavSendGameKey = function(code, key, keyCode, isDown) {
                     var eventType = isDown ? 'keydown' : 'keyup';
+                    var now = Date.now();
+                    var lastNative = window.__tvnavLastNativeKey[eventType + '_' + keyCode] || 0;
+                    if (now - lastNative < 35) return;
                     var ev = new KeyboardEvent(eventType, {
                         key: key,
                         code: code,
@@ -1542,8 +1699,10 @@ class MainActivity : ComponentActivity() {
                         bubbles: true,
                         cancelable: true
                     });
-                    (document.activeElement || document.body || window).dispatchEvent(ev);
-                    window.dispatchEvent(ev);
+                    ev.__tvnavSynthetic = true;
+                    var active = document.activeElement;
+                    var target = (active && active !== document.documentElement) ? active : (document.body || window);
+                    target.dispatchEvent(ev);
                 };
             })();
         """.trimIndent()
@@ -1621,13 +1780,14 @@ class MainActivity : ComponentActivity() {
                     return
                 }
                 if (voiceOverlay.visibility == View.VISIBLE) {
-                    speechRecognizer?.stopListening()
+                    isVoiceListening = false
+                    speechRecognizer?.cancel()
                     voiceOverlay.visibility = View.GONE
                     webView.requestFocus()
                     return
                 }
                 if (customView != null) {
-                    webView.webChromeClient?.onHideCustomView()
+                    mainWebChromeClient?.onHideCustomView()
                     return
                 }
                 if (isFullscreenMode) {
@@ -1636,18 +1796,18 @@ class MainActivity : ComponentActivity() {
                     btnFullscreen.requestFocus()
                     return
                 }
-                if (isWebViewInputFocused || isKeyboardVisible()) {
-                    webView.evaluateJavascript("document.activeElement.blur();", null)
-                    isWebViewInputFocused = false
-                    val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-                    imm.hideSoftInputFromWindow(webView.windowToken, 0)
-                    webView.requestFocus()
-                    return
-                }
                 if (urlInput.hasFocus()) {
                     val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                     imm.hideSoftInputFromWindow(urlInput.windowToken, 0)
                     urlInput.clearFocus()
+                    webView.requestFocus()
+                    return
+                }
+                if (isWebViewInputFocused || isKeyboardVisible()) {
+                    webView.evaluateJavascript("if (document.activeElement && document.activeElement.blur) document.activeElement.blur();", null)
+                    isWebViewInputFocused = false
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    imm.hideSoftInputFromWindow(webView.windowToken, 0)
                     webView.requestFocus()
                     return
                 }
@@ -1686,22 +1846,15 @@ class MainActivity : ComponentActivity() {
         val url = intent.getStringExtra(EXTRA_URL)?.trim().orEmpty()
         if (!UrlUtils.isBrowsableUrl(url)) return false
         webView.loadUrl(url)
-        urlInput.setText(url)
+        if (isDashboardOrAssetUrl(url)) {
+            urlInput.setText("")
+        } else {
+            urlInput.setText(url)
+        }
         return true
     }
 
-    private fun resolveHomepage(): String {
-        if (AppPreferences.hasCustomHomepage(this)) {
-            val custom = AppPreferences.getHomepage(this)
-            if (custom.isNotBlank()) return custom
-        }
-        val remoteUrl = RemoteConfigHelper.getHomepageUrl()
-        return if (remoteUrl.isNotBlank() && remoteUrl != "https://www.google.com") {
-            remoteUrl
-        } else {
-            "file:///android_asset/dashboard.html"
-        }
-    }
+    private fun resolveHomepage(): String = AppPreferences.resolveHomepage(this)
 
     private fun loadTypedUrl(input: String) {
         if (input.isBlank()) return
@@ -1737,11 +1890,13 @@ class MainActivity : ComponentActivity() {
             }
         """.trimIndent().replace("\n", " ")
         val js = "(function() {" +
+            "var parent = document.head || document.documentElement;" +
+            "if (!parent) return;" +
             "var style = document.getElementById('tvnav-focus-style');" +
             "if (!style) {" +
             "style = document.createElement('style');" +
             "style.id = 'tvnav-focus-style';" +
-            "document.head.appendChild(style);" +
+            "parent.appendChild(style);" +
             "}" +
             "style.innerHTML = '$css';" +
             "})();"
@@ -1790,6 +1945,15 @@ class MainActivity : ComponentActivity() {
         val canGoForward = webView.canGoForward()
         btnForward.isEnabled = canGoForward
         btnForward.alpha = if (canGoForward) 1.0f else 0.4f
+
+        // Skip disabled Back/Forward buttons cleanly during TV remote D-pad horizontal navigation
+        btnBack.nextFocusRightId = if (canGoForward) R.id.btnForward else R.id.btnRefresh
+        btnForward.nextFocusLeftId = if (canGoBack) R.id.btnBack else R.id.btnRefresh
+        btnRefresh.nextFocusLeftId = when {
+            canGoForward -> R.id.btnForward
+            canGoBack -> R.id.btnBack
+            else -> View.NO_ID
+        }
     }
 
     private fun setupBookmarkBarFlow() {
@@ -1797,6 +1961,7 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 bookmarkRepo.getAllBookmarks().collectLatest { list ->
                     realBookmarks = list
+                    updateBookmarkButtonState()
                     if (urlInput.text.isNullOrBlank() || !urlInput.hasFocus()) {
                         populateBookmarkBar(list)
                     }
@@ -1839,8 +2004,11 @@ class MainActivity : ComponentActivity() {
 
             FocusAnimationHelper.apply(chip)
             chip.setOnClickListener {
-                webView.loadUrl(bookmark.url)
+                val targetUrl = bookmark.url
+                webView.loadUrl(targetUrl)
+                urlInput.setText(if (isDashboardOrAssetUrl(targetUrl)) "" else targetUrl)
                 webView.requestFocus()
+                scheduleHideBookmarkBar(300L)
             }
             bookmarkBarContainer.addView(chip)
         }
@@ -1883,6 +2051,9 @@ class MainActivity : ComponentActivity() {
                 if (isViewInToolbarOrBookmarkBar(newFocus)) {
                     showBookmarkBar()
                 } else {
+                    if (bookmarkBarContainer.childCount > 0 && realBookmarks.isNotEmpty() && urlInput.text.toString() != webView.url) {
+                        populateBookmarkBar(realBookmarks)
+                    }
                     scheduleHideBookmarkBar()
                 }
             } else {
@@ -1894,7 +2065,10 @@ class MainActivity : ComponentActivity() {
     private fun isViewInToolbarOrBookmarkBar(view: View?): Boolean {
         var current: View? = view
         while (current != null) {
-            if (current.id == R.id.toolbarContainer || current.id == R.id.bookmarkBar) {
+            if (current.id == R.id.toolbarContainer ||
+                current.id == R.id.bookmarkBar ||
+                current.id == R.id.donationBanner
+            ) {
                 return true
             }
             val parent = current.parent
@@ -1903,7 +2077,7 @@ class MainActivity : ComponentActivity() {
         return false
     }
 
-    private fun applyDarkMode(enabled: Boolean) {
+    private fun applyDarkMode(enabled: Boolean, showToast: Boolean = true) {
         isDarkModeActive = enabled
         AppPreferences.setForceDarkModeEnabled(this, enabled)
         btnDarkMode.imageTintList = ColorStateList.valueOf(
@@ -1921,8 +2095,16 @@ class MainActivity : ComponentActivity() {
             } catch (_: Exception) {}
         }
 
-        // Comprehensive TV-friendly Dark Mode CSS injection / removal
-        webView.evaluateJavascript(darkModeScript(enabled), null)
+        // Only inject/remove CSS dark mode on external web pages (preserve local dashboard & game assets)
+        val currentUrl = webView.url.orEmpty()
+        if (!isDashboardOrAssetUrl(currentUrl)) {
+            webView.evaluateJavascript(darkModeScript(enabled), null)
+        } else {
+            webView.evaluateJavascript(darkModeScript(false), null)
+        }
+        if (showToast) {
+            showModeNotice(getString(if (enabled) R.string.dark_mode_active else R.string.dark_mode_inactive))
+        }
     }
 
     private fun startVoiceControl() {
@@ -1950,6 +2132,7 @@ class MainActivity : ComponentActivity() {
             return
         }
 
+        isVoiceListening = true
         voiceOverlay.visibility = View.VISIBLE
         tvVoiceStatus.text = getString(R.string.voice_search_prompt)
 
@@ -1967,7 +2150,10 @@ class MainActivity : ComponentActivity() {
                         tvVoiceStatus.text = getString(R.string.voice_status_processing)
                     }
                     override fun onError(error: Int) {
+                        val wasListening = isVoiceListening
+                        isVoiceListening = false
                         voiceOverlay.visibility = View.GONE
+                        if (!wasListening) return
                         val errorMsg = when (error) {
                             SpeechRecognizer.ERROR_NO_MATCH -> getString(R.string.voice_error_no_match)
                             SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> getString(R.string.voice_error_timeout)
@@ -1976,7 +2162,10 @@ class MainActivity : ComponentActivity() {
                         Toast.makeText(this@MainActivity, errorMsg, Toast.LENGTH_SHORT).show()
                     }
                     override fun onResults(results: Bundle?) {
+                        val wasListening = isVoiceListening
+                        isVoiceListening = false
                         voiceOverlay.visibility = View.GONE
+                        if (!wasListening) return
                         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                         val spokenText = matches?.firstOrNull()?.trim()
                         if (!spokenText.isNullOrBlank()) {
@@ -1993,6 +2182,7 @@ class MainActivity : ComponentActivity() {
             }
             speechRecognizer?.startListening(intent)
         } catch (e: Exception) {
+            isVoiceListening = false
             voiceOverlay.visibility = View.GONE
             Toast.makeText(this, getString(R.string.voice_error_speech, e.message.orEmpty()), Toast.LENGTH_SHORT).show()
         }
@@ -2144,9 +2334,17 @@ class MainActivity : ComponentActivity() {
                         }
                     }, { passive: true });
                 }
-                if (window.MutationObserver) {
-                    var observer = new MutationObserver(addFocusListeners);
-                    observer.observe(document.body, { childList: true, subtree: true });
+                if (window.MutationObserver && !window.__tvnavFocusObserverAttached) {
+                    var root = document.body || document.documentElement;
+                    if (root) {
+                        window.__tvnavFocusObserverAttached = true;
+                        var pendingFocusScan = null;
+                        var observer = new MutationObserver(function() {
+                            if (pendingFocusScan) cancelAnimationFrame(pendingFocusScan);
+                            pendingFocusScan = requestAnimationFrame(addFocusListeners);
+                        });
+                        observer.observe(root, { childList: true, subtree: true });
+                    }
                 }
             })();
         """.trimIndent()
@@ -2295,11 +2493,15 @@ class MainActivity : ComponentActivity() {
         val js = """
             (function() {
                 var text = "";
-                var elements = document.querySelectorAll('p, h1, h2, h3, article');
+                var elements = document.querySelectorAll('p, h1, h2, h3, li, article');
                 for (var i = 0; i < elements.length; i++) {
                     text += elements[i].innerText + " ";
                 }
-                return text.trim();
+                text = text.trim();
+                if (text.length < 120 && document.body && document.body.innerText) {
+                    text = document.body.innerText.trim();
+                }
+                return text;
             })();
         """.trimIndent()
 
@@ -2414,7 +2616,7 @@ class MainActivity : ComponentActivity() {
         }
 
         tvAiQuotaStatus.text = if (snap.isAtOrAboveSoftNudge && !snap.ecoLiteMode) {
-            "$statusBase\n${getString(R.string.ai_soft_nudge_hint)}"
+            "$statusBase\n${getString(R.string.ai_soft_nudge_hint).replace("%%", "%")}"
         } else {
             statusBase
         }
@@ -2482,13 +2684,6 @@ class MainActivity : ComponentActivity() {
                 donationBannerView.visibility = View.GONE
             }
             btnDonate.imageTintList = ColorStateList.valueOf(Color.parseColor("#FF4081"))
-        }
-
-        if (com.tdpham.navitvbrowser.util.DonationManager.shouldShowAutoPrompt(this)) {
-            com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
-                updateDonationUi()
-            }
-            com.tdpham.navitvbrowser.util.DonationManager.dismissAutoPrompt(this)
         }
     }
 

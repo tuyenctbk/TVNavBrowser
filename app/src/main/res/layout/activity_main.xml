@@ -32,7 +32,6 @@
                 style="@style/ToolbarIconButton"
                 android:src="@drawable/ic_nav_back"
                 android:nextFocusRight="@id/btnForward"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_back" />
 
             <ImageButton
@@ -42,7 +41,6 @@
                 android:src="@drawable/ic_nav_forward"
                 android:nextFocusLeft="@id/btnBack"
                 android:nextFocusRight="@id/btnRefresh"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_forward" />
 
             <ImageButton
@@ -52,7 +50,6 @@
                 android:src="@drawable/ic_nav_refresh"
                 android:nextFocusLeft="@id/btnForward"
                 android:nextFocusRight="@id/btnHome"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_refresh" />
 
             <ImageButton
@@ -62,7 +59,6 @@
                 android:src="@drawable/ic_nav_home"
                 android:nextFocusLeft="@id/btnRefresh"
                 android:nextFocusRight="@id/urlInput"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_home" />
 
             <EditText
@@ -78,7 +74,6 @@
                 android:inputType="textUri|textNoSuggestions"
                 android:nextFocusLeft="@id/btnHome"
                 android:nextFocusRight="@id/btnVoiceSearch"
-                android:nextFocusDown="@id/webView"
                 android:paddingStart="14dp"
                 android:paddingEnd="14dp"
                 android:singleLine="true"
@@ -91,7 +86,6 @@
                 android:src="@drawable/ic_nav_mic"
                 android:nextFocusLeft="@id/urlInput"
                 android:nextFocusRight="@id/btnBookmark"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/voice_search_prompt" />
 
             <ImageButton
@@ -101,7 +95,6 @@
                 android:src="@drawable/ic_nav_bookmark"
                 android:nextFocusLeft="@id/btnVoiceSearch"
                 android:nextFocusRight="@id/btnShowBookmarks"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_bookmark" />
 
             <ImageButton
@@ -111,7 +104,6 @@
                 android:src="@drawable/ic_nav_bookmarks_list"
                 android:nextFocusLeft="@id/btnBookmark"
                 android:nextFocusRight="@id/btnReadLater"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/bookmarks" />
 
             <ImageButton
@@ -121,7 +113,6 @@
                 android:src="@drawable/ic_read_later"
                 android:nextFocusLeft="@id/btnShowBookmarks"
                 android:nextFocusRight="@id/btnShowHistory"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/read_later_title" />
 
             <ImageButton
@@ -131,7 +122,6 @@
                 android:src="@drawable/ic_nav_history"
                 android:nextFocusLeft="@id/btnReadLater"
                 android:nextFocusRight="@id/btnSummarize"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/history" />
 
             <ImageButton
@@ -141,7 +131,6 @@
                 android:src="@drawable/ic_nav_summarize"
                 android:nextFocusLeft="@id/btnShowHistory"
                 android:nextFocusRight="@id/btnMouseMode"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_summarize" />
 
             <ImageButton
@@ -152,7 +141,6 @@
                 android:visibility="gone"
                 android:nextFocusLeft="@id/btnSummarize"
                 android:nextFocusRight="@id/btnMouseMode"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_game_mode" />
 
             <ImageButton
@@ -162,7 +150,6 @@
                 android:src="@drawable/ic_nav_mouse"
                 android:nextFocusLeft="@id/btnSummarize"
                 android:nextFocusRight="@id/btnDesktopMode"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/mouse_mode_on" />
 
             <ImageButton
@@ -172,7 +159,6 @@
                 android:src="@drawable/ic_nav_desktop"
                 android:nextFocusLeft="@id/btnMouseMode"
                 android:nextFocusRight="@id/btnDarkMode"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_desktop_mode" />
 
             <ImageButton
@@ -182,7 +168,6 @@
                 android:src="@drawable/ic_nav_dark_mode"
                 android:nextFocusLeft="@id/btnDesktopMode"
                 android:nextFocusRight="@id/btnSettings"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_dark_mode" />
 
             <ImageButton
@@ -192,7 +177,6 @@
                 android:src="@drawable/ic_nav_settings"
                 android:nextFocusLeft="@id/btnDarkMode"
                 android:nextFocusRight="@id/btnDonate"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/settings" />
 
             <ImageButton
@@ -202,7 +186,6 @@
                 android:src="@drawable/ic_support_heart"
                 android:nextFocusLeft="@id/btnSettings"
                 android:nextFocusRight="@id/btnFullscreen"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/donation_header_btn_desc" />
 
             <ImageButton
@@ -211,7 +194,6 @@
                 android:layout_marginStart="4dp"
                 android:src="@drawable/ic_nav_fullscreen"
                 android:nextFocusLeft="@id/btnDonate"
-                android:nextFocusDown="@id/webView"
                 android:contentDescription="@string/nav_fullscreen" />
 
         </LinearLayout>
@@ -453,7 +435,7 @@
                     android:layout_width="0dp"
                     android:layout_height="42dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_url_bar"
+                    android:background="?attr/urlBarBackground"
                     android:hint="@string/ai_ask_page_hint"
                     android:imeOptions="actionSend"
                     android:inputType="text"

@@ -98,6 +98,13 @@ object DonationDialogHelper {
             if (qrBitmap != null) {
                 ivPaypalQr.setImageBitmap(qrBitmap)
             }
+            val accentColor = ThemeHelper.getAccentColor(activity)
+            val primaryColor = ThemeHelper.getTextPrimaryColor(activity)
+            mapOf("3" to btnPreset3, "5" to btnPreset5, "10" to btnPreset10).forEach { (value, btn) ->
+                val active = value == amount
+                btn.alpha = if (active) 1.0f else 0.6f
+                btn.setTextColor(if (active) accentColor else primaryColor)
+            }
         }
         updatePaypalQr(selectedAmount)
 

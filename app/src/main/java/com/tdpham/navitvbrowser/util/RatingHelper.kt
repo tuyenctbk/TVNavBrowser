@@ -58,13 +58,17 @@ object RatingHelper {
     }
 
     private fun launchInAppReview(activity: Activity) {
-        val manager = ReviewManagerFactory.create(activity)
-        manager.requestReviewFlow().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                manager.launchReviewFlow(activity, task.result)
-            } else {
-                openPlayStore(activity)
+        try {
+            val manager = ReviewManagerFactory.create(activity)
+            manager.requestReviewFlow().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    manager.launchReviewFlow(activity, task.result)
+                } else {
+                    openPlayStore(activity)
+                }
             }
+        } catch (_: Exception) {
+            openPlayStore(activity)
         }
     }
 
@@ -74,15 +78,19 @@ object RatingHelper {
             Intent.ACTION_VIEW,
             Uri.parse("market://details?id=$packageName")
         )
-        if (marketIntent.resolveActivity(activity.packageManager) != null) {
+        try {
             activity.startActivity(marketIntent)
-        } else {
-            activity.startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+        } catch (_: Exception) {
+            try {
+                activity.startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                    )
                 )
-            )
+            } catch (_: Exception) {
+                // No Play Store or external browser handler installed on this device.
+            }
         }
     }
 }

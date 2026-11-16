@@ -3,8 +3,14 @@ package com.tdpham.navitvbrowser.data.repository
 import com.tdpham.navitvbrowser.data.dao.BookmarkDao
 import com.tdpham.navitvbrowser.data.entity.BookmarkEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class BookmarkRepository(private val bookmarkDao: BookmarkDao) {
+
+    companion object {
+        private val insertMutex = Mutex()
+    }
 
     fun getAllBookmarks(): Flow<List<BookmarkEntity>> = bookmarkDao.getAllBookmarks()
 
@@ -15,10 +21,13 @@ class BookmarkRepository(private val bookmarkDao: BookmarkDao) {
 
     suspend fun getBookmarkByUrl(url: String): BookmarkEntity? = bookmarkDao.getBookmarkByUrl(url)
 
-    suspend fun addBookmark(title: String, url: String): Boolean {
-        if (bookmarkDao.getBookmarkByUrl(url) != null) return false
-        bookmarkDao.insertBookmark(BookmarkEntity(title = title, url = url))
-        return true
+    suspend fun addBookmark(title: String, url: String): Boolean = insertMutex.withLock {
+        val normalizedUrl = url.trim()
+        if (normalizedUrl.isEmpty()) return@withLock false
+        if (bookmarkDao.getBookmarkByUrl(normalizedUrl) != null) return@withLock false
+        val safeTitle = title.trim().ifBlank { normalizedUrl }
+        bookmarkDao.insertBookmark(BookmarkEntity(title = safeTitle, url = normalizedUrl))
+        return@withLock true
     }
 
     suspend fun removeBookmark(bookmark: BookmarkEntity) {

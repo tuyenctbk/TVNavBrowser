@@ -11,14 +11,16 @@ object SmartPromptHelper {
 
     private const val PEP_THRESHOLD_RATING = 15
 
-    fun maybeShowNextPrompt(activity: Activity) {
+    fun maybeShowNextPrompt(activity: Activity, onShowSupporterPrompt: (() -> Unit)? = null) {
         // 1. Priority: Critical Updates
         if (EngagementHelper.canCheckUpdate(activity) && UpdateHelper.maybeShowUpdateDialog(activity)) {
             return
         }
 
-        // Avoid prompt fatigue: never stack a rating prompt if a supporter auto-prompt is due
+        // 2. Supporter auto-prompt (only if no update prompt was shown)
         if (!DonationManager.isSupporter(activity) && DonationManager.shouldShowAutoPrompt(activity)) {
+            DonationManager.dismissAutoPrompt(activity)
+            onShowSupporterPrompt?.invoke()
             return
         }
 

@@ -123,16 +123,6 @@
   canvas.width = width;
   canvas.height = height;
 
-  window.addEventListener('resize', () => {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-  });
-
-  let bestScore = parseInt(localStorage.getItem('navitv_neon_best') || '0', 10);
-  bestEl.textContent = bestScore;
-
   const LANES = [-1, 0, 1];
   let running = false;
   let score = 0;
@@ -140,25 +130,44 @@
   let playerLane = 1; // index 0, 1, 2
   let playerX = 0;
   let shieldTimer = 0;
+  let lastStartTime = 0;
+  let lastGameOverTime = 0;
   let obstacles = [];
   let orbs = [];
   let stars = [];
   let gridOffset = 0;
 
-  for (let i = 0; i < 65; i++) {
-    stars.push({
-      x: Math.random() * width,
-      y: Math.random() * (height * 0.55),
-      r: Math.random() * 2 + 0.6,
-      s: Math.random() * 0.4 + 0.1
-    });
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 65; i++) {
+      stars.push({
+        x: Math.random() * width,
+        y: Math.random() * (height * 0.55),
+        r: Math.random() * 2 + 0.6,
+        s: Math.random() * 0.4 + 0.1
+      });
+    }
   }
+  initStars();
+
+  window.addEventListener('resize', () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    initStars();
+  });
+
+  let bestScore = parseInt(localStorage.getItem('navitv_neon_best') || '0', 10);
+  bestEl.textContent = bestScore;
 
   function resetGame() {
     score = 0;
     speed = 7.5;
     playerLane = 1;
+    playerX = 0;
     shieldTimer = 0;
+    lastStartTime = Date.now();
     obstacles = [];
     orbs = [];
     scoreEl.textContent = '0';
@@ -168,6 +177,7 @@
 
   function gameOver() {
     running = false;
+    lastGameOverTime = Date.now();
     if (score > bestScore) {
       bestScore = Math.floor(score);
       localStorage.setItem('navitv_neon_best', String(bestScore));
@@ -189,10 +199,15 @@
     if (playerLane < 2) playerLane++;
   }
   function activateShield() {
+    const now = Date.now();
     if (!running) {
-      resetGame();
+      if (now - lastGameOverTime > 450) {
+        resetGame();
+      }
       return;
     }
+    // Avoid consuming shield from the same button press that started the run
+    if (now - lastStartTime < 350) return;
     if (shieldTimer <= 0) {
       shieldTimer = 90;
     }
@@ -215,6 +230,7 @@
       case 13: // Enter / DPAD_CENTER
       case 32: // Space
         e.preventDefault();
+        if (e.repeat) break;
         activateShield();
         break;
     }

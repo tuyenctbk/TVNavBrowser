@@ -72,7 +72,7 @@ class TtsHelper(
 
     fun speak(text: String) {
         val cleanText = text
-            .replace(Regex("[•⏱🎮✨]"), " ")
+            .replace(Regex("[\\p{So}\\p{Cn}•]+"), " ")
             .replace(Regex("\\s+"), " ")
             .trim()
         if (cleanText.isBlank()) return

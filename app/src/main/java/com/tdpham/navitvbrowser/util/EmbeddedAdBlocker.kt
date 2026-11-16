@@ -93,18 +93,22 @@ object EmbeddedAdBlocker {
     private var customRulesSet: Set<String> = emptySet()
 
     fun updateCustomRules(rules: Set<String>) {
-        customRulesSet = rules.map { it.lowercase().trim() }.filter { it.isNotEmpty() }.toSet()
+        customRulesSet = rules.map { it.lowercase().trim() }.filter { it.length >= 3 }.toSet()
     }
 
     fun shouldBlockRequest(request: WebResourceRequest): Boolean {
+        val urlStr = request.url.toString()
+        if (urlStr.startsWith("file:///android_asset/")) return false
         if (!request.isForMainFrame) {
-            return shouldBlockUrl(request.url.toString())
+            return shouldBlockUrl(urlStr)
         }
         return false
     }
 
     fun shouldBlockUrl(url: String): Boolean {
         val uri = runCatching { Uri.parse(url) }.getOrNull() ?: return false
+        val scheme = uri.scheme?.lowercase()
+        if (scheme == "file" || scheme == "about" || scheme == "data" || scheme == "blob") return false
         val host = uri.host?.lowercase() ?: return false
         val urlLower = url.lowercase()
 
@@ -166,11 +170,14 @@ object EmbeddedAdBlocker {
     )
 
     fun applyDomCleanup(webView: WebView) {
+        val currentUrl = webView.url.orEmpty()
+        if (currentUrl.startsWith("file:///android_asset/")) return
         webView.evaluateJavascript(DOM_CLEANUP_SCRIPT, null)
     }
 
     private const val DOM_CLEANUP_SCRIPT = """
 (function() {
+  if (location.protocol === 'file:' || (!document.head && !document.documentElement)) return;
   var css = [
     'ins.adsbygoogle,',
     '[class~="ad-container"], [class~="ad_container"], [class~="ad-wrapper"],',

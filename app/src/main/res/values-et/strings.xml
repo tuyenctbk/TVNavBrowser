@@ -154,7 +154,7 @@
     <string name="settings_mouse_speed_fast">Kiire</string>
     <string name="settings_mouse_speed_changed">Hiirekursori kiirus:%1$s</string>
     <string name="donation_title">Toeta arendust</string>
-    <string name="donation_subtitle">100% sõltumatu, võrguühenduseta ja privaatsusele keskendunud. Aita hoida NaviTV Browser kiire ja reklaamivabana!</string>
+    <string name="donation_subtitle" formatted="false">100% sõltumatu, võrguühenduseta ja privaatsusele keskendunud. Aita hoida NaviTV Browser kiire ja reklaamivabana!</string>
     <string name="donation_header_btn_desc">Toeta NaviTV arendust</string>
     <string name="donation_active_supporter">Aktiivne toetaja</string>
     <string name="donation_active_supporter_desc">Täname NaviTV Browseri toetamise eest! Kõik annetusbännerid on jäädavalt keelatud.</string>

@@ -137,6 +137,13 @@ object ThemeHelper {
                     child.setBackgroundResource(screenBg)
                     applyThemeRecursively(context, child, isLight)
                 }
+                is android.widget.Switch -> {
+                    child.setTextColor(textPrimary)
+                    child.setBackgroundResource(focusBg)
+                    val hPad = (12 * context.resources.displayMetrics.density).toInt()
+                    val vPad = (8 * context.resources.displayMetrics.density).toInt()
+                    child.setPadding(hPad, vPad, hPad, vPad)
+                }
                 is android.widget.Button -> {
                     child.setBackgroundResource(btnBg)
                     child.setTextColor(textPrimary)
@@ -145,9 +152,6 @@ object ThemeHelper {
                     child.setBackgroundResource(urlBg)
                     child.setTextColor(textPrimary)
                     child.setHintTextColor(textSecondary)
-                }
-                is android.widget.Switch -> {
-                    child.setTextColor(textPrimary)
                 }
                 is android.view.ViewGroup -> {
                     child.clipChildren = false
