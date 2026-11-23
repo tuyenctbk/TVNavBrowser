@@ -21,11 +21,16 @@ class WebViewMemoryManager(
         private const val MAX_HISTORY_STEPS = 25
     }
 
-    private val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+    private val appContext = context.applicationContext
+    private val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    private val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
     val isLowRamDevice: Boolean = activityManager?.isLowRamDevice ?: false
 
+    @Volatile
+    private var isDestroyed = false
+
     init {
-        context.registerComponentCallbacks(this)
+        appContext.registerComponentCallbacks(this)
         configureWebViewForMemory()
     }
 
@@ -40,27 +45,42 @@ class WebViewMemoryManager(
     }
 
     fun optimizeOnNavigation() {
-        val historyList = webView.copyBackForwardList()
-        if (historyList.size > MAX_HISTORY_STEPS) {
-            Log.d(TAG, "Navigation history exceeds $MAX_HISTORY_STEPS steps (${historyList.size}). Clearing non-essential history.")
-            webView.clearHistory()
+        if (isDestroyed) return
+        try {
+            val historyList = webView.copyBackForwardList()
+            if (historyList.size > MAX_HISTORY_STEPS) {
+                Log.d(TAG, "Navigation history exceeds $MAX_HISTORY_STEPS steps (${historyList.size}). Clearing non-essential history.")
+                webView.clearHistory()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error optimizing navigation history", e)
         }
     }
 
     fun forceTrimMemory(isCritical: Boolean = false) {
-        try {
-            Log.w(TAG, "Executing safe memory trim (critical: $isCritical)...")
-            // Only clear in-memory web cache without blocking disk I/O or triggering Stop-The-World GC
-            webView.clearCache(false)
-            if (isCritical) {
-                Toast.makeText(context, R.string.memory_warning_low_ram, Toast.LENGTH_SHORT).show()
+        if (isDestroyed) return
+        val action = Runnable {
+            if (isDestroyed) return@Runnable
+            try {
+                Log.w(TAG, "Executing safe memory trim (critical: $isCritical)...")
+                // Only clear in-memory web cache without blocking disk I/O or triggering Stop-The-World GC
+                webView.clearCache(false)
+                if (isCritical) {
+                    Toast.makeText(appContext, R.string.memory_warning_low_ram, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error during memory trim", e)
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error during memory trim", e)
+        }
+        if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
+            action.run()
+        } else {
+            mainHandler.post(action)
         }
     }
 
     override fun onTrimMemory(level: Int) {
+        if (isDestroyed) return
         Log.w(TAG, "onTrimMemory received level: $level")
         when (level) {
             ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
@@ -76,6 +96,7 @@ class WebViewMemoryManager(
     }
 
     override fun onLowMemory() {
+        if (isDestroyed) return
         Log.w(TAG, "onLowMemory callback triggered")
         forceTrimMemory(isCritical = true)
     }
@@ -83,18 +104,24 @@ class WebViewMemoryManager(
     override fun onConfigurationChanged(newConfig: Configuration) {}
 
     fun onPause() {
-        webView.onPause()
+        if (!isDestroyed) webView.onPause()
     }
 
     fun onResume() {
-        webView.onResume()
+        if (!isDestroyed) webView.onResume()
     }
 
     fun destroy() {
+        if (isDestroyed) return
+        isDestroyed = true
+        mainHandler.removeCallbacksAndMessages(null)
         try {
-            context.unregisterComponentCallbacks(this)
+            appContext.unregisterComponentCallbacks(this)
+            webView.removeJavascriptInterface("AndroidApp")
             (webView.parent as? android.view.ViewGroup)?.removeView(webView)
             webView.stopLoading()
+            webView.webChromeClient = null
+            webView.webViewClient = android.webkit.WebViewClient()
             webView.clearHistory()
             webView.removeAllViews()
             webView.destroy()

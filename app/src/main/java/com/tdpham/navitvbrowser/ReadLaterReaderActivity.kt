@@ -117,28 +117,43 @@ class ReadLaterReaderActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             val article = withContext(Dispatchers.IO) { repository.getArticleById(articleId) }
+            if (isFinishing || isDestroyed) return@launch
             if (article == null) {
-                Toast.makeText(this@ReadLaterReaderActivity, R.string.read_later_empty, Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, R.string.read_later_empty, Toast.LENGTH_SHORT).show()
                 finish()
                 return@launch
             }
-            currentArticle = article
-            displayArticle(article)
 
-            // Mark as read automatically when opened and sync in-memory state
+            val formattedText = withContext(Dispatchers.Default) {
+                try {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        Html.fromHtml(article.contentHtml, Html.FROM_HTML_MODE_COMPACT)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        Html.fromHtml(article.contentHtml)
+                    }
+                } catch (_: Exception) {
+                    article.excerpt
+                }
+            }
+            if (isFinishing || isDestroyed) return@launch
+
+            currentArticle = if (article.isRead) article else article.copy(isRead = true)
+            displayArticle(article, formattedText)
+
+            // Mark as read automatically when opened
             if (!article.isRead) {
                 withContext(Dispatchers.IO) { repository.markAsRead(article.id, true) }
-                currentArticle = article.copy(isRead = true)
             }
         }
 
         btnToggleReadStatus.setOnClickListener {
             val article = currentArticle ?: return@setOnClickListener
             val nextState = !article.isRead
+            currentArticle = article.copy(isRead = nextState)
+            updateReadButtonText(nextState)
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) { repository.markAsRead(article.id, nextState) }
-                currentArticle = article.copy(isRead = nextState)
-                updateReadButtonText(nextState)
             }
         }
 
@@ -154,21 +169,9 @@ class ReadLaterReaderActivity : ComponentActivity() {
         }
     }
 
-    private fun displayArticle(article: ReadLaterEntity) {
+    private fun displayArticle(article: ReadLaterEntity, formattedText: CharSequence?) {
         tvArticleTitle.text = article.title
         tvArticleUrl.text = article.url
-
-        val formattedText = try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                Html.fromHtml(article.contentHtml, Html.FROM_HTML_MODE_COMPACT)
-            } else {
-                @Suppress("DEPRECATION")
-                Html.fromHtml(article.contentHtml)
-            }
-        } catch (_: Exception) {
-            article.excerpt
-        }
-
         tvArticleContent.text = if (formattedText.isNullOrBlank()) article.excerpt else formattedText
         updateReadButtonText(true)
     }

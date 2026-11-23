@@ -29,6 +29,7 @@ object RatingHelper {
     }
 
     fun showRatingDialog(activity: Activity, onDismissedPermanently: (() -> Unit)? = null) {
+        if (activity.isFinishing || activity.isDestroyed) return
         val prefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         if (prefs.getBoolean(KEY_DONT_SHOW_AGAIN, false)) {
             onDismissedPermanently?.invoke()
@@ -58,9 +59,11 @@ object RatingHelper {
     }
 
     private fun launchInAppReview(activity: Activity) {
+        if (activity.isFinishing || activity.isDestroyed) return
         try {
             val manager = ReviewManagerFactory.create(activity)
             manager.requestReviewFlow().addOnCompleteListener { task ->
+                if (activity.isFinishing || activity.isDestroyed) return@addOnCompleteListener
                 if (task.isSuccessful) {
                     manager.launchReviewFlow(activity, task.result)
                 } else {
@@ -68,7 +71,9 @@ object RatingHelper {
                 }
             }
         } catch (_: Exception) {
-            openPlayStore(activity)
+            if (!activity.isFinishing && !activity.isDestroyed) {
+                openPlayStore(activity)
+            }
         }
     }
 

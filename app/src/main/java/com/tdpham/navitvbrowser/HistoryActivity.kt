@@ -35,7 +35,12 @@ class HistoryActivity : ComponentActivity() {
         ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
-        overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, android.R.anim.fade_out)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        }
 
         ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
@@ -72,6 +77,12 @@ class HistoryActivity : ComponentActivity() {
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
 
         val inflater = LayoutInflater.from(this)
+        val accentTint = android.content.res.ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
+        val textPrimary = ThemeHelper.getTextPrimaryColor(this)
+        val textSecondary = ThemeHelper.getTextSecondaryColor(this)
+        val secondaryTint = android.content.res.ColorStateList.valueOf(textSecondary)
+        val itemBg = ThemeHelper.getFocusableItemBackground(this)
+        val btnBg = ThemeHelper.getToolbarButtonBackground(this)
         list.forEachIndexed { index, history ->
             val row = inflater.inflate(R.layout.item_url_row, container, false)
             val rowContent = row.findViewById<android.view.View>(R.id.rowContent)
@@ -81,14 +92,14 @@ class HistoryActivity : ComponentActivity() {
             val btnDeleteRow = row.findViewById<ImageButton>(R.id.btnDeleteRow)
 
             ivRowIcon.setImageResource(R.drawable.ic_nav_history)
-            ivRowIcon.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
+            ivRowIcon.imageTintList = accentTint
             tvRowTitle.text = history.title
-            tvRowTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+            tvRowTitle.setTextColor(textPrimary)
             tvRowUrl.text = history.url
-            tvRowUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
-            rowContent.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
-            btnDeleteRow.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
-            btnDeleteRow.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
+            tvRowUrl.setTextColor(textSecondary)
+            rowContent.setBackgroundResource(itemBg)
+            btnDeleteRow.setBackgroundResource(btnBg)
+            btnDeleteRow.imageTintList = secondaryTint
 
             FocusAnimationHelper.apply(rowContent)
             FocusAnimationHelper.apply(btnDeleteRow)

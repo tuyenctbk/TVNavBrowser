@@ -241,10 +241,13 @@ object EmbeddedAdBlocker {
   }
   window.__tvnavAdBlockerObserverAttached = true;
 
-  var timeout;
+  var pendingTimer = null;
   function debouncedHideAds() {
-    if (timeout) cancelAnimationFrame(timeout);
-    timeout = requestAnimationFrame(hideAds);
+    if (pendingTimer) return;
+    pendingTimer = setTimeout(function() {
+      pendingTimer = null;
+      hideAds();
+    }, 450);
   }
 
   if (window.MutationObserver) {
@@ -252,8 +255,7 @@ object EmbeddedAdBlocker {
       .observe(document.documentElement || document.body, { childList: true, subtree: true });
   }
 
-  setTimeout(hideAds, 1000);
-  setTimeout(hideAds, 3000);
+  setTimeout(hideAds, 1200);
 })();
 """
 }

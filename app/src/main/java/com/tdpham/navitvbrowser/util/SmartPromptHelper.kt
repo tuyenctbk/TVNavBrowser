@@ -12,6 +12,7 @@ object SmartPromptHelper {
     private const val PEP_THRESHOLD_RATING = 15
 
     fun maybeShowNextPrompt(activity: Activity, onShowSupporterPrompt: (() -> Unit)? = null) {
+        if (activity.isFinishing || activity.isDestroyed) return
         // 1. Priority: Critical Updates
         if (EngagementHelper.canCheckUpdate(activity) && UpdateHelper.maybeShowUpdateDialog(activity)) {
             return

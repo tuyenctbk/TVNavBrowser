@@ -36,7 +36,12 @@ class ReadLaterActivity : ComponentActivity() {
         ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_read_later)
-        overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, android.R.anim.fade_out)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        }
 
         ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
@@ -92,6 +97,15 @@ class ReadLaterActivity : ComponentActivity() {
         btnClearAll.alpha = if (list.isNotEmpty()) 1.0f else 0.4f
 
         val inflater = LayoutInflater.from(this)
+        val textPrimary = ThemeHelper.getTextPrimaryColor(this)
+        val textSecondary = ThemeHelper.getTextSecondaryColor(this)
+        val accentColor = ThemeHelper.getAccentColor(this)
+        val secondaryTint = android.content.res.ColorStateList.valueOf(textSecondary)
+        val itemBg = ThemeHelper.getFocusableItemBackground(this)
+        val btnBg = ThemeHelper.getToolbarButtonBackground(this)
+        val badgeBg = ThemeHelper.getStepBadgeBackground(this)
+        val readLabel = getString(R.string.read_later_read)
+        val unreadLabel = getString(R.string.read_later_unread)
         list.forEachIndexed { index, article ->
             val row = inflater.inflate(R.layout.item_read_later, container, false)
             val rowContent = row.findViewById<android.view.View>(R.id.rowContent)
@@ -102,17 +116,17 @@ class ReadLaterActivity : ComponentActivity() {
             val btnDelete = row.findViewById<ImageButton>(R.id.btnDelete)
 
             tvTitle.text = article.title
-            tvTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+            tvTitle.setTextColor(textPrimary)
             tvExcerpt.text = article.excerpt
-            tvExcerpt.setTextColor(ThemeHelper.getTextSecondaryColor(this))
+            tvExcerpt.setTextColor(textSecondary)
             tvUrl.text = article.url
-            tvUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
-            rowContent.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
-            btnDelete.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
-            btnDelete.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
-            tvReadBadge.text = if (article.isRead) getString(R.string.read_later_read) else getString(R.string.read_later_unread)
-            tvReadBadge.setTextColor(ThemeHelper.getAccentColor(this))
-            tvReadBadge.setBackgroundResource(ThemeHelper.getStepBadgeBackground(this))
+            tvUrl.setTextColor(textSecondary)
+            rowContent.setBackgroundResource(itemBg)
+            btnDelete.setBackgroundResource(btnBg)
+            btnDelete.imageTintList = secondaryTint
+            tvReadBadge.text = if (article.isRead) readLabel else unreadLabel
+            tvReadBadge.setTextColor(accentColor)
+            tvReadBadge.setBackgroundResource(badgeBg)
 
             FocusAnimationHelper.apply(rowContent)
             FocusAnimationHelper.apply(btnDelete)
