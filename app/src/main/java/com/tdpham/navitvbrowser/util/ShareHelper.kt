@@ -30,8 +30,8 @@ object ShareHelper {
             .setPositiveButton(android.R.string.ok, null)
             .create()
 
-        bindAsyncQr(activity, dialog, ivQr, playStoreUrl)
         dialog.show()
+        bindAsyncQr(activity, dialog, ivQr, playStoreUrl)
     }
 
     fun showPageQrDialog(activity: Activity, pageUrl: String?, pageTitle: String? = null) {
@@ -58,8 +58,8 @@ object ShareHelper {
             .setPositiveButton(android.R.string.ok, null)
             .create()
 
-        bindAsyncQr(activity, dialog, ivQr, cleanUrl)
         dialog.show()
+        bindAsyncQr(activity, dialog, ivQr, cleanUrl)
     }
 
     private fun bindAsyncQr(activity: Activity, dialog: AlertDialog, imageView: ImageView, url: String) {

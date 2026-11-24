@@ -632,7 +632,7 @@ class MainActivity : ComponentActivity() {
         if (::webView.isInitialized) {
             val darkPref = AppPreferences.isForceDarkModeEnabled(this)
             if (darkPref != isDarkModeActive) {
-                applyDarkMode(darkPref)
+                applyDarkMode(darkPref, showToast = false)
             }
         }
         if (::webViewMemoryManager.isInitialized) {
@@ -1117,6 +1117,7 @@ class MainActivity : ComponentActivity() {
                 if (::webViewMemoryManager.isInitialized) {
                     webViewMemoryManager.optimizeOnNavigation()
                 }
+                updateNavButtonsState()
                 if (!UrlUtils.isBrowsableUrl(pageUrlStr)) return
                 if (isDashboardOrAssetUrl(pageUrlStr)) {
                     urlInput.setText("")
@@ -2207,9 +2208,14 @@ class MainActivity : ComponentActivity() {
             else ThemeHelper.getTextPrimaryColor(this)
         )
 
-        // WebSettingsCompat Force Dark if supported
-        if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+        // WebSettingsCompat Darkening: prefer ALGORITHMIC_DARKENING on API 33+ WebViews, fallback to FORCE_DARK on older ones
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
             try {
+                WebSettingsCompat.setAlgorithmicDarkeningAllowed(webView.settings, enabled)
+            } catch (_: Exception) {}
+        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            try {
+                @Suppress("DEPRECATION")
                 WebSettingsCompat.setForceDark(
                     webView.settings,
                     if (enabled) WebSettingsCompat.FORCE_DARK_ON else WebSettingsCompat.FORCE_DARK_OFF
@@ -2395,12 +2401,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        @Suppress("DEPRECATION")
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RECORD_AUDIO_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -2411,8 +2418,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == VOICE_SEARCH_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             val results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
@@ -2500,6 +2508,9 @@ class MainActivity : ComponentActivity() {
             .setDuration(140)
             .start()
 
+        if (!enabled) {
+            resetInactivityTimer(force = true)
+        }
         FirebaseInitializer.logEvent(
             if (enabled) "fullscreen_on" else "fullscreen_off",
             null

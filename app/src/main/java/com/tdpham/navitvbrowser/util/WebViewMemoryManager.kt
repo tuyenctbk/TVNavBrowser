@@ -21,7 +21,8 @@ class WebViewMemoryManager(
 
     companion object {
         private const val TAG = "WebViewMemoryManager"
-        private const val MAX_HISTORY_STEPS = 25
+        private const val MAX_HISTORY_STEPS_LOW_RAM = 25
+        private const val MAX_HISTORY_STEPS_DEFAULT = 50
     }
 
     private val appContext = context.applicationContext
@@ -51,9 +52,10 @@ class WebViewMemoryManager(
     fun optimizeOnNavigation() {
         if (isDestroyed) return
         try {
+            val maxSteps = if (isLowRamDevice) MAX_HISTORY_STEPS_LOW_RAM else MAX_HISTORY_STEPS_DEFAULT
             val historyList = webView.copyBackForwardList()
-            if (historyList.size > MAX_HISTORY_STEPS) {
-                Log.d(TAG, "Navigation history exceeds $MAX_HISTORY_STEPS steps (${historyList.size}). Clearing non-essential history.")
+            if (historyList.size > maxSteps) {
+                Log.d(TAG, "Navigation history exceeds $maxSteps steps (${historyList.size}). Clearing non-essential history.")
                 webView.clearHistory()
             }
         } catch (e: Exception) {
