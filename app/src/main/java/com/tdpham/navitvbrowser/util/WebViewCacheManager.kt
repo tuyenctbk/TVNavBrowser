@@ -8,6 +8,7 @@ import android.webkit.WebView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ object WebViewCacheManager {
     private const val DEFAULT_CACHE_BUDGET_BYTES = 60 * 1024 * 1024L // 60 MB
     private const val LOW_RAM_CACHE_BUDGET_BYTES = 25 * 1024 * 1024L // 25 MB
 
-    private val scope = CoroutineScope(Dispatchers.IO + Job())
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var periodicJob: Job? = null
 
     /**
@@ -42,6 +43,7 @@ object WebViewCacheManager {
         startPeriodicCleanup(appContext)
     }
 
+    @Synchronized
     fun startPeriodicCleanup(context: Context) {
         if (periodicJob?.isActive == true) return
 
@@ -110,8 +112,9 @@ object WebViewCacheManager {
 
             val cacheDirs = getWebViewCacheDirectories(context)
             for (dir in cacheDirs) {
-                if (dir.exists()) {
-                    deleteRecursively(dir)
+                if (dir.exists() && dir.isDirectory) {
+                    // Delete children only; never delete Android's root cacheDir / externalCacheDir itself
+                    dir.listFiles()?.forEach { deleteRecursively(it) }
                 }
             }
             Log.d(TAG, "Full WebView cache purge completed")

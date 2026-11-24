@@ -35,7 +35,12 @@ class HistoryActivity : ComponentActivity() {
         ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
-        overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, android.R.anim.fade_out)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        }
 
         ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
@@ -111,9 +116,13 @@ class HistoryActivity : ComponentActivity() {
         }
         hasRenderedOnce = true
 
-        if (hadRowFocus && container.childCount > 0) {
-            val targetIdx = focusedIndex.coerceIn(0, container.childCount - 1)
-            container.getChildAt(targetIdx)?.findViewById<android.view.View>(R.id.rowContent)?.requestFocus()
+        if (hadRowFocus) {
+            if (container.childCount > 0) {
+                val targetIdx = focusedIndex.coerceIn(0, container.childCount - 1)
+                container.getChildAt(targetIdx)?.findViewById<android.view.View>(R.id.rowContent)?.requestFocus()
+            } else {
+                findViewById<android.view.View>(R.id.btnHistoryBack)?.requestFocus()
+            }
         }
     }
 

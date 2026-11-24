@@ -9,6 +9,7 @@ import com.tdpham.navitvbrowser.ui.ThemeHelper
 object ShareHelper {
 
     fun showShareDialog(activity: Activity) {
+        if (activity.isFinishing || activity.isDestroyed) return
         val packageName = activity.packageName
         val playStoreUrl = "https://play.google.com/store/apps/details?id=$packageName"
 
@@ -25,6 +26,7 @@ object ShareHelper {
     }
 
     fun showPageQrDialog(activity: Activity, pageUrl: String?, pageTitle: String? = null) {
+        if (activity.isFinishing || activity.isDestroyed) return
         val cleanUrl = pageUrl?.trim().orEmpty()
         if (cleanUrl.isBlank() || cleanUrl.startsWith("file:///")) {
             showShareDialog(activity)

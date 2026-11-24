@@ -13,8 +13,8 @@ android {
         applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
         targetSdk = 36
-        versionCode = 40
-        versionName = "3.2.1"
+        versionCode = 41
+        versionName = "3.2.2"
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -90,7 +90,6 @@ dependencies {
     // implementation(libs.firebase.messaging)
     implementation(libs.firebase.remoteconfig)
     implementation(libs.firebase.firestore)
-    implementation(libs.firebase.auth)
 
     // Google Mobile Ads (AdMob) — disabled to keep browser 100% ad-free & lightweight
     // implementation(libs.google.admob)

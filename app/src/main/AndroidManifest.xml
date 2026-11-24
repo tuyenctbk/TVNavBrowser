@@ -6,6 +6,17 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!-- Ad-free app: strip Advertising ID and AdServices permissions pulled transitively by Firebase Analytics -->
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION"
+        tools:node="remove" />
+
     <!-- Android TV supported; touchscreen/leanback configured for compatibility -->
     <uses-feature
         android:name="android.software.leanback"
@@ -58,6 +69,17 @@
         android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true"
         android:hardwareAccelerated="true">
+
+        <!-- Privacy-first: disable Advertising ID, SSAID, and ad personalization signals in Firebase Analytics -->
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="google_analytics_ssaid_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="google_analytics_default_allow_ad_personalization_signals"
+            android:value="false" />
 
         <activity
             android:name=".LauncherActivity"

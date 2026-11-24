@@ -33,6 +33,7 @@ object UpdateHelper {
     }
 
     private fun showDialog(activity: Activity, latestVersion: Int) {
+        if (activity.isFinishing || activity.isDestroyed) return
         AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
             .setTitle(R.string.update_available_title)
             .setMessage(R.string.update_available_message)

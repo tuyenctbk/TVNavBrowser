@@ -99,6 +99,9 @@ class VirtualCursorController(
     private var isClickPending = false
     private var pendingDownRunnable: Runnable? = null
     private var pendingUpRunnable: Runnable? = null
+    private var pendingClickTargetView: View? = null
+    private var pendingClickX: Float = 0f
+    private var pendingClickY: Float = 0f
     private val resetPressRunnable = Runnable { animatePress(false) }
 
     private var holdingUp = false
@@ -450,7 +453,7 @@ class VirtualCursorController(
 
     /** Hotspot mapped into WebView coordinates, clamped inside it, or null if not laid out. */
     private fun hotspotInWebView(): Pair<Float, Float>? {
-        if (webView.width <= 0 || webView.height <= 0) return null
+        if (webView.width <= 2 || webView.height <= 2) return null
         val containerLoc = IntArray(2)
         val webLoc = IntArray(2)
         container.getLocationInWindow(containerLoc)
@@ -615,25 +618,26 @@ class VirtualCursorController(
         pendingUpRunnable?.let {
             mainHandler.removeCallbacks(it)
             pendingUpRunnable = null
-            try {
-                val now = SystemClock.uptimeMillis()
-                val isOverWeb = isHotspotOverWebView()
-                val webCoords = if (isOverWeb) hotspotInWebView() else null
-                val targetView = if (isOverWeb && webCoords != null) webView else container
-                val x = if (isOverWeb && webCoords != null) webCoords.first else hotspotX
-                val y = if (isOverWeb && webCoords != null) webCoords.second else hotspotY
-
-                val cancelEvent = obtainTouch(now, now, MotionEvent.ACTION_CANCEL, x, y)
-                isDispatchingSyntheticEvent = true
+            val targetView = pendingClickTargetView
+            val x = pendingClickX
+            val y = pendingClickY
+            pendingClickTargetView = null
+            if (targetView != null) {
                 try {
-                    targetView.dispatchTouchEvent(cancelEvent)
-                } finally {
-                    isDispatchingSyntheticEvent = false
+                    val now = SystemClock.uptimeMillis()
+                    val cancelEvent = obtainTouch(now, now, MotionEvent.ACTION_CANCEL, x, y)
+                    isDispatchingSyntheticEvent = true
+                    try {
+                        targetView.dispatchTouchEvent(cancelEvent)
+                    } finally {
+                        isDispatchingSyntheticEvent = false
+                    }
+                } catch (_: Throwable) {
+                    // Ignore cancellation dispatch issues during teardown
                 }
-            } catch (_: Throwable) {
-                // Ignore cancellation dispatch issues during teardown
             }
         }
+        pendingClickTargetView = null
         isClickPending = false
     }
 
@@ -685,8 +689,13 @@ class VirtualCursorController(
                 isDispatchingSyntheticEvent = false
             }
 
+            pendingClickTargetView = targetView
+            pendingClickX = clickX
+            pendingClickY = clickY
+
             val upRunnable = Runnable {
                 pendingUpRunnable = null
+                pendingClickTargetView = null
                 try {
                     val upTime = SystemClock.uptimeMillis()
                     val upEvent = obtainTouch(downTime, upTime, MotionEvent.ACTION_UP, clickX, clickY)

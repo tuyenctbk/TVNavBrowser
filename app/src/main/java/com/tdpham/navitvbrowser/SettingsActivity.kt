@@ -35,7 +35,12 @@ class SettingsActivity : ComponentActivity() {
         ThemeHelper.applyTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.fade_in, android.R.anim.fade_out)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, android.R.anim.fade_out)
+        }
 
         ThemeHelper.applyActivityThemeView(this, findViewById(android.R.id.content))
 
@@ -165,7 +170,12 @@ class SettingsActivity : ComponentActivity() {
         val btnAddAdRule: Button = findViewById(R.id.btnAddAdRule)
         val customRulesContainer: LinearLayout = findViewById(R.id.customRulesContainer)
 
-        fun refreshCustomRules() {
+        fun hideKeyboard(view: View) {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+        fun refreshCustomRules(restoreFocusIndex: Int = -1) {
             customRulesContainer.removeAllViews()
             val rules = AppPreferences.getCustomAdRules(this)
             EmbeddedAdBlocker.updateCustomRules(rules)
@@ -178,10 +188,13 @@ class SettingsActivity : ComponentActivity() {
                     setPadding(0, 8, 0, 8)
                 }
                 customRulesContainer.addView(tvEmpty)
+                if (restoreFocusIndex >= 0) {
+                    etCustomAdRule.requestFocus()
+                }
                 return
             }
 
-            for (rule in rules) {
+            rules.forEachIndexed { idx, rule ->
                 val row = LinearLayout(this).apply {
                     orientation = LinearLayout.HORIZONTAL
                     layoutParams = LinearLayout.LayoutParams(
@@ -208,7 +221,7 @@ class SettingsActivity : ComponentActivity() {
                     setOnClickListener {
                         AppPreferences.removeCustomAdRule(this@SettingsActivity, rule)
                         Toast.makeText(this@SettingsActivity, getString(R.string.settings_adblock_rule_removed, rule), Toast.LENGTH_SHORT).show()
-                        refreshCustomRules()
+                        refreshCustomRules(restoreFocusIndex = idx)
                     }
                 }
                 FocusAnimationHelper.apply(btnRemove)
@@ -216,6 +229,11 @@ class SettingsActivity : ComponentActivity() {
                 row.addView(tvRule)
                 row.addView(btnRemove)
                 customRulesContainer.addView(row)
+            }
+
+            if (restoreFocusIndex >= 0 && customRulesContainer.childCount > 0) {
+                val targetRow = customRulesContainer.getChildAt(restoreFocusIndex.coerceIn(0, customRulesContainer.childCount - 1)) as? LinearLayout
+                targetRow?.getChildAt(1)?.requestFocus()
             }
         }
 
@@ -226,6 +244,7 @@ class SettingsActivity : ComponentActivity() {
             if (rule.isNotEmpty()) {
                 if (AppPreferences.addCustomAdRule(this, rule)) {
                     etCustomAdRule.setText("")
+                    hideKeyboard(etCustomAdRule)
                     Toast.makeText(this, getString(R.string.settings_adblock_rule_added, rule.lowercase()), Toast.LENGTH_SHORT).show()
                     refreshCustomRules()
                 }
@@ -251,6 +270,7 @@ class SettingsActivity : ComponentActivity() {
             if (cleanId.isNotEmpty()) {
                 AppPreferences.setSyncUserId(this, cleanId)
                 etSyncUserId.setText(cleanId)
+                hideKeyboard(etSyncUserId)
                 com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
                 Toast.makeText(this, R.string.sync_user_id_saved, Toast.LENGTH_SHORT).show()
             }
@@ -368,6 +388,7 @@ class SettingsActivity : ComponentActivity() {
                     etHomepage.setText(normalized)
                 }
                 FirebaseInitializer.logEvent("settings_homepage_saved", mapOf("host" to UrlUtils.hostOf(normalized)))
+                hideKeyboard(etHomepage)
                 Toast.makeText(this, R.string.settings_homepage_saved, Toast.LENGTH_SHORT).show()
             }
         }

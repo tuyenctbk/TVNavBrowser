@@ -10,7 +10,6 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -112,19 +111,9 @@ object UsageQuotaManager {
     }
 
     /**
-     * Resolves the active user ID for Firestore quota tracking:
-     * prefers FirebaseAuth UID if signed in, falling back to the persistent device/cloud Sync User ID.
+     * Resolves the active user ID for optional Firestore quota sync using the sanitized Sync User ID.
      */
     fun resolveQuotaUserId(context: Context): String {
-        val authUid = try {
-            FirebaseAuth.getInstance().currentUser?.uid?.trim()
-        } catch (_: Exception) {
-            null
-        }
-        if (!authUid.isNullOrEmpty()) {
-            val safeUid = AppPreferences.sanitizeSyncUserId(authUid)
-            if (safeUid.isNotEmpty()) return safeUid
-        }
         return AppPreferences.sanitizeSyncUserId(AppPreferences.getSyncUserId(context))
     }
 
@@ -147,20 +136,10 @@ object UsageQuotaManager {
                 val storedDate = prefs[DS_DATE_ISO] ?: ""
                 val supporter = prefs[DS_IS_SUPPORTER] ?: DonationManager.isSupporter(appContext)
                 if (storedDate != today) {
-                    val preservedEco = prefs[DS_ECO_LITE_MODE] ?: getSnapshot(appContext).ecoLiteMode
-                    val rolledOver = QuotaSnapshot(
-                        dateIso = today,
-                        summaryUsed = 0,
-                        chatUsed = 0,
-                        voiceUsed = 0,
-                        bonusGraceCredits = 0,
-                        graceClaimed = false,
-                        ecoLiteMode = preservedEco,
-                        fallbackCascadeCount = prefs[DS_FALLBACK_CASCADE_COUNT] ?: 0,
-                        isSupporter = supporter
-                    )
-                    persistLocalMirror(appContext, rolledOver)
-                    rolledOver
+                    // Delegate to getSnapshot() so an uninitialized DataStore never zeroes out today's SharedPreferences usage
+                    val current = getSnapshot(appContext)
+                    persistDataStoreAsync(appContext, current)
+                    current
                 } else {
                     QuotaSnapshot(
                         dateIso = today,

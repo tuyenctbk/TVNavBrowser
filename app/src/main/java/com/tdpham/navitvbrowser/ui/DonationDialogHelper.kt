@@ -27,6 +27,7 @@ object DonationDialogHelper {
     private const val KOFI_URL = "https://ko-fi.com/navitvbrowser"
 
     fun showDonationDialog(activity: Activity, onSupporterStateChanged: (() -> Unit)? = null) {
+        if (activity.isFinishing || activity.isDestroyed) return
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
@@ -118,8 +119,8 @@ object DonationDialogHelper {
             try {
                 activity.startActivity(intent)
             } catch (_: Exception) {
-                val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.donation_method_paypal), paypalUrl))
+                val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                clipboard?.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.donation_method_paypal), paypalUrl))
                 Toast.makeText(activity, R.string.donation_address_copied, Toast.LENGTH_SHORT).show()
             }
         }
@@ -135,8 +136,8 @@ object DonationDialogHelper {
             try {
                 activity.startActivity(intent)
             } catch (_: Exception) {
-                val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.donation_method_kofi), KOFI_URL))
+                val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                clipboard?.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.donation_method_kofi), KOFI_URL))
                 Toast.makeText(activity, R.string.donation_address_copied, Toast.LENGTH_SHORT).show()
             }
         }

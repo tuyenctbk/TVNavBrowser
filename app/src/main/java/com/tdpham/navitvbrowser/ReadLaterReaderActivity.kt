@@ -122,13 +122,13 @@ class ReadLaterReaderActivity : ComponentActivity() {
                 finish()
                 return@launch
             }
-            currentArticle = article
-            displayArticle(article)
+            // Mark as read automatically when opened and sync in-memory state immediately before DB write
+            val markedArticle = if (article.isRead) article else article.copy(isRead = true)
+            currentArticle = markedArticle
+            displayArticle(markedArticle)
 
-            // Mark as read automatically when opened and sync in-memory state
             if (!article.isRead) {
                 withContext(Dispatchers.IO) { repository.markAsRead(article.id, true) }
-                currentArticle = article.copy(isRead = true)
             }
         }
 

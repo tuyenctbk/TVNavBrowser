@@ -1,6 +1,8 @@
 package com.tdpham.navitvbrowser.util
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.widget.Toast
@@ -12,25 +14,34 @@ class TtsHelper(
     private val onStateChanged: ((Boolean) -> Unit)? = null
 ) : TextToSpeech.OnInitListener {
 
+    private val appContext = context.applicationContext
+    private val mainHandler = Handler(Looper.getMainLooper())
     private var tts: TextToSpeech? = null
+    @Volatile
     private var isReady = false
+    @Volatile
+    private var initFailed = false
+    @Volatile
     private var pendingText: String? = null
 
+    @Volatile
     var isSpeaking: Boolean = false
         private set
 
     init {
         try {
-            tts = TextToSpeech(context.applicationContext, this)
+            tts = TextToSpeech(appContext, this)
         } catch (_: Exception) {
             isReady = false
+            initFailed = true
         }
     }
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
-            isReady = true
             val engine = tts ?: return
+            isReady = true
+            initFailed = false
             val defaultLocale = Locale.getDefault()
             val langResult = engine.setLanguage(defaultLocale)
             if (langResult == TextToSpeech.LANG_MISSING_DATA || langResult == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -52,13 +63,30 @@ class TtsHelper(
                     isSpeaking = false
                     notifyState(false)
                 }
+
+                override fun onError(utteranceId: String?, errorCode: Int) {
+                    isSpeaking = false
+                    notifyState(false)
+                }
+
+                override fun onStop(utteranceId: String?, interrupted: Boolean) {
+                    isSpeaking = false
+                    notifyState(false)
+                }
             })
-            pendingText?.let { textToSpeak ->
-                pendingText = null
-                speak(textToSpeak)
+            val queued = pendingText
+            pendingText = null
+            if (!queued.isNullOrBlank()) {
+                mainHandler.post { speak(queued) }
             }
         } else {
             isReady = false
+            initFailed = true
+            val hadPending = !pendingText.isNullOrBlank()
+            pendingText = null
+            if (hadPending) {
+                showToast(R.string.tts_unavailable)
+            }
         }
     }
 
@@ -77,24 +105,39 @@ class TtsHelper(
             .trim()
         if (cleanText.isBlank()) return
 
+        if (initFailed || tts == null) {
+            showToast(R.string.tts_unavailable)
+            return
+        }
+
         if (!isReady) {
             pendingText = cleanText
-            Toast.makeText(context, R.string.tts_reading_aloud, Toast.LENGTH_SHORT).show()
+            showToast(R.string.tts_reading_aloud)
             return
         }
 
-        val engine = tts
-        if (engine == null) {
-            Toast.makeText(context, R.string.tts_unavailable, Toast.LENGTH_SHORT).show()
+        val engine = tts ?: run {
+            showToast(R.string.tts_unavailable)
             return
         }
 
-        isSpeaking = true
-        notifyState(true)
-        Toast.makeText(context, R.string.tts_reading_aloud, Toast.LENGTH_SHORT).show()
         val maxLen = TextToSpeech.getMaxSpeechInputLength().coerceAtMost(3900)
         val clipped = if (cleanText.length > maxLen) cleanText.take(maxLen) else cleanText
-        engine.speak(clipped, TextToSpeech.QUEUE_FLUSH, null, "navitv_tts_utterance")
+        val result = try {
+            engine.speak(clipped, TextToSpeech.QUEUE_FLUSH, null, "navitv_tts_utterance")
+        } catch (_: Exception) {
+            TextToSpeech.ERROR
+        }
+
+        if (result == TextToSpeech.ERROR) {
+            isSpeaking = false
+            notifyState(false)
+            showToast(R.string.tts_unavailable)
+        } else {
+            isSpeaking = true
+            notifyState(true)
+            showToast(R.string.tts_reading_aloud)
+        }
     }
 
     fun stop() {
@@ -112,6 +155,7 @@ class TtsHelper(
 
     fun shutdown() {
         stop()
+        mainHandler.removeCallbacksAndMessages(null)
         try {
             tts?.shutdown()
         } catch (_: Exception) {}
@@ -119,8 +163,14 @@ class TtsHelper(
         isReady = false
     }
 
+    private fun showToast(resId: Int) {
+        mainHandler.post {
+            Toast.makeText(appContext, resId, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun notifyState(speaking: Boolean) {
-        android.os.Handler(android.os.Looper.getMainLooper()).post {
+        mainHandler.post {
             onStateChanged?.invoke(speaking)
         }
     }

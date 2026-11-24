@@ -158,6 +158,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnQuickAskFacts: Button
     private lateinit var btnQuickAskActions: Button
     private var lastExtractedPageText: String = ""
+    private var aiRequestJob: Job? = null
     private var lastSummaryTier: com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier =
         com.tdpham.navitvbrowser.util.AiModelConfig.CapabilityTier.TIER_1_PRIMARY_CLOUD
     private var ttsHelper: com.tdpham.navitvbrowser.util.TtsHelper? = null
@@ -170,6 +171,9 @@ class MainActivity : ComponentActivity() {
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
     private var mainWebChromeClient: WebChromeClient? = null
+    private val pendingPopupWebViews = mutableSetOf<WebView>()
+    private var isShowingSuggestions = false
+    private var globalFocusChangeListener: android.view.ViewTreeObserver.OnGlobalFocusChangeListener? = null
 
     private var realBookmarks: List<BookmarkEntity> = emptyList()
     private lateinit var virtualCursor: VirtualCursorController
@@ -210,7 +214,7 @@ class MainActivity : ComponentActivity() {
         try {
             setContentView(R.layout.activity_main)
         } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseInitializer.recordException(e)
             val msg = e.message ?: ""
             if (msg.contains("WebView", ignoreCase = true) || msg.contains("Browser", ignoreCase = true)) {
                 Toast.makeText(this, getString(R.string.error_webview_missing), Toast.LENGTH_LONG).show()
@@ -218,7 +222,7 @@ class MainActivity : ComponentActivity() {
                 return
             } else {
                 // If it's not a clear WebView error, show a general error
-                Toast.makeText(this, getString(R.string.error_generic_app, e.message), Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.error_generic_app, msg.ifBlank { "Unknown error" }), Toast.LENGTH_LONG).show()
                 finish()
                 return
             }
@@ -366,12 +370,13 @@ class MainActivity : ComponentActivity() {
         btnCopySummary.setOnClickListener {
             val text = tvSummaryContent.text.toString()
             if (text.isNotBlank()) {
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.ai_summary_heading), text))
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                clipboard?.setPrimaryClip(ClipData.newPlainText(getString(R.string.ai_summary_heading), text))
                 Toast.makeText(this, R.string.ai_summary_copied, Toast.LENGTH_SHORT).show()
             }
         }
         val closeOverlayAction = {
+            aiRequestJob?.cancel()
             ttsHelper?.stop()
             val card = summaryOverlayContainer.findViewById<View>(R.id.cardSummary)
             if (card != null) {
@@ -648,14 +653,24 @@ class MainActivity : ComponentActivity() {
         ttsHelper?.stop()
         if (customView != null) {
             try {
-                customViewCallback?.onCustomViewHidden()
-                if (::customViewContainer.isInitialized) {
-                    customViewContainer.removeView(customView)
-                    customViewContainer.visibility = View.GONE
-                }
-                customView = null
-                customViewCallback = null
-            } catch (_: Exception) {}
+                mainWebChromeClient?.onHideCustomView()
+            } catch (_: Exception) {
+                try {
+                    customViewCallback?.onCustomViewHidden()
+                    if (::customViewContainer.isInitialized) {
+                        customViewContainer.removeView(customView)
+                        customViewContainer.visibility = View.GONE
+                    }
+                    if (::webViewContainer.isInitialized) {
+                        webViewContainer.visibility = View.VISIBLE
+                    }
+                    if (::toolbarContainer.isInitialized) {
+                        toolbarContainer.visibility = if (isFullscreenMode) View.GONE else View.VISIBLE
+                    }
+                    customView = null
+                    customViewCallback = null
+                } catch (_: Exception) {}
+            }
         }
         super.onStop()
     }
@@ -687,10 +702,26 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         com.tdpham.navitvbrowser.util.UsageQuotaManager.stopRealtimeSync()
         handler.removeCallbacksAndMessages(null)
+        globalFocusChangeListener?.let { listener ->
+            try {
+                val vto = window.decorView.viewTreeObserver
+                if (vto.isAlive) vto.removeOnGlobalFocusChangeListener(listener)
+            } catch (_: Exception) {}
+        }
+        globalFocusChangeListener = null
         if (::tvInputHint.isInitialized) {
             tvInputHint.removeCallbacks(hideInputHintRunnable)
         }
         autocompleteJob?.cancel()
+        aiRequestJob?.cancel()
+        pendingPopupWebViews.toList().forEach { popup ->
+            try {
+                popup.stopLoading()
+                popup.webViewClient = WebViewClient()
+                popup.destroy()
+            } catch (_: Exception) {}
+        }
+        pendingPopupWebViews.clear()
         if (::virtualCursor.isInitialized) {
             virtualCursor.onDestroy()
         }
@@ -776,7 +807,9 @@ class MainActivity : ComponentActivity() {
                 KeyEvent.KEYCODE_DPAD_CENTER,
                 KeyEvent.KEYCODE_ENTER -> return true
             }
-        } else if (event.action == KeyEvent.ACTION_DOWN && (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN)) {
+        } else if (!isOverlayActive && !isEditingUrl && !isFocusedOnToolbar && !isCustomViewShown && webView.hasFocus() &&
+            event.action == KeyEvent.ACTION_DOWN && (event.keyCode == KeyEvent.KEYCODE_DPAD_UP || event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+        ) {
             // Smooth accelerated scrolling when holding D-pad in spatial navigation mode
             val holdDurationMs = (event.eventTime - event.downTime).coerceAtLeast(0)
             if (event.repeatCount > 1 || holdDurationMs > 280L) {
@@ -928,6 +961,9 @@ class MainActivity : ComponentActivity() {
                     // Only permit bundled app assets; block arbitrary local filesystem file:// navigation
                     return !fullUrl.startsWith(TRUSTED_ASSET_PREFIX)
                 }
+                if (scheme == "javascript" || scheme == "data" || scheme == "blob") {
+                    return false
+                }
                 if (scheme != "http" && scheme != "https" && scheme != "about") {
                     try {
                         val intent = Intent.parseUri(fullUrl, Intent.URI_INTENT_SCHEME)
@@ -935,8 +971,23 @@ class MainActivity : ComponentActivity() {
                             intent.addCategory(Intent.CATEGORY_BROWSABLE)
                             intent.component = null
                             intent.selector = null
-                            startActivity(intent)
-                            return true
+                            val grantMask = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or
+                                Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
+                            intent.flags = intent.flags and grantMask.inv()
+                            try {
+                                startActivity(intent)
+                                return true
+                            } catch (_: Exception) {
+                                val fallback = intent.getStringExtra("browser_fallback_url")?.trim().orEmpty()
+                                if (fallback.startsWith("http://", ignoreCase = true) ||
+                                    fallback.startsWith("https://", ignoreCase = true)
+                                ) {
+                                    view?.loadUrl(fallback)
+                                }
+                                return true
+                            }
                         }
                     } catch (_: Exception) {
                         return true
@@ -960,9 +1011,11 @@ class MainActivity : ComponentActivity() {
             @RequiresApi(android.os.Build.VERSION_CODES.O)
             override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
                 // Without this override a renderer crash/OOM-kill (common on low-RAM TVs) takes down the whole app.
-                FirebaseCrashlytics.getInstance().log(
-                    "WebView renderer gone (didCrash=${detail?.didCrash()}, priority=${detail?.rendererPriorityAtExit()})"
-                )
+                runCatching {
+                    FirebaseCrashlytics.getInstance().log(
+                        "WebView renderer gone (didCrash=${detail?.didCrash()}, priority=${detail?.rendererPriorityAtExit()})"
+                    )
+                }
                 recoverToHomepage = true
                 runOnUiThread {
                     if (!isFinishing && !isDestroyed) recreate()
@@ -976,6 +1029,7 @@ class MainActivity : ComponentActivity() {
                 progressBar.progress = 0
                 isWebViewInputFocused = false
                 lastExtractedPageText = ""
+                aiRequestJob?.cancel()
                 virtualCursor.setHoveringInteractive(false)
 
                 val urlStr = url.orEmpty()
@@ -1046,7 +1100,7 @@ class MainActivity : ComponentActivity() {
                 }
                 val title = view?.title
                 val pageUrl = url
-                if (!title.isNullOrBlank() && pageUrl != null) {
+                if (!title.isNullOrBlank() && pageUrl != null && !isDashboardOrAssetUrl(pageUrlStr)) {
                     EngagementHelper.recordPageLoaded(this@MainActivity)
                     lifecycleScope.launch(Dispatchers.IO) {
                         historyRepo.addToHistory(title = title, url = pageUrl)
@@ -1071,13 +1125,17 @@ class MainActivity : ComponentActivity() {
                 }
                 val transport = resultMsg.obj as? WebView.WebViewTransport ?: return false
                 val tempWebView = WebView(this@MainActivity)
+                pendingPopupWebViews.add(tempWebView)
                 var destroyed = false
                 fun cleanupTempWebView() {
                     if (destroyed) return
                     destroyed = true
-                    tempWebView.stopLoading()
-                    tempWebView.webViewClient = WebViewClient()
-                    tempWebView.destroy()
+                    pendingPopupWebViews.remove(tempWebView)
+                    try {
+                        tempWebView.stopLoading()
+                        tempWebView.webViewClient = WebViewClient()
+                        tempWebView.destroy()
+                    } catch (_: Exception) {}
                 }
                 // Guarantee cleanup even if the popup fails to trigger a top-level redirect
                 handler.postDelayed({ cleanupTempWebView() }, 5000L)
@@ -1087,7 +1145,7 @@ class MainActivity : ComponentActivity() {
                         val targetUrl = request?.url?.toString().orEmpty()
                         val isHttpOrHttps = targetUrl.startsWith("http://", ignoreCase = true) ||
                             targetUrl.startsWith("https://", ignoreCase = true)
-                        if (isHttpOrHttps) {
+                        if (isHttpOrHttps && !isFinishing && !isDestroyed) {
                             val blockedByAdBlock = AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity) &&
                                 EmbeddedAdBlocker.shouldBlockUrl(targetUrl)
                             if (!blockedByAdBlock) {
@@ -1103,7 +1161,7 @@ class MainActivity : ComponentActivity() {
                         if (targetUrl.isNotBlank() && targetUrl != "about:blank") {
                             val isHttpOrHttps = targetUrl.startsWith("http://", ignoreCase = true) ||
                                 targetUrl.startsWith("https://", ignoreCase = true)
-                            if (isHttpOrHttps &&
+                            if (isHttpOrHttps && !isFinishing && !isDestroyed &&
                                 !(AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity) && EmbeddedAdBlocker.shouldBlockUrl(targetUrl))
                             ) {
                                 webView.loadUrl(targetUrl)
@@ -1406,6 +1464,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun populateSuggestionChips(suggestions: List<SearchSuggestion>) {
+        isShowingSuggestions = suggestions.isNotEmpty()
         bookmarkBarContainer.removeAllViews()
         if (suggestions.isEmpty()) {
             bookmarkBar.visibility = View.GONE
@@ -1988,6 +2047,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun populateBookmarkBar(list: List<BookmarkEntity>) {
+        isShowingSuggestions = false
         bookmarkBarContainer.removeAllViews()
         if (list.isEmpty()) {
             bookmarkBar.visibility = View.GONE
@@ -2046,12 +2106,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupBookmarkBarAutoHide() {
-        window.decorView.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+        val listener = android.view.ViewTreeObserver.OnGlobalFocusChangeListener { _, newFocus ->
             if (newFocus != null) {
                 if (isViewInToolbarOrBookmarkBar(newFocus)) {
                     showBookmarkBar()
                 } else {
-                    if (bookmarkBarContainer.childCount > 0 && realBookmarks.isNotEmpty() && urlInput.text.toString() != webView.url) {
+                    if (isShowingSuggestions) {
                         populateBookmarkBar(realBookmarks)
                     }
                     scheduleHideBookmarkBar()
@@ -2060,6 +2120,8 @@ class MainActivity : ComponentActivity() {
                 scheduleHideBookmarkBar()
             }
         }
+        globalFocusChangeListener = listener
+        window.decorView.viewTreeObserver.addOnGlobalFocusChangeListener(listener)
     }
 
     private fun isViewInToolbarOrBookmarkBar(view: View?): Boolean {
@@ -2505,10 +2567,16 @@ class MainActivity : ComponentActivity() {
             })();
         """.trimIndent()
 
+        aiRequestJob?.cancel()
         val progressToast = Toast.makeText(this, getString(R.string.ai_summarizing), Toast.LENGTH_LONG)
         progressToast.show()
+        val requestUrl = url
 
         webView.evaluateJavascript(js) { extractedText ->
+            if (isFinishing || isDestroyed || webView.url != requestUrl) {
+                progressToast.cancel()
+                return@evaluateJavascript
+            }
             val cleanText = try {
                 if (extractedText == null || extractedText == "null") null
                 else JSONObject("{\"text\":$extractedText}").getString("text")
@@ -2525,45 +2593,56 @@ class MainActivity : ComponentActivity() {
             val truncatedText = if (cleanText.length > 4000) cleanText.take(4000) + "..." else cleanText
             lastExtractedPageText = truncatedText
 
-            lifecycleScope.launch {
-                val result = AiHelper.getSummaryDetailed(this@MainActivity, truncatedText)
-                progressToast.cancel()
-                
-                result.onSuccess { response ->
-                    EngagementHelper.recordAiSummary(this@MainActivity)
-                    handleCoreOperationCompleted()
-                    lastSummaryTier = response.usedTier
-                    showSummaryDialog(response.text, response.usedTier)
-                }.onFailure { error ->
-                    val message = when (error.message) {
-                        "API_KEY_MISSING" -> getString(R.string.ai_error_key_missing)
-                        "EMPTY_TEXT" -> getString(R.string.ai_error_empty)
-                        else -> getString(R.string.ai_error_generic)
+            aiRequestJob?.cancel()
+            aiRequestJob = lifecycleScope.launch {
+                try {
+                    val result = AiHelper.getSummaryDetailed(this@MainActivity, truncatedText)
+                    if (isFinishing || isDestroyed || webView.url != requestUrl) return@launch
+
+                    result.onSuccess { response ->
+                        EngagementHelper.recordAiSummary(this@MainActivity)
+                        handleCoreOperationCompleted()
+                        lastSummaryTier = response.usedTier
+                        showSummaryDialog(response.text, response.usedTier)
+                    }.onFailure { error ->
+                        val message = when (error.message) {
+                            "API_KEY_MISSING" -> getString(R.string.ai_error_key_missing)
+                            "EMPTY_TEXT" -> getString(R.string.ai_error_empty)
+                            else -> getString(R.string.ai_error_generic)
+                        }
+                        Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
                     }
-                    Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                } finally {
+                    progressToast.cancel()
                 }
             }
         }
     }
 
     private fun askQuestionAboutCurrentPage(question: String) {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        imm.hideSoftInputFromWindow(etAskPageQuestion.windowToken, 0)
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+        imm?.hideSoftInputFromWindow(etAskPageQuestion.windowToken, 0)
         etAskPageQuestion.setText("")
+        val requestUrl = webView.url.orEmpty()
 
         fun runQuestionWithPageText(pageText: String) {
+            aiRequestJob?.cancel()
             val progressToast = Toast.makeText(this, getString(R.string.ai_asking_question), Toast.LENGTH_SHORT)
             progressToast.show()
-            lifecycleScope.launch {
-                val result = AiHelper.askPageQuestionDetailed(this@MainActivity, question, pageText)
-                progressToast.cancel()
-                result.onSuccess { response ->
-                    handleCoreOperationCompleted()
-                    lastSummaryTier = response.usedTier
-                    val formattedAnswer = getString(R.string.ai_question_answer_format, question, response.text)
-                    showSummaryDialog(formattedAnswer, response.usedTier)
-                }.onFailure {
-                    Toast.makeText(this@MainActivity, getString(R.string.ai_error_generic), Toast.LENGTH_SHORT).show()
+            aiRequestJob = lifecycleScope.launch {
+                try {
+                    val result = AiHelper.askPageQuestionDetailed(this@MainActivity, question, pageText)
+                    if (isFinishing || isDestroyed || webView.url.orEmpty() != requestUrl) return@launch
+                    result.onSuccess { response ->
+                        handleCoreOperationCompleted()
+                        lastSummaryTier = response.usedTier
+                        val formattedAnswer = getString(R.string.ai_question_answer_format, question, response.text)
+                        showSummaryDialog(formattedAnswer, response.usedTier)
+                    }.onFailure {
+                        Toast.makeText(this@MainActivity, getString(R.string.ai_error_generic), Toast.LENGTH_SHORT).show()
+                    }
+                } finally {
+                    progressToast.cancel()
                 }
             }
         }
@@ -2575,6 +2654,7 @@ class MainActivity : ComponentActivity() {
 
         val js = "(function() { return document.body ? document.body.innerText.slice(0, 4000) : ''; })();"
         webView.evaluateJavascript(js) { raw ->
+            if (isFinishing || isDestroyed || webView.url.orEmpty() != requestUrl) return@evaluateJavascript
             val clean = try {
                 if (raw.isNullOrBlank() || raw == "null") ""
                 else JSONObject("{\"t\":$raw}").getString("t")
@@ -2690,7 +2770,7 @@ class MainActivity : ComponentActivity() {
     private fun handleCoreOperationCompleted() {
         val count = com.tdpham.navitvbrowser.util.DonationManager.recordCoreOperation(this)
         val milestone = com.tdpham.navitvbrowser.util.DonationManager.checkAndGetMilestone(this, count)
-        if (milestone != null) {
+        if (milestone != null && !isFinishing && !isDestroyed) {
             val title = getString(R.string.donation_milestone_title, milestone)
             val msg = getString(R.string.donation_milestone_msg)
             androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))

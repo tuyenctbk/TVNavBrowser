@@ -612,6 +612,15 @@
             }
         }
 
+        function escapeHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         // Dynamic Portal Suggestions Renderer (filters out any duplicate top-bar native actions)
         function renderPortals(data) {
             if (!data || !data.categories) return;
@@ -637,9 +646,10 @@
             });
 
             // Build Category Tabs
-            var tabsHtml = '<button class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\', this)">' + localizedLabels.allPortals + '</button>';
+            var tabsHtml = '<button class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\', this)">' + escapeHtml(localizedLabels.allPortals) + '</button>';
             validCategories.forEach(function(cat) {
-                tabsHtml += '<button class="cat-tab" data-cat="' + cat.id + '" onclick="filterCategory(\'' + cat.id + '\', this)">' + cat.tabIcon + ' ' + cat.tabTitle + '</button>';
+                var safeId = escapeHtml(cat.id);
+                tabsHtml += '<button class="cat-tab" data-cat="' + safeId + '" onclick="filterCategory(\'' + safeId + '\', this)">' + escapeHtml(cat.tabIcon) + ' ' + escapeHtml(cat.tabTitle) + '</button>';
             });
             navContainer.innerHTML = tabsHtml;
 
@@ -647,27 +657,27 @@
             var sectionsHtml = '';
             validCategories.forEach(function(cat, idx) {
                 var delay = (idx * 0.05).toFixed(2);
-                sectionsHtml += '<div class="section-group" data-cat="' + cat.id + '" style="animation-delay:' + delay + 's;">';
+                sectionsHtml += '<div class="section-group" data-cat="' + escapeHtml(cat.id) + '" style="animation-delay:' + delay + 's;">';
                 sectionsHtml += '  <div class="section-header">';
                 sectionsHtml += '    <div class="section-title">';
-                sectionsHtml += '      <span>' + cat.tabIcon + ' ' + cat.headerTitle + '</span>';
-                sectionsHtml += '      <span class="section-badge">' + cat.headerBadge + '</span>';
+                sectionsHtml += '      <span>' + escapeHtml(cat.tabIcon) + ' ' + escapeHtml(cat.headerTitle) + '</span>';
+                sectionsHtml += '      <span class="section-badge">' + escapeHtml(cat.headerBadge) + '</span>';
                 sectionsHtml += '    </div>';
                 sectionsHtml += '  </div>';
                 sectionsHtml += '  <div class="grid">';
                 cat.items.forEach(function(item) {
-                    sectionsHtml += '    <a href="' + item.url + '" class="card ' + (item.cardClass || '') + '">';
+                    sectionsHtml += '    <a href="' + escapeHtml(item.url) + '" class="card ' + escapeHtml(item.cardClass || '') + '">';
                     sectionsHtml += '      <div class="card-icon-wrap">';
-                    sectionsHtml += '        <svg viewBox="0 0 24 24" fill="' + item.fill + '">';
-                    sectionsHtml += '          <path d="' + item.path + '"/>';
+                    sectionsHtml += '        <svg viewBox="0 0 24 24" fill="' + escapeHtml(item.fill) + '">';
+                    sectionsHtml += '          <path d="' + escapeHtml(item.path) + '"/>';
                     sectionsHtml += '        </svg>';
                     sectionsHtml += '      </div>';
                     sectionsHtml += '      <div class="card-info">';
                     sectionsHtml += '        <div class="card-title-row">';
-                    sectionsHtml += '          <span class="card-label">' + item.title + '</span>';
-                    sectionsHtml += '          <span class="card-badge ' + (item.badgeClass || '') + '">' + item.badge + '</span>';
+                    sectionsHtml += '          <span class="card-label">' + escapeHtml(item.title) + '</span>';
+                    sectionsHtml += '          <span class="card-badge ' + escapeHtml(item.badgeClass || '') + '">' + escapeHtml(item.badge) + '</span>';
                     sectionsHtml += '        </div>';
-                    sectionsHtml += '        <span class="card-desc">' + item.desc + '</span>';
+                    sectionsHtml += '        <span class="card-desc">' + escapeHtml(item.desc) + '</span>';
                     sectionsHtml += '      </div>';
                     sectionsHtml += '    </a>';
                 });

@@ -4,8 +4,12 @@ import com.tdpham.navitvbrowser.data.dao.HistoryDao
 import com.tdpham.navitvbrowser.data.entity.HistoryEntity
 import com.tdpham.navitvbrowser.util.UrlUtils
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class HistoryRepository(private val historyDao: HistoryDao) {
+
+    private val writeMutex = Mutex()
 
     fun getAllHistory(): Flow<List<HistoryEntity>> = historyDao.getAllHistory()
 
@@ -22,9 +26,13 @@ class HistoryRepository(private val historyDao: HistoryDao) {
         historyDao.getRecentHistoryList(limit)
 
     suspend fun addToHistory(title: String, url: String) {
-        if (!UrlUtils.isBrowsableUrl(url)) return
-        historyDao.deleteByUrl(url)
-        historyDao.insertHistory(HistoryEntity(title = title, url = url))
+        val cleanUrl = url.trim()
+        if (!UrlUtils.isBrowsableUrl(cleanUrl) || cleanUrl.startsWith("file:///", ignoreCase = true)) return
+        val cleanTitle = title.trim().ifBlank { cleanUrl }
+        writeMutex.withLock {
+            historyDao.deleteByUrl(cleanUrl)
+            historyDao.insertHistory(HistoryEntity(title = cleanTitle, url = cleanUrl))
+        }
     }
 
     suspend fun removeFromHistory(history: HistoryEntity) {
@@ -35,4 +43,3 @@ class HistoryRepository(private val historyDao: HistoryDao) {
         historyDao.clearAll()
     }
 }
-

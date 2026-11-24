@@ -5,6 +5,7 @@ import android.os.SystemClock
 import com.google.firebase.Firebase
 import com.google.firebase.vertexai.vertexAI
 import com.google.firebase.vertexai.type.content
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -39,6 +40,8 @@ class FirebaseVertexAiProvider(
             }
             response.text?.takeIf { it.isNotBlank() }?.let { Result.success(it) }
                 ?: Result.failure(Exception("EMPTY_RESPONSE"))
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -59,6 +62,8 @@ class FirebaseVertexAiProvider(
             }
             response.text?.takeIf { it.isNotBlank() }?.let { Result.success(it) }
                 ?: Result.failure(Exception("EMPTY_RESPONSE"))
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -78,7 +83,7 @@ class LocalExtractiveProvider : AiProvider {
         val readMinutes = max(1, wordCount / 200)
         val readingTimeHeader = context.getString(R.string.ai_reading_time_format, readMinutes, wordCount)
 
-        val rawSentences = clean.split(Regex("(?<=[.!?])\\s+"))
+        val rawSentences = clean.split(Regex("(?<=[.!?。！？])\\s+"))
             .map { it.trim() }
             .filter { it.length in 35..260 && !it.contains("cookie", ignoreCase = true) && !it.contains("subscribe", ignoreCase = true) }
 
@@ -134,7 +139,7 @@ class LocalExtractiveProvider : AiProvider {
             .filter { it.length >= 3 }
             .toSet()
 
-        val sentences = clean.split(Regex("(?<=[.!?])\\s+"))
+        val sentences = clean.split(Regex("(?<=[.!?。！？])\\s+"))
             .map { it.trim() }
             .filter { it.length in 25..280 }
 
@@ -162,18 +167,45 @@ class LocalExtractiveProvider : AiProvider {
 object AiHelper {
     const val SYSTEM_PROMPT = "Summarize the following web page content concisely for an Android TV user. Respond in the same language as the page content. Focus on the main points and keep it under 150 words."
 
-    /** Fingerprint Deduplication Cache (45s TTL) — Playbook Section 1.C */
+    /** Fingerprint Deduplication Cache (45s TTL, up to 8 recent summary/Q&A entries) — Playbook Section 1.C */
     private const val CACHE_TTL_MS = 45_000L
+    private const val MAX_CACHE_ENTRIES = 8
     private data class CacheEntry(
-        val fingerprint: Int,
         val response: AiGenerationResponse,
         val timestampMs: Long
     )
-    @Volatile
-    private var lastCacheEntry: CacheEntry? = null
+    private val cacheLock = Any()
+    private val responseCache = object : LinkedHashMap<String, CacheEntry>(MAX_CACHE_ENTRIES + 1, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, CacheEntry>?): Boolean {
+            return size > MAX_CACHE_ENTRIES
+        }
+    }
 
     fun clearCache() {
-        lastCacheEntry = null
+        synchronized(cacheLock) {
+            responseCache.clear()
+        }
+    }
+
+    private fun getCached(key: String, preferredTier: AiModelConfig.CapabilityTier): AiGenerationResponse? {
+        val now = SystemClock.elapsedRealtime()
+        synchronized(cacheLock) {
+            val cached = responseCache[key] ?: return null
+            if ((now - cached.timestampMs) > CACHE_TTL_MS) {
+                responseCache.remove(key)
+                return null
+            }
+            val canUpgradeFromOffline = cached.response.usedTier == AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST &&
+                preferredTier != AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST
+            if (canUpgradeFromOffline) return null
+            return cached.response.copy(fromCache = true)
+        }
+    }
+
+    private fun putCached(key: String, response: AiGenerationResponse) {
+        synchronized(cacheLock) {
+            responseCache[key] = CacheEntry(response, SystemClock.elapsedRealtime())
+        }
     }
 
     suspend fun getSummaryDetailed(context: Context, text: String): Result<AiGenerationResponse> {
@@ -184,15 +216,8 @@ object AiHelper {
 
         // 1. Check 45-second Fingerprint Deduplication Cache (0 tokens on double-tap).
         // Bypass a cached Tier-3 offline result if cloud credits were just unlocked (e.g. grace pack / supporter).
-        val fingerprint = cleanInput.hashCode()
-        val now = SystemClock.elapsedRealtime()
-        lastCacheEntry?.let { cached ->
-            val canUpgradeFromOffline = cached.response.usedTier == AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST &&
-                preferredTier != AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST
-            if (cached.fingerprint == fingerprint && (now - cached.timestampMs) <= CACHE_TTL_MS && !canUpgradeFromOffline) {
-                return Result.success(cached.response.copy(fromCache = true))
-            }
-        }
+        val cacheKey = "summary:${cleanInput.length}:${cleanInput.hashCode()}"
+        getCached(cacheKey, preferredTier)?.let { return Result.success(it) }
 
         var cascadedFromPrimary = false
 
@@ -206,7 +231,7 @@ object AiHelper {
                     usedTier = AiModelConfig.CapabilityTier.TIER_1_PRIMARY_CLOUD
                 )
                 UsageQuotaManager.recordSuccess(context, UsageQuotaManager.AiFeature.SUMMARY, out.usedTier)
-                lastCacheEntry = CacheEntry(fingerprint, out, SystemClock.elapsedRealtime())
+                putCached(cacheKey, out)
                 return Result.success(out)
             }
             // Primary failed or hit 429 rate-limit -> cascade to Tier 2 Economy Lite
@@ -225,7 +250,7 @@ object AiHelper {
                     rateLimitedCascaded = cascadedFromPrimary
                 )
                 UsageQuotaManager.recordSuccess(context, UsageQuotaManager.AiFeature.SUMMARY, out.usedTier)
-                lastCacheEntry = CacheEntry(fingerprint, out, SystemClock.elapsedRealtime())
+                putCached(cacheKey, out)
                 return Result.success(out)
             }
             UsageQuotaManager.recordFallbackCascade(context)
@@ -240,7 +265,7 @@ object AiHelper {
                 usedTier = AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST,
                 rateLimitedCascaded = cascadedFromPrimary
             )
-            lastCacheEntry = CacheEntry(fingerprint, out, SystemClock.elapsedRealtime())
+            putCached(cacheKey, out)
             out
         }
     }
@@ -264,16 +289,9 @@ object AiHelper {
             return Result.failure(Exception("EMPTY_TEXT"))
         }
 
-        val fingerprint = (cleanQuestion.lowercase() + "||" + cleanPage.hashCode()).hashCode()
+        val cacheKey = "qa:${cleanQuestion.lowercase().hashCode()}:${cleanPage.length}:${cleanPage.hashCode()}"
         val preferredTier = UsageQuotaManager.resolvePreferredTier(context)
-        val now = SystemClock.elapsedRealtime()
-        lastCacheEntry?.let { cached ->
-            val canUpgradeFromOffline = cached.response.usedTier == AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST &&
-                preferredTier != AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST
-            if (cached.fingerprint == fingerprint && (now - cached.timestampMs) <= CACHE_TTL_MS && !canUpgradeFromOffline) {
-                return Result.success(cached.response.copy(fromCache = true))
-            }
-        }
+        getCached(cacheKey, preferredTier)?.let { return Result.success(it) }
         var cascadedFromPrimary = false
 
         // Tier 1: Primary Standard Model
@@ -286,7 +304,7 @@ object AiHelper {
                     usedTier = AiModelConfig.CapabilityTier.TIER_1_PRIMARY_CLOUD
                 )
                 UsageQuotaManager.recordSuccess(context, UsageQuotaManager.AiFeature.CHAT, out.usedTier)
-                lastCacheEntry = CacheEntry(fingerprint, out, SystemClock.elapsedRealtime())
+                putCached(cacheKey, out)
                 return Result.success(out)
             }
             cascadedFromPrimary = true
@@ -304,7 +322,7 @@ object AiHelper {
                     rateLimitedCascaded = cascadedFromPrimary
                 )
                 UsageQuotaManager.recordSuccess(context, UsageQuotaManager.AiFeature.CHAT, out.usedTier)
-                lastCacheEntry = CacheEntry(fingerprint, out, SystemClock.elapsedRealtime())
+                putCached(cacheKey, out)
                 return Result.success(out)
             }
             UsageQuotaManager.recordFallbackCascade(context)
@@ -318,7 +336,7 @@ object AiHelper {
                 usedTier = AiModelConfig.CapabilityTier.TIER_3_LOCAL_ZERO_COST,
                 rateLimitedCascaded = cascadedFromPrimary
             )
-            lastCacheEntry = CacheEntry(fingerprint, out, SystemClock.elapsedRealtime())
+            putCached(cacheKey, out)
             out
         }
     }

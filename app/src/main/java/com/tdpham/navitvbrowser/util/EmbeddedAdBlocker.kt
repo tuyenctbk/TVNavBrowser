@@ -8,7 +8,6 @@ import java.io.ByteArrayInputStream
 
 /**
  * Blocks embedded website ads via network filtering and DOM cleanup.
- * Does not affect the app's own AdMob banner.
  */
 object EmbeddedAdBlocker {
 
@@ -133,9 +132,11 @@ object EmbeddedAdBlocker {
             return true
         }
 
-        // 4. Keyword searches on path (requires path parsing, done last)
-        val path = uri.path?.lowercase().orEmpty()
-        return blockedPathKeywords.any { path.contains(it) }
+        // 4. Keyword searches on path + query (so rules like "/ads?" and "/ad?" match reliably)
+        val rawPath = uri.path.orEmpty()
+        val rawQuery = uri.query
+        val pathAndQuery = (if (rawQuery != null) "$rawPath?$rawQuery" else rawPath).lowercase()
+        return blockedPathKeywords.any { pathAndQuery.contains(it) }
     }
 
     private fun isHostBlocked(host: String): Boolean {

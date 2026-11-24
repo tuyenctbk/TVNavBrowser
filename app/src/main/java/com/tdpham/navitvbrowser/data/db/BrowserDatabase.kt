@@ -33,7 +33,7 @@ abstract class BrowserDatabase : RoomDatabase() {
                     BrowserDatabase::class.java,
                     "browser_database"
                 )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(dropAllTables = true)
                 .build().also { instance = it }
             }
     }

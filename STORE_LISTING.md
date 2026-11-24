@@ -1,6 +1,6 @@
-# Google Play Store Listing: NaviTV Browser (v3.2.1)
+# Google Play Store Listing: NaviTV Browser (v3.2.2)
 
-This document contains the localized store listing assets and copy for **NaviTV Browser** (`com.tdpham.navitvbrowser`, `versionCode 40`, `versionName 3.2.1`).
+This document contains the localized store listing assets and copy for **NaviTV Browser** (`com.tdpham.navitvbrowser`, `versionCode 41`, `versionName 3.2.2`).
 
 ---
 

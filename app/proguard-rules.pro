@@ -19,16 +19,7 @@
 -keep class com.tdpham.navitvbrowser.data.dao.** { *; }
 -keep class com.tdpham.navitvbrowser.data.db.** { *; }
 
-# 3. Google Mobile Ads (AdMob)
--keep public class com.google.android.gms.ads.** {
-   public *;
-}
--keep public class com.google.ads.** {
-   public *;
-}
--dontwarn com.google.android.gms.ads.**
-
-# 4. Firebase (Auth, Firestore, Analytics, Crashlytics, Messaging, RemoteConfig, Vertex AI)
+# 3. Firebase (Firestore, Analytics, Crashlytics, RemoteConfig, Vertex AI)
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 -dontwarn com.google.firebase.**
 -keep class com.google.firebase.** { *; }

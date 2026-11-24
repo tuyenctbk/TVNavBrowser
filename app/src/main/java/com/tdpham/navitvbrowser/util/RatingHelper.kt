@@ -29,6 +29,7 @@ object RatingHelper {
     }
 
     fun showRatingDialog(activity: Activity, onDismissedPermanently: (() -> Unit)? = null) {
+        if (activity.isFinishing || activity.isDestroyed) return
         val prefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         if (prefs.getBoolean(KEY_DONT_SHOW_AGAIN, false)) {
             onDismissedPermanently?.invoke()
@@ -61,6 +62,7 @@ object RatingHelper {
         try {
             val manager = ReviewManagerFactory.create(activity)
             manager.requestReviewFlow().addOnCompleteListener { task ->
+                if (activity.isFinishing || activity.isDestroyed) return@addOnCompleteListener
                 if (task.isSuccessful) {
                     manager.launchReviewFlow(activity, task.result)
                 } else {
