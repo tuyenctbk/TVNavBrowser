@@ -63,10 +63,11 @@ class BookmarksActivity : ComponentActivity() {
             android.widget.Toast.makeText(this, R.string.sync_bookmarks_syncing, android.widget.Toast.LENGTH_SHORT).show()
             lifecycleScope.launch {
                 val result = com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@BookmarksActivity, repository)
+                if (isFinishing || isDestroyed) return@launch
                 result.onSuccess { count ->
-                    android.widget.Toast.makeText(this@BookmarksActivity, getString(R.string.sync_bookmarks_success, count), android.widget.Toast.LENGTH_LONG).show()
+                    android.widget.Toast.makeText(applicationContext, getString(R.string.sync_bookmarks_success, count), android.widget.Toast.LENGTH_LONG).show()
                 }.onFailure {
-                    android.widget.Toast.makeText(this@BookmarksActivity, R.string.sync_bookmarks_error, android.widget.Toast.LENGTH_LONG).show()
+                    android.widget.Toast.makeText(applicationContext, R.string.sync_bookmarks_error, android.widget.Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -96,6 +97,12 @@ class BookmarksActivity : ComponentActivity() {
         emptyView.visibility = if (list.isEmpty()) TextView.VISIBLE else TextView.GONE
 
         val inflater = LayoutInflater.from(this)
+        val accentTint = android.content.res.ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
+        val textPrimary = ThemeHelper.getTextPrimaryColor(this)
+        val textSecondary = ThemeHelper.getTextSecondaryColor(this)
+        val secondaryTint = android.content.res.ColorStateList.valueOf(textSecondary)
+        val itemBg = ThemeHelper.getFocusableItemBackground(this)
+        val btnBg = ThemeHelper.getToolbarButtonBackground(this)
         list.forEachIndexed { index, bookmark ->
             val row = inflater.inflate(R.layout.item_url_row, container, false)
             val rowContent = row.findViewById<android.view.View>(R.id.rowContent)
@@ -105,14 +112,14 @@ class BookmarksActivity : ComponentActivity() {
             val btnDeleteRow = row.findViewById<ImageButton>(R.id.btnDeleteRow)
 
             ivRowIcon.setImageResource(R.drawable.ic_nav_bookmark)
-            ivRowIcon.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getAccentColor(this))
+            ivRowIcon.imageTintList = accentTint
             tvRowTitle.text = bookmark.title
-            tvRowTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+            tvRowTitle.setTextColor(textPrimary)
             tvRowUrl.text = bookmark.url
-            tvRowUrl.setTextColor(ThemeHelper.getTextSecondaryColor(this))
-            rowContent.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
-            btnDeleteRow.setBackgroundResource(ThemeHelper.getToolbarButtonBackground(this))
-            btnDeleteRow.imageTintList = android.content.res.ColorStateList.valueOf(ThemeHelper.getTextSecondaryColor(this))
+            tvRowUrl.setTextColor(textSecondary)
+            rowContent.setBackgroundResource(itemBg)
+            btnDeleteRow.setBackgroundResource(btnBg)
+            btnDeleteRow.imageTintList = secondaryTint
 
             FocusAnimationHelper.apply(rowContent)
             FocusAnimationHelper.apply(btnDeleteRow)

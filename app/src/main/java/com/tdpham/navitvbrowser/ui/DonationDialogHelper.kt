@@ -20,6 +20,13 @@ import android.widget.Toast
 import com.tdpham.navitvbrowser.R
 import com.tdpham.navitvbrowser.util.DonationManager
 import com.tdpham.navitvbrowser.util.QrCodeGenerator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object DonationDialogHelper {
 
@@ -28,6 +35,7 @@ object DonationDialogHelper {
 
     fun showDonationDialog(activity: Activity, onSupporterStateChanged: (() -> Unit)? = null) {
         if (activity.isFinishing || activity.isDestroyed) return
+
         val dialog = Dialog(activity)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
@@ -39,6 +47,11 @@ object DonationDialogHelper {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val dialogScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        dialog.setOnDismissListener {
+            dialogScope.cancel()
+        }
 
         val btnClose = view.findViewById<ImageButton>(R.id.btnCloseDonation)
 
@@ -92,12 +105,18 @@ object DonationDialogHelper {
         val btnOpenPaypal = view.findViewById<Button>(R.id.btnOpenPaypal)
 
         var selectedAmount = "5"
+        var paypalQrJob: Job? = null
         fun updatePaypalQr(amount: String) {
             selectedAmount = amount
             val paypalUrl = "https://paypal.me/$PAYPAL_USERNAME/${amount}USD"
-            val qrBitmap = QrCodeGenerator.generateQrCode(paypalUrl, 320, 320)
-            if (qrBitmap != null) {
-                ivPaypalQr.setImageBitmap(qrBitmap)
+            paypalQrJob?.cancel()
+            paypalQrJob = dialogScope.launch {
+                val qrBitmap = withContext(Dispatchers.Default) {
+                    QrCodeGenerator.generateQrCode(paypalUrl, 320, 320)
+                }
+                if (!activity.isFinishing && !activity.isDestroyed && dialog.isShowing && qrBitmap != null) {
+                    ivPaypalQr.setImageBitmap(qrBitmap)
+                }
             }
             val accentColor = ThemeHelper.getAccentColor(activity)
             val primaryColor = ThemeHelper.getTextPrimaryColor(activity)
@@ -107,7 +126,6 @@ object DonationDialogHelper {
                 btn.setTextColor(if (active) accentColor else primaryColor)
             }
         }
-        updatePaypalQr(selectedAmount)
 
         btnPreset3.setOnClickListener { updatePaypalQr("3") }
         btnPreset5.setOnClickListener { updatePaypalQr("5") }
@@ -128,8 +146,19 @@ object DonationDialogHelper {
         // Ko-fi Section
         val btnOpenKofi = view.findViewById<Button>(R.id.btnOpenKofi)
         val ivKofiQr = view.findViewById<ImageView>(R.id.ivKofiQr)
-        val kofiQrBitmap = QrCodeGenerator.generateQrCode(KOFI_URL, 320, 320)
-        if (kofiQrBitmap != null) ivKofiQr.setImageBitmap(kofiQrBitmap)
+        var kofiQrLoaded = false
+        fun ensureKofiQrLoaded() {
+            if (kofiQrLoaded) return
+            kofiQrLoaded = true
+            dialogScope.launch {
+                val kofiQrBitmap = withContext(Dispatchers.Default) {
+                    QrCodeGenerator.generateQrCode(KOFI_URL, 320, 320)
+                }
+                if (!activity.isFinishing && !activity.isDestroyed && dialog.isShowing && kofiQrBitmap != null) {
+                    ivKofiQr.setImageBitmap(kofiQrBitmap)
+                }
+            }
+        }
 
         btnOpenKofi.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(KOFI_URL))
@@ -161,6 +190,12 @@ object DonationDialogHelper {
 
             targetLayout.visibility = View.VISIBLE
             selectedBtn.alpha = 1.0f
+
+            if (targetLayout === layoutPaypal) {
+                updatePaypalQr(selectedAmount)
+            } else if (targetLayout === layoutKofi) {
+                ensureKofiQrLoaded()
+            }
         }
 
         btnTabPlay.setOnClickListener { selectTab(btnTabPlay, layoutPlay) }
@@ -169,7 +204,7 @@ object DonationDialogHelper {
 
         btnClose.setOnClickListener { dialog.dismiss() }
 
-        // Default tab: Google Play
+        // Default tab: Google Play (QR codes generated lazily only when PayPal / Ko-fi tab is selected)
         selectTab(btnTabPlay, layoutPlay)
 
         dialog.show()

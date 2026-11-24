@@ -10,17 +10,21 @@ import com.tdpham.navitvbrowser.R
 import java.util.Locale
 
 class TtsHelper(
-    private val context: Context,
+    context: Context,
     private val onStateChanged: ((Boolean) -> Unit)? = null
 ) : TextToSpeech.OnInitListener {
 
-    private val appContext = context.applicationContext
+    private val appContext: Context = context.applicationContext
     private val mainHandler = Handler(Looper.getMainLooper())
     private var tts: TextToSpeech? = null
+    @Volatile
+    private var isInitializing = false
     @Volatile
     private var isReady = false
     @Volatile
     private var initFailed = false
+    @Volatile
+    private var isShutdown = false
     @Volatile
     private var pendingText: String? = null
 
@@ -28,16 +32,27 @@ class TtsHelper(
     var isSpeaking: Boolean = false
         private set
 
-    init {
+    private fun ensureInitialized() {
+        if (isShutdown || isReady || isInitializing) return
+        isInitializing = true
         try {
             tts = TextToSpeech(appContext, this)
         } catch (_: Exception) {
+            isInitializing = false
             isReady = false
             initFailed = true
+            pendingText = null
+            showToast(R.string.tts_unavailable)
         }
     }
 
     override fun onInit(status: Int) {
+        isInitializing = false
+        if (isShutdown) {
+            try { tts?.shutdown() } catch (_: Exception) {}
+            tts = null
+            return
+        }
         if (status == TextToSpeech.SUCCESS) {
             val engine = tts ?: return
             isReady = true
@@ -77,16 +92,15 @@ class TtsHelper(
             val queued = pendingText
             pendingText = null
             if (!queued.isNullOrBlank()) {
-                mainHandler.post { speak(queued) }
+                mainHandler.post {
+                    if (!isShutdown) speak(queued)
+                }
             }
         } else {
             isReady = false
             initFailed = true
-            val hadPending = !pendingText.isNullOrBlank()
             pendingText = null
-            if (hadPending) {
-                showToast(R.string.tts_unavailable)
-            }
+            showToast(R.string.tts_unavailable)
         }
     }
 
@@ -99,20 +113,24 @@ class TtsHelper(
     }
 
     fun speak(text: String) {
+        if (isShutdown) return
         val cleanText = text
             .replace(Regex("[\\p{So}\\p{Cn}•]+"), " ")
             .replace(Regex("\\s+"), " ")
             .trim()
         if (cleanText.isBlank()) return
 
-        if (initFailed || tts == null) {
+        if (initFailed) {
             showToast(R.string.tts_unavailable)
             return
         }
 
         if (!isReady) {
             pendingText = cleanText
-            showToast(R.string.tts_reading_aloud)
+            ensureInitialized()
+            if (!initFailed) {
+                showToast(R.string.tts_reading_aloud)
+            }
             return
         }
 
@@ -154,6 +172,7 @@ class TtsHelper(
     }
 
     fun shutdown() {
+        isShutdown = true
         stop()
         mainHandler.removeCallbacksAndMessages(null)
         try {
@@ -161,17 +180,24 @@ class TtsHelper(
         } catch (_: Exception) {}
         tts = null
         isReady = false
+        isInitializing = false
     }
 
     private fun showToast(resId: Int) {
+        if (isShutdown) return
         mainHandler.post {
-            Toast.makeText(appContext, resId, Toast.LENGTH_SHORT).show()
+            if (!isShutdown) {
+                Toast.makeText(appContext, resId, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun notifyState(speaking: Boolean) {
+        if (isShutdown) return
         mainHandler.post {
-            onStateChanged?.invoke(speaking)
+            if (!isShutdown) {
+                onStateChanged?.invoke(speaking)
+            }
         }
     }
 }

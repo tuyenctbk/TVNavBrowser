@@ -171,11 +171,16 @@ class MainActivity : ComponentActivity() {
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
     private var mainWebChromeClient: WebChromeClient? = null
-    private val pendingPopupWebViews = mutableSetOf<WebView>()
-    private var isShowingSuggestions = false
-    private var globalFocusChangeListener: android.view.ViewTreeObserver.OnGlobalFocusChangeListener? = null
 
     private var realBookmarks: List<BookmarkEntity> = emptyList()
+    private var renderedBookmarkSnapshot: List<BookmarkEntity>? = null
+    private var isShowingSuggestions = false
+    private var globalFocusChangeListener: android.view.ViewTreeObserver.OnGlobalFocusChangeListener? = null
+    private val activePopupWebViews = mutableSetOf<WebView>()
+    private var hasAppliedProgressAdBlock = false
+    private var lastNavBackState: Boolean? = null
+    private var lastNavForwardState: Boolean? = null
+    private var lastInactivityResetMs = 0L
     private lateinit var virtualCursor: VirtualCursorController
     private lateinit var historyRepo: HistoryRepository
     private lateinit var bookmarkRepo: BookmarkRepository
@@ -201,6 +206,7 @@ class MainActivity : ComponentActivity() {
     private var isSwitchingMode = false
 
     private fun showModeNotice(message: String) {
+        if (isFinishing || isDestroyed) return
         modeToast?.cancel()
         modeToast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT)
         modeToast?.show()
@@ -616,7 +622,9 @@ class MainActivity : ComponentActivity() {
             recreate()
             return
         }
-        applyInterfaceTheme()
+        if (::btnDonate.isInitialized && ::donationBannerView.isInitialized) {
+            updateDonationUi()
+        }
         if (::virtualCursor.isInitialized) {
             virtualCursor.speedMultiplier = AppPreferences.getMouseSpeedMultiplier(this)
         }
@@ -632,7 +640,7 @@ class MainActivity : ComponentActivity() {
         } else if (::webView.isInitialized) {
             webView.onResume()
         }
-        resetInactivityTimer()
+        resetInactivityTimer(force = true)
         com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this)
     }
 
@@ -702,26 +710,31 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         com.tdpham.navitvbrowser.util.UsageQuotaManager.stopRealtimeSync()
         handler.removeCallbacksAndMessages(null)
+        modeToast?.cancel()
+        modeToast = null
         globalFocusChangeListener?.let { listener ->
             try {
-                val vto = window.decorView.viewTreeObserver
-                if (vto.isAlive) vto.removeOnGlobalFocusChangeListener(listener)
+                val vto = window?.decorView?.viewTreeObserver
+                if (vto != null && vto.isAlive) {
+                    vto.removeOnGlobalFocusChangeListener(listener)
+                }
             } catch (_: Exception) {}
+            globalFocusChangeListener = null
         }
-        globalFocusChangeListener = null
+        if (::bookmarkBar.isInitialized) {
+            bookmarkBar.animate().cancel()
+        }
+        if (::gameModeOverlay.isInitialized) {
+            gameModeOverlay.animate().cancel()
+        }
+        if (::summaryOverlayContainer.isInitialized) {
+            summaryOverlayContainer.findViewById<View>(R.id.cardSummary)?.animate()?.cancel()
+        }
         if (::tvInputHint.isInitialized) {
             tvInputHint.removeCallbacks(hideInputHintRunnable)
         }
         autocompleteJob?.cancel()
         aiRequestJob?.cancel()
-        pendingPopupWebViews.toList().forEach { popup ->
-            try {
-                popup.stopLoading()
-                popup.webViewClient = WebViewClient()
-                popup.destroy()
-            } catch (_: Exception) {}
-        }
-        pendingPopupWebViews.clear()
         if (::virtualCursor.isInitialized) {
             virtualCursor.onDestroy()
         }
@@ -732,9 +745,20 @@ class MainActivity : ComponentActivity() {
             speechRecognizer = null
         } catch (_: Exception) {}
 
+        val lingeringPopups = activePopupWebViews.toList()
+        activePopupWebViews.clear()
+        lingeringPopups.forEach { popup ->
+            try {
+                popup.stopLoading()
+                popup.webViewClient = WebViewClient()
+                popup.destroy()
+            } catch (_: Exception) {}
+        }
+
         if (::webViewMemoryManager.isInitialized) {
             webViewMemoryManager.destroy()
         } else if (::webView.isInitialized) {
+            webView.removeJavascriptInterface("AndroidApp")
             webView.loadUrl("about:blank")
             webView.stopLoading()
             webView.webChromeClient = null
@@ -1056,7 +1080,7 @@ class MainActivity : ComponentActivity() {
                 }
                 setGameModeButtonVisible(false)
 
-                view?.evaluateJavascript("window.__tvnavAdBlockerApplied = false;", null)
+                hasAppliedProgressAdBlock = false
                 injectFocusStyle(view)
                 injectGameModeBridge(view)
                 updateNavButtonsState()
@@ -1068,6 +1092,7 @@ class MainActivity : ComponentActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                if (isFinishing || isDestroyed) return
                 progressBar.isVisible = false
                 injectFocusStyle(view)
                 injectGameModeBridge(view)
@@ -1089,6 +1114,9 @@ class MainActivity : ComponentActivity() {
                 virtualCursor.showIfEnabled()
                 updateGameModeAvailability(url)
                 updateBookmarkButtonState(pageUrlStr)
+                if (::webViewMemoryManager.isInitialized) {
+                    webViewMemoryManager.optimizeOnNavigation()
+                }
                 if (!UrlUtils.isBrowsableUrl(pageUrlStr)) return
                 if (isDashboardOrAssetUrl(pageUrlStr)) {
                     urlInput.setText("")
@@ -1118,19 +1146,19 @@ class MainActivity : ComponentActivity() {
                 isUserGesture: Boolean,
                 resultMsg: Message?
             ): Boolean {
-                if (resultMsg == null) return false
+                if (resultMsg == null || isFinishing || isDestroyed) return false
                 // Block non-user-initiated popups when AdBlocker is enabled
                 if (!isUserGesture && AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
                     return false
                 }
                 val transport = resultMsg.obj as? WebView.WebViewTransport ?: return false
                 val tempWebView = WebView(this@MainActivity)
-                pendingPopupWebViews.add(tempWebView)
+                activePopupWebViews.add(tempWebView)
                 var destroyed = false
                 fun cleanupTempWebView() {
                     if (destroyed) return
                     destroyed = true
-                    pendingPopupWebViews.remove(tempWebView)
+                    activePopupWebViews.remove(tempWebView)
                     try {
                         tempWebView.stopLoading()
                         tempWebView.webViewClient = WebViewClient()
@@ -1209,7 +1237,8 @@ class MainActivity : ComponentActivity() {
                 progressBar.isVisible = newProgress in 1..99
                 updateNavButtonsState()
 
-                if (newProgress >= 30 && AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
+                if (!hasAppliedProgressAdBlock && newProgress >= 30 && AppPreferences.isBlockEmbeddedAdsEnabled(this@MainActivity)) {
+                    hasAppliedProgressAdBlock = true
                     view?.let { EmbeddedAdBlocker.applyDomCleanup(it) }
                 }
             }
@@ -1341,46 +1370,45 @@ class MainActivity : ComponentActivity() {
     private fun saveCurrentPageForOfflineReading() {
         val url = (webView.url ?: urlInput.text.toString()).trim()
         if (!UrlUtils.isBrowsableUrl(url) || isDashboardOrAssetUrl(url)) return
+        val fallbackTitle = webView.title.orEmpty().ifBlank { url }
 
         webView.evaluateJavascript(
             "(function() { return JSON.stringify({title: document.title || '', text: document.body ? document.body.innerText : ''}); })();"
         ) { jsonResult ->
+            if (isFinishing || isDestroyed) return@evaluateJavascript
             lifecycleScope.launch {
-                var title = webView.title.orEmpty().ifBlank { url }
-                var fullText = ""
-
-                try {
-                    if (!jsonResult.isNullOrBlank() && jsonResult != "null") {
-                        // evaluateJavascript() JSON-encodes the script result. Because the script already returns a
-                        // JSON string, the value arrives as an escaped string literal that must be decoded once
-                        // (handling escaped quotes, backslashes and \uXXXX correctly) before parsing it as an object.
-                        val obj = when (val decoded = JSONTokener(jsonResult).nextValue()) {
-                            is String -> JSONObject(decoded)
-                            is JSONObject -> decoded
-                            else -> null
+                val (title, contentHtml, excerpt) = withContext(Dispatchers.Default) {
+                    var parsedTitle = fallbackTitle
+                    var fullText = ""
+                    try {
+                        if (!jsonResult.isNullOrBlank() && jsonResult != "null") {
+                            val obj = when (val decoded = JSONTokener(jsonResult).nextValue()) {
+                                is String -> JSONObject(decoded)
+                                is JSONObject -> decoded
+                                else -> null
+                            }
+                            if (obj != null) {
+                                val pageTitle = obj.optString("title")
+                                if (pageTitle.isNotBlank()) parsedTitle = pageTitle
+                                fullText = obj.optString("text")
+                                    .replace("\\n{3,}".toRegex(), "\n\n")
+                                    .trim()
+                                    .take(MAX_OFFLINE_TEXT_CHARS)
+                            }
                         }
-                        if (obj != null) {
-                            val pageTitle = obj.optString("title")
-                            if (pageTitle.isNotBlank()) title = pageTitle
-                            fullText = obj.optString("text")
-                                .replace("\\n{3,}".toRegex(), "\n\n")
-                                .trim()
-                                .take(MAX_OFFLINE_TEXT_CHARS)
-                        }
+                    } catch (_: Exception) {
+                        fullText = ""
                     }
-                } catch (_: Exception) {
-                    fullText = ""
+                    val parsedExcerpt = fullText.take(250).replace("\\s+".toRegex(), " ").trim().ifBlank { parsedTitle }
+                    val encodedHtml = if (fullText.isBlank()) "" else TextUtils.htmlEncode(fullText).replace("\n", "<br>")
+                    Triple(parsedTitle, encodedHtml, parsedExcerpt)
                 }
-
-                val excerpt = fullText.take(250).replace("\\s+".toRegex(), " ").trim().ifBlank { title }
-                // The reader renders this through Html.fromHtml(), so plain text must be escaped.
-                val contentHtml = if (fullText.isBlank()) "" else TextUtils.htmlEncode(fullText).replace("\n", "<br>")
 
                 val savedId = withContext(Dispatchers.IO) {
                     readLaterRepo.saveArticle(title, url, contentHtml, excerpt)
                 }
-                if (savedId > 0) {
-                    Toast.makeText(this@MainActivity, R.string.read_later_saved, Toast.LENGTH_SHORT).show()
+                if (savedId > 0 && !isFinishing && !isDestroyed) {
+                    Toast.makeText(applicationContext, R.string.read_later_saved, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -1465,6 +1493,7 @@ class MainActivity : ComponentActivity() {
 
     private fun populateSuggestionChips(suggestions: List<SearchSuggestion>) {
         isShowingSuggestions = suggestions.isNotEmpty()
+        renderedBookmarkSnapshot = null
         bookmarkBarContainer.removeAllViews()
         if (suggestions.isEmpty()) {
             bookmarkBar.visibility = View.GONE
@@ -1998,10 +2027,14 @@ class MainActivity : ComponentActivity() {
 
     private fun updateNavButtonsState() {
         val canGoBack = webView.canGoBack()
+        val canGoForward = webView.canGoForward()
+        if (lastNavBackState == canGoBack && lastNavForwardState == canGoForward) return
+        lastNavBackState = canGoBack
+        lastNavForwardState = canGoForward
+
         btnBack.isEnabled = canGoBack
         btnBack.alpha = if (canGoBack) 1.0f else 0.4f
 
-        val canGoForward = webView.canGoForward()
         btnForward.isEnabled = canGoForward
         btnForward.alpha = if (canGoForward) 1.0f else 0.4f
 
@@ -2047,7 +2080,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun populateBookmarkBar(list: List<BookmarkEntity>) {
+        if (!isShowingSuggestions && renderedBookmarkSnapshot == list && bookmarkBarContainer.childCount == list.size) {
+            if (list.isEmpty()) {
+                bookmarkBar.visibility = View.GONE
+            } else if (isViewInToolbarOrBookmarkBar(currentFocus)) {
+                showBookmarkBar()
+            }
+            return
+        }
+
         isShowingSuggestions = false
+        renderedBookmarkSnapshot = list
         bookmarkBarContainer.removeAllViews()
         if (list.isEmpty()) {
             bookmarkBar.visibility = View.GONE
@@ -2055,11 +2098,13 @@ class MainActivity : ComponentActivity() {
         }
 
         val inflater = LayoutInflater.from(this)
+        val chipBg = ThemeHelper.getFocusableItemBackground(this)
+        val chipTextColor = ThemeHelper.getTextPrimaryColor(this)
         list.forEach { bookmark ->
             val chip = inflater.inflate(R.layout.item_bookmark_chip, bookmarkBarContainer, false)
             val tvChipTitle = chip.findViewById<TextView>(R.id.tvChipTitle)
-            chip.setBackgroundResource(ThemeHelper.getFocusableItemBackground(this))
-            tvChipTitle.setTextColor(ThemeHelper.getTextPrimaryColor(this))
+            chip.setBackgroundResource(chipBg)
+            tvChipTitle.setTextColor(chipTextColor)
             tvChipTitle.text = bookmark.title
 
             FocusAnimationHelper.apply(chip)
@@ -2092,31 +2137,46 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun animateBookmarkBarVisibility(show: Boolean) {
+        if (isFinishing || isDestroyed) return
         val containerChildCount = bookmarkBarContainer.childCount
         if (containerChildCount == 0) {
+            bookmarkBar.animate().cancel()
             bookmarkBar.visibility = View.GONE
             return
         }
 
         val targetVisibility = if (show) View.VISIBLE else View.GONE
-        if (bookmarkBar.visibility == targetVisibility) return
+        if (bookmarkBar.visibility == targetVisibility && (!show || bookmarkBar.alpha >= 0.99f)) return
 
-        android.transition.TransitionManager.beginDelayedTransition(findViewById(android.R.id.content))
-        bookmarkBar.visibility = targetVisibility
+        bookmarkBar.animate().cancel()
+        if (show) {
+            bookmarkBar.alpha = 0f
+            bookmarkBar.visibility = View.VISIBLE
+            bookmarkBar.animate()
+                .alpha(1f)
+                .setDuration(140L)
+                .start()
+        } else {
+            bookmarkBar.animate()
+                .alpha(0f)
+                .setDuration(120L)
+                .withEndAction {
+                    bookmarkBar.visibility = View.GONE
+                    bookmarkBar.alpha = 1f
+                }
+                .start()
+        }
     }
 
     private fun setupBookmarkBarAutoHide() {
         val listener = android.view.ViewTreeObserver.OnGlobalFocusChangeListener { _, newFocus ->
-            if (newFocus != null) {
-                if (isViewInToolbarOrBookmarkBar(newFocus)) {
-                    showBookmarkBar()
-                } else {
-                    if (isShowingSuggestions) {
-                        populateBookmarkBar(realBookmarks)
-                    }
-                    scheduleHideBookmarkBar()
-                }
+            if (isFinishing || isDestroyed) return@OnGlobalFocusChangeListener
+            if (newFocus != null && isViewInToolbarOrBookmarkBar(newFocus)) {
+                showBookmarkBar()
             } else {
+                if (isShowingSuggestions) {
+                    populateBookmarkBar(realBookmarks)
+                }
                 scheduleHideBookmarkBar()
             }
         }
@@ -2203,17 +2263,20 @@ class MainActivity : ComponentActivity() {
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
                 setRecognitionListener(object : RecognitionListener {
                     override fun onReadyForSpeech(params: Bundle?) {
+                        if (isFinishing || isDestroyed) return
                         tvVoiceStatus.text = getString(R.string.voice_status_listening)
                     }
                     override fun onBeginningOfSpeech() {}
                     override fun onRmsChanged(rmsdB: Float) {}
                     override fun onBufferReceived(buffer: ByteArray?) {}
                     override fun onEndOfSpeech() {
+                        if (isFinishing || isDestroyed) return
                         tvVoiceStatus.text = getString(R.string.voice_status_processing)
                     }
                     override fun onError(error: Int) {
                         val wasListening = isVoiceListening
                         isVoiceListening = false
+                        if (isFinishing || isDestroyed) return
                         voiceOverlay.visibility = View.GONE
                         if (!wasListening) return
                         val errorMsg = when (error) {
@@ -2221,11 +2284,12 @@ class MainActivity : ComponentActivity() {
                             SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> getString(R.string.voice_error_timeout)
                             else -> getString(R.string.voice_error_generic)
                         }
-                        Toast.makeText(this@MainActivity, errorMsg, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, errorMsg, Toast.LENGTH_SHORT).show()
                     }
                     override fun onResults(results: Bundle?) {
                         val wasListening = isVoiceListening
                         isVoiceListening = false
+                        if (isFinishing || isDestroyed) return
                         voiceOverlay.visibility = View.GONE
                         if (!wasListening) return
                         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
@@ -2300,6 +2364,7 @@ class MainActivity : ComponentActivity() {
                     ttsHelper?.toggleSpeak(tvSummaryContent.text.toString())
                 } else {
                     webView.evaluateJavascript("(function(){ return document.body ? document.body.innerText.slice(0, 3500) : ''; })();") { raw ->
+                        if (isFinishing || isDestroyed) return@evaluateJavascript
                         val clean = try {
                             if (raw.isNullOrBlank() || raw == "null") ""
                             else JSONObject("{\"t\":$raw}").getString("t")
@@ -2309,7 +2374,7 @@ class MainActivity : ComponentActivity() {
                         if (clean.isNotBlank()) {
                             ttsHelper?.toggleSpeak(clean)
                         } else {
-                            Toast.makeText(this, R.string.ai_error_empty, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(applicationContext, R.string.ai_error_empty, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -2373,7 +2438,8 @@ class MainActivity : ComponentActivity() {
             (function() {
                 function addFocusListeners() {
                     var inputs = document.querySelectorAll('input, textarea, [contenteditable]');
-                    inputs.forEach(function(input) {
+                    for (var i = 0; i < inputs.length; i++) {
+                        var input = inputs[i];
                         if (!input.dataset.hasTvnavListeners) {
                             input.dataset.hasTvnavListeners = 'true';
                             input.addEventListener('focus', function() {
@@ -2383,16 +2449,20 @@ class MainActivity : ComponentActivity() {
                                 if (window.AndroidApp) window.AndroidApp.onInputBlurred();
                             });
                         }
-                    });
+                    }
                 }
                 addFocusListeners();
                 if (!window.__tvnavMagnetBound) {
                     window.__tvnavMagnetBound = true;
+                    window.__tvnavLastHover = null;
                     document.addEventListener('mouseover', function(e) {
                         var t = e.target;
-                        var clickable = t && t.closest && t.closest('a, button, input, select, textarea, [role="button"], [onclick]');
-                        if (window.AndroidApp && window.AndroidApp.onInteractiveHover) {
-                            window.AndroidApp.onInteractiveHover(!!clickable);
+                        var clickable = !!(t && t.closest && t.closest('a, button, input, select, textarea, [role="button"], [onclick]'));
+                        if (window.__tvnavLastHover !== clickable) {
+                            window.__tvnavLastHover = clickable;
+                            if (window.AndroidApp && window.AndroidApp.onInteractiveHover) {
+                                window.AndroidApp.onInteractiveHover(clickable);
+                            }
                         }
                     }, { passive: true });
                 }
@@ -2400,10 +2470,13 @@ class MainActivity : ComponentActivity() {
                     var root = document.body || document.documentElement;
                     if (root) {
                         window.__tvnavFocusObserverAttached = true;
-                        var pendingFocusScan = null;
+                        var pendingFocusTimer = null;
                         var observer = new MutationObserver(function() {
-                            if (pendingFocusScan) cancelAnimationFrame(pendingFocusScan);
-                            pendingFocusScan = requestAnimationFrame(addFocusListeners);
+                            if (pendingFocusTimer) return;
+                            pendingFocusTimer = setTimeout(function() {
+                                pendingFocusTimer = null;
+                                addFocusListeners();
+                            }, 400);
                         });
                         observer.observe(root, { childList: true, subtree: true });
                     }
@@ -2433,7 +2506,10 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun resetInactivityTimer() {
+    private fun resetInactivityTimer(force: Boolean = false) {
+        val now = SystemClock.uptimeMillis()
+        if (!force && now - lastInactivityResetMs < 500L) return
+        lastInactivityResetMs = now
         handler.removeCallbacks(autoFullscreenRunnable)
         if (AppPreferences.isAutoFullscreenEnabled(this)) {
             val isEditing = urlInput.hasFocus()
@@ -2449,14 +2525,18 @@ class MainActivity : ComponentActivity() {
         @android.webkit.JavascriptInterface
         fun onInputFocused() {
             runOnUiThread {
-                isWebViewInputFocused = true
+                if (!isFinishing && !isDestroyed) {
+                    isWebViewInputFocused = true
+                }
             }
         }
 
         @android.webkit.JavascriptInterface
         fun onInputBlurred() {
             runOnUiThread {
-                isWebViewInputFocused = false
+                if (!isFinishing && !isDestroyed) {
+                    isWebViewInputFocused = false
+                }
             }
         }
 
@@ -2476,7 +2556,9 @@ class MainActivity : ComponentActivity() {
          */
         private fun runIfTrustedPage(action: () -> Unit) {
             runOnUiThread {
-                if (webView.url.orEmpty().startsWith(TRUSTED_ASSET_PREFIX)) action()
+                if (!isFinishing && !isDestroyed && webView.url.orEmpty().startsWith(TRUSTED_ASSET_PREFIX)) {
+                    action()
+                }
             }
         }
 
@@ -2511,7 +2593,7 @@ class MainActivity : ComponentActivity() {
         @android.webkit.JavascriptInterface
         fun onInteractiveHover(hovering: Boolean) {
             runOnUiThread {
-                if (::virtualCursor.isInitialized) {
+                if (!isFinishing && !isDestroyed && ::virtualCursor.isInitialized) {
                     virtualCursor.setHoveringInteractive(hovering)
                 }
             }
@@ -2586,7 +2668,7 @@ class MainActivity : ComponentActivity() {
 
             if (cleanText.isNullOrBlank()) {
                 progressToast.cancel()
-                Toast.makeText(this, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
                 return@evaluateJavascript
             }
 
@@ -2610,7 +2692,7 @@ class MainActivity : ComponentActivity() {
                             "EMPTY_TEXT" -> getString(R.string.ai_error_empty)
                             else -> getString(R.string.ai_error_generic)
                         }
-                        Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
                     }
                 } finally {
                     progressToast.cancel()
@@ -2626,6 +2708,7 @@ class MainActivity : ComponentActivity() {
         val requestUrl = webView.url.orEmpty()
 
         fun runQuestionWithPageText(pageText: String) {
+            if (isFinishing || isDestroyed) return
             aiRequestJob?.cancel()
             val progressToast = Toast.makeText(this, getString(R.string.ai_asking_question), Toast.LENGTH_SHORT)
             progressToast.show()
@@ -2639,7 +2722,7 @@ class MainActivity : ComponentActivity() {
                         val formattedAnswer = getString(R.string.ai_question_answer_format, question, response.text)
                         showSummaryDialog(formattedAnswer, response.usedTier)
                     }.onFailure {
-                        Toast.makeText(this@MainActivity, getString(R.string.ai_error_generic), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, getString(R.string.ai_error_generic), Toast.LENGTH_SHORT).show()
                     }
                 } finally {
                     progressToast.cancel()
@@ -2662,7 +2745,7 @@ class MainActivity : ComponentActivity() {
                 raw?.trim('"').orEmpty()
             }.trim()
             if (clean.isBlank()) {
-                Toast.makeText(this, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, getString(R.string.ai_error_empty), Toast.LENGTH_SHORT).show()
             } else {
                 lastExtractedPageText = clean
                 runQuestionWithPageText(clean)

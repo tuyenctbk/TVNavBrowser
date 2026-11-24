@@ -49,7 +49,6 @@ class VirtualCursorController(
         private const val JOYSTICK_MAX_SPEED_DP_PER_S = 780f
         private const val JOYSTICK_DEADZONE = 0.18f
 
-        private const val LONG_PRESS_MS = 650L
         private const val IDLE_FADE_DELAY_MS = 6000L
         private const val IDLE_ALPHA = 0.35f
         private const val HOVER_INTERVAL_MS = 45L
@@ -88,11 +87,30 @@ class VirtualCursorController(
     /** Invoked when user presses DPAD_UP while the pointer is already at the top edge, allowing focus to jump to toolbar. */
     var onEscapeToToolbar: (() -> Unit)? = null
 
-    /** Invoked when OK/Select is held. When null, a long press behaves like a normal click. */
-    var onSelectLongPress: (() -> Unit)? = null
-
     private val density = container.resources.displayMetrics.density
     private val mainHandler = Handler(Looper.getMainLooper())
+    private val containerLoc = IntArray(2)
+    private val webLoc = IntArray(2)
+    private val mappedWebPoint = FloatArray(2)
+    private val mouseProps = arrayOf(
+        MotionEvent.PointerProperties().apply {
+            id = 0
+            toolType = MotionEvent.TOOL_TYPE_MOUSE
+        }
+    )
+    private val mouseCoords = arrayOf(MotionEvent.PointerCoords())
+    private val touchProps = arrayOf(
+        MotionEvent.PointerProperties().apply {
+            id = 0
+            toolType = MotionEvent.TOOL_TYPE_FINGER
+        }
+    )
+    private val touchCoords = arrayOf(
+        MotionEvent.PointerCoords().apply {
+            pressure = 1f
+            size = 1f
+        }
+    )
     private var isFrameCallbackPosted = false
     private var lastFrameNanos = 0L
 
@@ -451,51 +469,44 @@ class VirtualCursorController(
         onCursorActivity?.invoke()
     }
 
-    /** Hotspot mapped into WebView coordinates, clamped inside it, or null if not laid out. */
-    private fun hotspotInWebView(): Pair<Float, Float>? {
-        if (webView.width <= 2 || webView.height <= 2) return null
-        val containerLoc = IntArray(2)
-        val webLoc = IntArray(2)
+    /**
+     * Maps the cursor hotspot into WebView coordinates inside [mappedWebPoint] without heap allocations.
+     * Returns true if the WebView is visible/laid out and (when [requireInside] is true) the hotspot is inside it.
+     */
+    private fun mapHotspotToWebView(requireInside: Boolean): Boolean {
+        val w = webView.width
+        val h = webView.height
+        if (w <= 2 || h <= 2 || webView.visibility != View.VISIBLE) return false
         container.getLocationInWindow(containerLoc)
         webView.getLocationInWindow(webLoc)
-        val x = hotspotX + containerLoc[0] - webLoc[0]
-        val y = hotspotY + containerLoc[1] - webLoc[1]
-        return x.coerceIn(1f, webView.width - 2f) to y.coerceIn(1f, webView.height - 2f)
-    }
-
-    private fun isHotspotOverWebView(): Boolean {
-        if (webView.width <= 0 || webView.height <= 0 || webView.visibility != View.VISIBLE) return false
-        val containerLoc = IntArray(2)
-        val webLoc = IntArray(2)
-        container.getLocationInWindow(containerLoc)
-        webView.getLocationInWindow(webLoc)
-        val x = hotspotX + containerLoc[0] - webLoc[0]
-        val y = hotspotY + containerLoc[1] - webLoc[1]
-        return x >= 0 && y >= 0 && x < webView.width && y < webView.height
+        val rawX = hotspotX + containerLoc[0] - webLoc[0]
+        val rawY = hotspotY + containerLoc[1] - webLoc[1]
+        if (requireInside && (rawX < 0f || rawY < 0f || rawX >= w || rawY >= h)) {
+            return false
+        }
+        mappedWebPoint[0] = rawX.coerceIn(1f, (w - 2f).coerceAtLeast(1f))
+        mappedWebPoint[1] = rawY.coerceIn(1f, (h - 2f).coerceAtLeast(1f))
+        return true
     }
 
     private fun dispatchWheel(vScroll: Float, hScroll: Float, throttle: Boolean) {
         val now = SystemClock.uptimeMillis()
         if (throttle && now - lastWheelTime < WHEEL_INTERVAL_MS) return
         lastWheelTime = now
-        val (x, y) = hotspotInWebView() ?: return
+        if (!mapHotspotToWebView(requireInside = false)) return
         try {
-            val props = MotionEvent.PointerProperties().apply {
-                id = 0
-                toolType = MotionEvent.TOOL_TYPE_MOUSE
-            }
-            val coords = MotionEvent.PointerCoords().apply {
-                this.x = x
-                this.y = y
-                setAxisValue(MotionEvent.AXIS_VSCROLL, vScroll)
-                setAxisValue(MotionEvent.AXIS_HSCROLL, hScroll)
-            }
+            val coords = mouseCoords[0]
+            coords.clear()
+            coords.x = mappedWebPoint[0]
+            coords.y = mappedWebPoint[1]
+            coords.setAxisValue(MotionEvent.AXIS_VSCROLL, vScroll)
+            coords.setAxisValue(MotionEvent.AXIS_HSCROLL, hScroll)
             val event = MotionEvent.obtain(
-                now, now, MotionEvent.ACTION_SCROLL, 1, arrayOf(props), arrayOf(coords),
+                now, now, MotionEvent.ACTION_SCROLL, 1, mouseProps, mouseCoords,
                 0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_MOUSE, 0
             )
             webView.dispatchGenericMotionEvent(event)
-            // Not recycled on purpose: see the note in simulateClick().
+            // Not recycled on purpose: Chromium may retain synthetic events asynchronously.
         } catch (_: Throwable) {
             // Synthetic wheel is best-effort only.
         }
@@ -507,25 +518,20 @@ class VirtualCursorController(
      */
     private fun dispatchHover(force: Boolean) {
         if (!isEnabled) return
-        if (!isHotspotOverWebView()) {
+        val now = SystemClock.uptimeMillis()
+        if (!force && now - lastHoverTime < HOVER_INTERVAL_MS) return
+        if (!mapHotspotToWebView(requireInside = true)) {
             if (isHoveringInteractive) setHoveringInteractive(false)
             return
         }
-        val now = SystemClock.uptimeMillis()
-        if (!force && now - lastHoverTime < HOVER_INTERVAL_MS) return
         lastHoverTime = now
-        val (x, y) = hotspotInWebView() ?: return
         try {
-            val props = MotionEvent.PointerProperties().apply {
-                id = 0
-                toolType = MotionEvent.TOOL_TYPE_MOUSE
-            }
-            val coords = MotionEvent.PointerCoords().apply {
-                this.x = x
-                this.y = y
-            }
+            val coords = mouseCoords[0]
+            coords.clear()
+            coords.x = mappedWebPoint[0]
+            coords.y = mappedWebPoint[1]
             val event = MotionEvent.obtain(
-                now, now, MotionEvent.ACTION_HOVER_MOVE, 1, arrayOf(props), arrayOf(coords),
+                now, now, MotionEvent.ACTION_HOVER_MOVE, 1, mouseProps, mouseCoords,
                 0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_MOUSE, 0
             )
             webView.dispatchGenericMotionEvent(event)
@@ -539,6 +545,7 @@ class VirtualCursorController(
             stopMotion()
             cancelPendingClick()
             mainHandler.removeCallbacks(idleFadeRunnable)
+            cursor.animate().cancel()
             cursor.visibility = View.GONE
         }
     }
@@ -555,6 +562,8 @@ class VirtualCursorController(
         cancelPendingClick()
         mainHandler.removeCallbacks(resetPressRunnable)
         mainHandler.removeCallbacks(idleFadeRunnable)
+        cursor.animate().cancel()
+        clickRipple?.animate()?.cancel()
     }
 
     fun onDestroy() {
@@ -587,10 +596,11 @@ class VirtualCursorController(
 
     private fun showClickRipple() {
         val ripple = clickRipple ?: return
+        if (!ripple.isAttachedToWindow) return
         if (ripple.width <= 0) {
             // First use: lay it out invisibly, then animate on the next frame.
             ripple.visibility = View.INVISIBLE
-            ripple.post { if (ripple.width > 0) showClickRipple() }
+            ripple.post { if (isEnabled && ripple.isAttachedToWindow && ripple.width > 0) showClickRipple() }
             return
         }
         ripple.animate().cancel()
@@ -642,18 +652,13 @@ class VirtualCursorController(
     }
 
     private fun obtainTouch(downTime: Long, eventTime: Long, action: Int, x: Float, y: Float): MotionEvent {
-        val props = MotionEvent.PointerProperties().apply {
-            id = 0
-            toolType = MotionEvent.TOOL_TYPE_FINGER
-        }
-        val coords = MotionEvent.PointerCoords().apply {
-            this.x = x
-            this.y = y
-            pressure = 1f
-            size = 1f
-        }
+        val coords = touchCoords[0]
+        coords.x = x
+        coords.y = y
+        coords.pressure = 1f
+        coords.size = 1f
         return MotionEvent.obtain(
-            downTime, eventTime, action, 1, arrayOf(props), arrayOf(coords),
+            downTime, eventTime, action, 1, touchProps, touchCoords,
             0, 0, 1f, 1f, 0, 0, InputDevice.SOURCE_TOUCHSCREEN, 0
         )
     }
@@ -670,11 +675,10 @@ class VirtualCursorController(
             }
 
             // Tap exactly where the arrow tip is pointing
-            val isOverWeb = isHotspotOverWebView()
-            val webCoords = if (isOverWeb) hotspotInWebView() else null
-            val targetView = if (isOverWeb && webCoords != null) webView else container
-            val clickX = if (isOverWeb && webCoords != null) webCoords.first else hotspotX
-            val clickY = if (isOverWeb && webCoords != null) webCoords.second else hotspotY
+            val isOverWeb = mapHotspotToWebView(requireInside = true)
+            val targetView = if (isOverWeb) webView else container
+            val clickX = if (isOverWeb) mappedWebPoint[0] else hotspotX
+            val clickY = if (isOverWeb) mappedWebPoint[1] else hotspotY
             val downTime = SystemClock.uptimeMillis()
 
             val downEvent = obtainTouch(downTime, downTime, MotionEvent.ACTION_DOWN, clickX, clickY)

@@ -73,12 +73,16 @@ object UsageQuotaManager {
     const val SOFT_NUDGE_THRESHOLD_RATIO = 0.80f
 
     private val ledgerScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val listenerLock = Any()
 
     @Volatile
     private var firestoreListener: ListenerRegistration? = null
 
     @Volatile
     private var activeListeningUserId: String? = null
+
+    @Volatile
+    private var hasSeededDataStore = false
 
     enum class AiFeature {
         SUMMARY,
@@ -160,83 +164,100 @@ object UsageQuotaManager {
     /**
      * Attaches a real-time Firestore snapshot listener on `/users/{userId}/usageQuota/daily`
      * and mirrors remote updates into local Jetpack DataStore for instant reactive UI feedback.
+     * Offloaded onto [ledgerScope] so calling from Activity.onCreate/onResume never blocks VSync.
      */
-    @Synchronized
     fun startRealtimeSync(context: Context) {
         val appContext = context.applicationContext
-        val currentSnap = getSnapshot(appContext)
-        persistDataStoreAsync(appContext, currentSnap)
+        ledgerScope.launch {
+            if (!hasSeededDataStore) {
+                hasSeededDataStore = true
+                val currentSnap = getSnapshot(appContext)
+                persistDataStoreAsync(appContext, currentSnap)
+            }
 
-        if (!AppPreferences.isFirestoreSyncEnabled(appContext)) return
-        val userId = resolveQuotaUserId(appContext)
-        if (userId.isEmpty()) return
+            if (!AppPreferences.isFirestoreSyncEnabled(appContext)) return@launch
+            val userId = resolveQuotaUserId(appContext)
+            if (userId.isEmpty()) return@launch
 
-        if (firestoreListener != null && activeListeningUserId == userId) {
-            return
-        }
-        firestoreListener?.remove()
-        activeListeningUserId = userId
-
-        try {
-            val docRef = FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(userId)
-                .collection("usageQuota")
-                .document("daily")
-
-            firestoreListener = docRef.addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Log.w(TAG, "Firestore quota listener error: ${error.message}")
-                    return@addSnapshotListener
+            synchronized(listenerLock) {
+                if (firestoreListener != null && activeListeningUserId == userId) {
+                    return@launch
                 }
-                if (snapshot == null || !snapshot.exists()) {
-                    // Seed Firestore document with current local snapshot
-                    syncToFirestoreAsync(appContext, getSnapshot(appContext))
-                    return@addSnapshotListener
-                }
+                firestoreListener?.remove()
+                firestoreListener = null
+                activeListeningUserId = userId
+            }
 
-                val today = currentDateIso()
-                val remoteDate = snapshot.getString("dateIso") ?: ""
-                val local = getSnapshot(appContext)
+            try {
+                val docRef = FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userId)
+                    .collection("usageQuota")
+                    .document("daily")
 
-                if (remoteDate != today) {
-                    // Remote ledger is from a previous day -> push current day's local snapshot (already rolled over by getSnapshot)
-                    syncToFirestoreAsync(appContext, local)
-                } else {
-                    val remoteSummary = (snapshot.getLong("summaryUsed") ?: 0L).toInt().coerceAtLeast(0)
-                    val remoteChat = (snapshot.getLong("chatUsed") ?: 0L).toInt().coerceAtLeast(0)
-                    val remoteVoice = (snapshot.getLong("voiceUsed") ?: 0L).toInt().coerceAtLeast(0)
-                    val remoteBonus = (snapshot.getLong("bonusGraceCredits") ?: 0L).toInt().coerceAtLeast(0)
-                    val remoteGraceClaimed = snapshot.getBoolean("graceClaimed") ?: false
-                    val remoteEco = snapshot.getBoolean("ecoLiteMode") ?: local.ecoLiteMode
-                    val remoteCascade = (snapshot.getLong("fallbackCascadeCount") ?: 0L).toInt().coerceAtLeast(0)
+                val registration = docRef.addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        Log.w(TAG, "Firestore quota listener error: ${error.message}")
+                        return@addSnapshotListener
+                    }
+                    // Handle snapshot merge off the main thread so lock/SharedPrefs never stall VSync
+                    ledgerScope.launch {
+                        if (snapshot == null || !snapshot.exists()) {
+                            syncToFirestoreAsync(appContext, getSnapshot(appContext))
+                            return@launch
+                        }
 
-                    val merged = QuotaSnapshot(
-                        dateIso = today,
-                        summaryUsed = max(local.summaryUsed, remoteSummary),
-                        chatUsed = max(local.chatUsed, remoteChat),
-                        voiceUsed = max(local.voiceUsed, remoteVoice),
-                        bonusGraceCredits = max(local.bonusGraceCredits, remoteBonus),
-                        graceClaimed = local.graceClaimed || remoteGraceClaimed,
-                        ecoLiteMode = remoteEco,
-                        fallbackCascadeCount = max(local.fallbackCascadeCount, remoteCascade),
-                        isSupporter = DonationManager.isSupporter(appContext)
-                    )
-                    if (merged != local) {
-                        persistLocalMirror(appContext, merged)
+                        val today = currentDateIso()
+                        val remoteDate = snapshot.getString("dateIso") ?: ""
+                        val local = getSnapshot(appContext)
+
+                        if (remoteDate != today) {
+                            syncToFirestoreAsync(appContext, local)
+                        } else {
+                            val remoteSummary = (snapshot.getLong("summaryUsed") ?: 0L).toInt().coerceAtLeast(0)
+                            val remoteChat = (snapshot.getLong("chatUsed") ?: 0L).toInt().coerceAtLeast(0)
+                            val remoteVoice = (snapshot.getLong("voiceUsed") ?: 0L).toInt().coerceAtLeast(0)
+                            val remoteBonus = (snapshot.getLong("bonusGraceCredits") ?: 0L).toInt().coerceAtLeast(0)
+                            val remoteGraceClaimed = snapshot.getBoolean("graceClaimed") ?: false
+                            val remoteEco = snapshot.getBoolean("ecoLiteMode") ?: local.ecoLiteMode
+                            val remoteCascade = (snapshot.getLong("fallbackCascadeCount") ?: 0L).toInt().coerceAtLeast(0)
+
+                            val merged = QuotaSnapshot(
+                                dateIso = today,
+                                summaryUsed = max(local.summaryUsed, remoteSummary),
+                                chatUsed = max(local.chatUsed, remoteChat),
+                                voiceUsed = max(local.voiceUsed, remoteVoice),
+                                bonusGraceCredits = max(local.bonusGraceCredits, remoteBonus),
+                                graceClaimed = local.graceClaimed || remoteGraceClaimed,
+                                ecoLiteMode = remoteEco,
+                                fallbackCascadeCount = max(local.fallbackCascadeCount, remoteCascade),
+                                isSupporter = DonationManager.isSupporter(appContext)
+                            )
+                            if (merged != local) {
+                                persistLocalMirror(appContext, merged)
+                            }
+                        }
                     }
                 }
+                synchronized(listenerLock) {
+                    if (activeListeningUserId == userId) {
+                        firestoreListener = registration
+                    } else {
+                        registration.remove()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Unable to attach Firestore quota listener: ${e.message}")
             }
-        } catch (e: Exception) {
-            Log.w(TAG, "Unable to attach Firestore quota listener: ${e.message}")
         }
     }
 
-    @Synchronized
     fun stopRealtimeSync() {
-        firestoreListener?.remove()
-        firestoreListener = null
-        activeListeningUserId = null
+        synchronized(listenerLock) {
+            firestoreListener?.remove()
+            firestoreListener = null
+            activeListeningUserId = null
+        }
     }
 
     @Synchronized
@@ -425,30 +446,32 @@ object UsageQuotaManager {
 
     private fun syncToFirestoreAsync(context: Context, snapshot: QuotaSnapshot = getSnapshot(context)) {
         val appContext = context.applicationContext
-        if (!AppPreferences.isFirestoreSyncEnabled(appContext)) return
-        val userId = resolveQuotaUserId(appContext)
-        if (userId.isEmpty()) return
-        try {
-            val payload = mapOf(
-                "userId" to userId,
-                "dateIso" to snapshot.dateIso,
-                "summaryUsed" to snapshot.summaryUsed,
-                "chatUsed" to snapshot.chatUsed,
-                "voiceUsed" to snapshot.voiceUsed,
-                "bonusGraceCredits" to snapshot.bonusGraceCredits,
-                "graceClaimed" to snapshot.graceClaimed,
-                "ecoLiteMode" to snapshot.ecoLiteMode,
-                "fallbackCascadeCount" to snapshot.fallbackCascadeCount,
-                "updatedAt" to FieldValue.serverTimestamp()
-            )
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(userId)
-                .collection("usageQuota")
-                .document("daily")
-                .set(payload, SetOptions.merge())
-        } catch (_: Exception) {
-            // Best-effort cloud sync; local DataStore mirror remains authoritative offline
+        ledgerScope.launch {
+            if (!AppPreferences.isFirestoreSyncEnabled(appContext)) return@launch
+            val userId = resolveQuotaUserId(appContext)
+            if (userId.isEmpty()) return@launch
+            try {
+                val payload = mapOf(
+                    "userId" to userId,
+                    "dateIso" to snapshot.dateIso,
+                    "summaryUsed" to snapshot.summaryUsed,
+                    "chatUsed" to snapshot.chatUsed,
+                    "voiceUsed" to snapshot.voiceUsed,
+                    "bonusGraceCredits" to snapshot.bonusGraceCredits,
+                    "graceClaimed" to snapshot.graceClaimed,
+                    "ecoLiteMode" to snapshot.ecoLiteMode,
+                    "fallbackCascadeCount" to snapshot.fallbackCascadeCount,
+                    "updatedAt" to FieldValue.serverTimestamp()
+                )
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userId)
+                    .collection("usageQuota")
+                    .document("daily")
+                    .set(payload, SetOptions.merge())
+            } catch (_: Exception) {
+                // Best-effort cloud sync; local DataStore mirror remains authoritative offline
+            }
         }
     }
 }

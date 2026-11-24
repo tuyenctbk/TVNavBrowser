@@ -284,10 +284,11 @@ class SettingsActivity : ComponentActivity() {
             lifecycleScope.launch {
                 com.tdpham.navitvbrowser.util.UsageQuotaManager.startRealtimeSync(this@SettingsActivity)
                 val result = com.tdpham.navitvbrowser.data.sync.BookmarkSyncManager.syncBookmarks(this@SettingsActivity, bookmarkRepo)
+                if (isFinishing || isDestroyed) return@launch
                 result.onSuccess { count ->
-                    Toast.makeText(this@SettingsActivity, getString(R.string.sync_bookmarks_success, count), Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, getString(R.string.sync_bookmarks_success, count), Toast.LENGTH_LONG).show()
                 }.onFailure {
-                    Toast.makeText(this@SettingsActivity, R.string.sync_bookmarks_error, Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, R.string.sync_bookmarks_error, Toast.LENGTH_LONG).show()
                 }
             }
         }

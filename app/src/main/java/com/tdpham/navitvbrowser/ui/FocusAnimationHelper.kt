@@ -59,13 +59,13 @@ object FocusAnimationHelper {
     }
 
     fun animateEntrance(view: View, index: Int) {
-        val cappedIndex = index.coerceAtMost(10)
+        if (index > 10) return
         view.alpha = 0f
         view.translationY = 18f
         view.animate()
             .alpha(1f)
             .translationY(0f)
-            .setStartDelay(cappedIndex * 28L)
+            .setStartDelay(index * 28L)
             .setDuration(210L)
             .setInterpolator(decelerateInterpolator)
             .start()

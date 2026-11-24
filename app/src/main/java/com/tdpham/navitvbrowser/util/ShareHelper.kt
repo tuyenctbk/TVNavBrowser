@@ -5,6 +5,13 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import com.tdpham.navitvbrowser.R
 import com.tdpham.navitvbrowser.ui.ThemeHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object ShareHelper {
 
@@ -15,14 +22,16 @@ object ShareHelper {
 
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_share_qr, null)
         val ivQr = dialogView.findViewById<ImageView>(R.id.ivQrCode)
-        QrCodeGenerator.generateQrCode(playStoreUrl, 480, 480)?.let { ivQr.setImageBitmap(it) }
 
-        AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
+        val dialog = AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
             .setTitle(R.string.share_title)
             .setMessage(R.string.share_message)
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok, null)
-            .show()
+            .create()
+
+        bindAsyncQr(activity, dialog, ivQr, playStoreUrl)
+        dialog.show()
     }
 
     fun showPageQrDialog(activity: Activity, pageUrl: String?, pageTitle: String? = null) {
@@ -35,7 +44,6 @@ object ShareHelper {
 
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_share_qr, null)
         val ivQr = dialogView.findViewById<ImageView>(R.id.ivQrCode)
-        QrCodeGenerator.generateQrCode(cleanUrl, 480, 480)?.let { ivQr.setImageBitmap(it) }
 
         val message = if (!pageTitle.isNullOrBlank()) {
             "${activity.getString(R.string.qr_open_on_phone_msg)}\n\n$pageTitle"
@@ -43,11 +51,30 @@ object ShareHelper {
             activity.getString(R.string.qr_open_on_phone_msg)
         }
 
-        AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
+        val dialog = AlertDialog.Builder(activity, ThemeHelper.getDialogTheme(activity))
             .setTitle(R.string.qr_open_on_phone_title)
             .setMessage(message)
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok, null)
-            .show()
+            .create()
+
+        bindAsyncQr(activity, dialog, ivQr, cleanUrl)
+        dialog.show()
+    }
+
+    private fun bindAsyncQr(activity: Activity, dialog: AlertDialog, imageView: ImageView, url: String) {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        val job: Job = scope.launch {
+            val bitmap = withContext(Dispatchers.Default) {
+                QrCodeGenerator.generateQrCode(url, 480, 480)
+            }
+            if (!activity.isFinishing && !activity.isDestroyed && dialog.isShowing && bitmap != null) {
+                imageView.setImageBitmap(bitmap)
+            }
+        }
+        dialog.setOnDismissListener {
+            job.cancel()
+            scope.cancel()
+        }
     }
 }

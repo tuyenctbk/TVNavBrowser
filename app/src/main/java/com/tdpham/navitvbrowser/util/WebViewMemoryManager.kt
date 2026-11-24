@@ -28,6 +28,7 @@ class WebViewMemoryManager(
     private val mainHandler = Handler(Looper.getMainLooper())
     private val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
     val isLowRamDevice: Boolean = activityManager?.isLowRamDevice ?: false
+
     @Volatile
     private var isDestroyed = false
 
@@ -49,10 +50,14 @@ class WebViewMemoryManager(
 
     fun optimizeOnNavigation() {
         if (isDestroyed) return
-        val historyList = webView.copyBackForwardList()
-        if (historyList.size > MAX_HISTORY_STEPS) {
-            Log.d(TAG, "Navigation history exceeds $MAX_HISTORY_STEPS steps (${historyList.size}). Clearing non-essential history.")
-            webView.clearHistory()
+        try {
+            val historyList = webView.copyBackForwardList()
+            if (historyList.size > MAX_HISTORY_STEPS) {
+                Log.d(TAG, "Navigation history exceeds $MAX_HISTORY_STEPS steps (${historyList.size}). Clearing non-essential history.")
+                webView.clearHistory()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error optimizing navigation history", e)
         }
     }
 
@@ -109,13 +114,11 @@ class WebViewMemoryManager(
     override fun onConfigurationChanged(newConfig: Configuration) {}
 
     fun onPause() {
-        if (isDestroyed) return
-        webView.onPause()
+        if (!isDestroyed) webView.onPause()
     }
 
     fun onResume() {
-        if (isDestroyed) return
-        webView.onResume()
+        if (!isDestroyed) webView.onResume()
     }
 
     fun destroy() {

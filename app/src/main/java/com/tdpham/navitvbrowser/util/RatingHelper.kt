@@ -59,6 +59,7 @@ object RatingHelper {
     }
 
     private fun launchInAppReview(activity: Activity) {
+        if (activity.isFinishing || activity.isDestroyed) return
         try {
             val manager = ReviewManagerFactory.create(activity)
             manager.requestReviewFlow().addOnCompleteListener { task ->
@@ -70,7 +71,9 @@ object RatingHelper {
                 }
             }
         } catch (_: Exception) {
-            openPlayStore(activity)
+            if (!activity.isFinishing && !activity.isDestroyed) {
+                openPlayStore(activity)
+            }
         }
     }
 
