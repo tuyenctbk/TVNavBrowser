@@ -91,7 +91,6 @@
             android:name=".LauncherActivity"
             android:banner="@drawable/app_banner"
             android:exported="true"
-            android:screenOrientation="landscape"
             android:theme="@style/Theme.TVNavBrowser">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -104,33 +103,27 @@
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false"
-            android:launchMode="singleTop"
-            android:screenOrientation="landscape" />
+            android:launchMode="singleTop" />
 
         <activity
             android:name=".SettingsActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
+            android:exported="false" />
 
         <activity
             android:name=".BookmarksActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
+            android:exported="false" />
 
         <activity
             android:name=".HistoryActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
+            android:exported="false" />
 
         <activity
             android:name=".ReadLaterActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
+            android:exported="false" />
 
         <activity
             android:name=".ReadLaterReaderActivity"
-            android:exported="false"
-            android:screenOrientation="landscape" />
+            android:exported="false" />
 
     </application>
 

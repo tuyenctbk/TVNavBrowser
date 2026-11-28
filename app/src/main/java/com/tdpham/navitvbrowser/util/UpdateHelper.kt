@@ -64,7 +64,12 @@ object UpdateHelper {
                 }
                 dialog.dismiss()
             }
-            .setCancelable(false)
+            .setOnCancelListener {
+                activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit {
+                    putInt(KEY_LAST_CHECKED_VERSION, latestVersion)
+                }
+            }
+            .setCancelable(true)
             .show()
     }
 }

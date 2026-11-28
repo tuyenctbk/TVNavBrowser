@@ -71,14 +71,8 @@ object DonationManager {
         return (age >= MIN_INSTALL_AGE_MS) && (launches >= 3 || coreOps >= 3)
     }
 
-    fun shouldShowBanner(context: Context): Boolean {
-        if (isSupporter(context)) return false
-        if (!meetsSatisfactionSafeguard(context)) return false
-
-        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val dismissedTime = prefs.getLong(KEY_BANNER_DISMISSED_TIME, 0L)
-        return (System.currentTimeMillis() - dismissedTime) >= BANNER_COOLDOWN_MS
-    }
+    /** Persistent in-browser donation banners are disabled to keep the TV viewport clean. */
+    fun shouldShowBanner(context: Context): Boolean = false
 
     fun dismissBanner(context: Context) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit {
@@ -86,17 +80,8 @@ object DonationManager {
         }
     }
 
-    fun shouldShowAutoPrompt(context: Context): Boolean {
-        if (isSupporter(context)) return false
-        if (!meetsSatisfactionSafeguard(context)) return false
-
-        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val coreOps = prefs.getInt(KEY_CORE_OP_COUNT, 0)
-        if (coreOps < 7) return false
-
-        val dismissedTime = prefs.getLong(KEY_AUTO_PROMPT_DISMISSED_TIME, 0L)
-        return (System.currentTimeMillis() - dismissedTime) >= AUTO_PROMPT_COOLDOWN_MS
-    }
+    /** Automatic startup donation popups are disabled; support options live quietly in Settings. */
+    fun shouldShowAutoPrompt(context: Context): Boolean = false
 
     fun dismissAutoPrompt(context: Context) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit {
@@ -104,17 +89,6 @@ object DonationManager {
         }
     }
 
-    fun checkAndGetMilestone(context: Context, newOpCount: Int): Int? {
-        if (isSupporter(context)) return null
-        val milestones = listOf(10, 25, 50, 100)
-        if (newOpCount in milestones) {
-            val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            val lastShown = prefs.getInt(KEY_LAST_MILESTONE_SHOWN, 0)
-            if (newOpCount > lastShown) {
-                prefs.edit { putInt(KEY_LAST_MILESTONE_SHOWN, newOpCount) }
-                return newOpCount
-            }
-        }
-        return null
-    }
+    /** Interruptive milestone dialogs are disabled so browsing and saving bookmarks stay frictionless. */
+    fun checkAndGetMilestone(context: Context, newOpCount: Int): Int? = null
 }

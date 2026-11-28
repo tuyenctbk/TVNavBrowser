@@ -113,7 +113,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnShowBookmarks: ImageButton
     private lateinit var btnShowHistory: ImageButton
     private lateinit var btnDesktopMode: ImageButton
-    private lateinit var btnDarkMode: ImageButton
     private lateinit var btnVoiceSearch: ImageButton
     private lateinit var btnSummarize: ImageButton
     private lateinit var btnSettings: ImageButton
@@ -129,8 +128,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var bookmarkBar: View
     private lateinit var bookmarkBarContainer: LinearLayout
     private lateinit var btnFullscreen: ImageButton
-    private lateinit var btnDonate: ImageButton
-    private lateinit var donationBannerView: View
+    private lateinit var toolbarScroll: View
     private lateinit var toolbarContainer: View
     private lateinit var rootLayout: View
     private lateinit var customViewContainer: FrameLayout
@@ -257,13 +255,11 @@ class MainActivity : ComponentActivity() {
         btnShowBookmarks = findViewById(R.id.btnShowBookmarks)
         btnShowHistory = findViewById(R.id.btnShowHistory)
         btnDesktopMode = findViewById(R.id.btnDesktopMode)
-        btnDarkMode = findViewById(R.id.btnDarkMode)
         btnVoiceSearch = findViewById(R.id.btnVoiceSearch)
         btnSummarize = findViewById(R.id.btnSummarize)
         btnSettings = findViewById(R.id.btnSettings)
         btnGameMode = findViewById(R.id.btnGameMode)
         btnMouseMode = findViewById(R.id.btnMouseMode)
-        btnDonate = findViewById(R.id.btnDonate)
         ivCursor = findViewById(R.id.ivCursor)
         cursorRipple = findViewById(R.id.cursorRipple)
         gameModeOverlay = findViewById(R.id.gameModeOverlay)
@@ -274,6 +270,7 @@ class MainActivity : ComponentActivity() {
         bookmarkBar = findViewById(R.id.bookmarkBar)
         bookmarkBarContainer = findViewById(R.id.bookmarkBarContainer)
         btnFullscreen = findViewById(R.id.btnFullscreen)
+        toolbarScroll = findViewById(R.id.toolbarScroll)
         toolbarContainer = findViewById(R.id.toolbarContainer)
         rootLayout = findViewById(R.id.rootLayout)
         customViewContainer = findViewById(R.id.customViewContainer)
@@ -483,15 +480,10 @@ class MainActivity : ComponentActivity() {
         }
 
         com.tdpham.navitvbrowser.util.DonationManager.initOrRecordLaunch(this)
-        setupDonationAndEngagement()
 
         if (AppPreferences.isOnboardingComplete(this)) {
             EngagementHelper.recordLaunch(this)
-            SmartPromptHelper.maybeShowNextPrompt(this) {
-                com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
-                    updateDonationUi()
-                }
-            }
+            SmartPromptHelper.maybeShowNextPrompt(this)
         }
 
         applyInterfaceTheme()
@@ -500,7 +492,7 @@ class MainActivity : ComponentActivity() {
     private fun applyInterfaceTheme() {
         val isLight = ThemeHelper.isLightTheme(this)
         rootLayout.setBackgroundResource(ThemeHelper.getScreenBackground(this))
-        toolbarContainer.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
+        toolbarScroll.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
         bookmarkBar.setBackgroundResource(ThemeHelper.getToolbarBackground(this))
         bookmarkBarContainer.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         if (::webViewContainer.isInitialized) {
@@ -529,22 +521,11 @@ class MainActivity : ComponentActivity() {
                                 child.id == R.id.btnMouseMode && ::virtualCursor.isInitialized && virtualCursor.isEnabled -> {
                                     child.imageTintList = ColorStateList.valueOf(accentColor)
                                 }
-                                child.id == R.id.btnDarkMode && isDarkModeActive -> {
-                                    child.imageTintList = ColorStateList.valueOf(accentColor)
-                                }
                                 child.id == R.id.btnDesktopMode && isCurrentPageDesktopMode() -> {
                                     child.imageTintList = ColorStateList.valueOf(accentColor)
                                 }
                                 child.id == R.id.btnBookmark && isCurrentPageBookmarked() -> {
                                     child.imageTintList = ColorStateList.valueOf(accentColor)
-                                }
-                                child.id == R.id.btnDonate -> {
-                                    val donateTint = if (com.tdpham.navitvbrowser.util.DonationManager.isSupporter(this@MainActivity)) {
-                                        Color.parseColor("#4CAF50")
-                                    } else {
-                                        Color.parseColor("#FF4081")
-                                    }
-                                    child.imageTintList = ColorStateList.valueOf(donateTint)
                                 }
                                 else -> {
                                     child.imageTintList = iconTint
@@ -598,18 +579,6 @@ class MainActivity : ComponentActivity() {
         btnCloseSummaryIcon.setBackgroundResource(btnBg)
         btnCloseSummaryIcon.imageTintList = iconTint
 
-        if (::donationBannerView.isInitialized) {
-            donationBannerView.setBackgroundResource(ThemeHelper.getOverlayCardBackground(this))
-            donationBannerView.findViewById<Button>(R.id.btnBannerSupport)?.apply {
-                setBackgroundResource(btnBg)
-                setTextColor(ThemeHelper.getTextPrimaryColor(this@MainActivity))
-            }
-            donationBannerView.findViewById<ImageButton>(R.id.btnBannerDismiss)?.apply {
-                setBackgroundResource(btnBg)
-                imageTintList = iconTint
-            }
-        }
-
         // Ensure dashboard.html reflects the active theme immediately
         webView.evaluateJavascript("if (typeof applyTheme === 'function') { applyTheme($isLight); }", null)
     }
@@ -621,9 +590,6 @@ class MainActivity : ComponentActivity() {
             currentAppliedTheme = latestTheme
             recreate()
             return
-        }
-        if (::btnDonate.isInitialized && ::donationBannerView.isInitialized) {
-            updateDonationUi()
         }
         if (::virtualCursor.isInitialized) {
             virtualCursor.speedMultiplier = AppPreferences.getMouseSpeedMultiplier(this)
@@ -672,13 +638,20 @@ class MainActivity : ComponentActivity() {
                     if (::webViewContainer.isInitialized) {
                         webViewContainer.visibility = View.VISIBLE
                     }
-                    if (::toolbarContainer.isInitialized) {
-                        toolbarContainer.visibility = if (isFullscreenMode) View.GONE else View.VISIBLE
+                    if (::toolbarScroll.isInitialized) {
+                        toolbarScroll.visibility = if (isFullscreenMode) View.GONE else View.VISIBLE
                     }
                     customView = null
                     customViewCallback = null
                 } catch (_: Exception) {}
             }
+        }
+        if (::webView.isInitialized &&
+            com.tdpham.navitvbrowser.util.WebViewCacheManager.consumePendingDiskCacheFlush(applicationContext)
+        ) {
+            try {
+                webView.clearCache(true)
+            } catch (_: Exception) {}
         }
         super.onStop()
     }
@@ -1049,6 +1022,7 @@ class MainActivity : ComponentActivity() {
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                 super.onPageStarted(view, url, favicon)
+                com.tdpham.navitvbrowser.util.SiteActivityTracker.recordVisit(applicationContext, url)
                 progressBar.isVisible = true
                 progressBar.progress = 0
                 isWebViewInputFocused = false
@@ -1130,6 +1104,7 @@ class MainActivity : ComponentActivity() {
                 val title = view?.title
                 val pageUrl = url
                 if (!title.isNullOrBlank() && pageUrl != null && !isDashboardOrAssetUrl(pageUrlStr)) {
+                    com.tdpham.navitvbrowser.util.SiteActivityTracker.recordVisit(applicationContext, pageUrl)
                     EngagementHelper.recordPageLoaded(this@MainActivity)
                     lifecycleScope.launch(Dispatchers.IO) {
                         historyRepo.addToHistory(title = title, url = pageUrl)
@@ -1215,7 +1190,7 @@ class MainActivity : ComponentActivity() {
                     customViewContainer.addView(view)
                 }
                 customViewContainer.visibility = View.VISIBLE
-                toolbarContainer.visibility = View.GONE
+                toolbarScroll.visibility = View.GONE
                 bookmarkBar.visibility = View.GONE
                 webViewContainer.visibility = View.GONE
                 ivCursor.visibility = View.GONE
@@ -1226,7 +1201,7 @@ class MainActivity : ComponentActivity() {
                 customViewContainer.removeView(customView)
                 customView = null
                 customViewContainer.visibility = View.GONE
-                toolbarContainer.visibility = if (isFullscreenMode) View.GONE else View.VISIBLE
+                toolbarScroll.visibility = if (isFullscreenMode) View.GONE else View.VISIBLE
                 webViewContainer.visibility = View.VISIBLE
                 customViewCallback?.onCustomViewHidden()
                 customViewCallback = null
@@ -1289,7 +1264,6 @@ class MainActivity : ComponentActivity() {
             cycleSiteTextZoom()
             true
         }
-        btnDarkMode.setOnClickListener { applyDarkMode(!isDarkModeActive) }
         btnGameMode.setOnClickListener { toggleGameMode() }
         btnMouseMode.setOnClickListener {
             val nextState = !virtualCursor.isEnabled
@@ -1433,15 +1407,17 @@ class MainActivity : ComponentActivity() {
         val query = input.trim()
         autocompleteJob?.cancel()
 
-        // Only suggest while the user is actually typing; programmatic updates (page loads, voice,
-        // intents) must not run DB queries or replace the bookmark chips with URL look-alikes.
-        if (!urlInput.hasFocus() || query.isBlank() || query.startsWith("file://")) {
-            populateBookmarkBar(realBookmarks)
+        // Only suggest while actively typing 2+ characters so 1-keystroke edits and programmatic
+        // URL updates never trigger jarring suggestion pop-ins.
+        if (!urlInput.hasFocus() || query.length < 2 || query.startsWith("file://")) {
+            if (isShowingSuggestions) {
+                populateBookmarkBar(realBookmarks)
+            }
             return
         }
 
         autocompleteJob = lifecycleScope.launch {
-            delay(120) // Debounce typing
+            delay(260) // Calm debounce while typing on a TV remote
 
             val suggestions = withContext(Dispatchers.IO) {
                 val results = mutableListOf<SearchSuggestion>()
@@ -1455,7 +1431,7 @@ class MainActivity : ComponentActivity() {
                         .removeSuffix("/")
 
                 // 1. Frequently visited sites from History database
-                val frequentHistory = historyRepo.searchFrequentSites(query, 6)
+                val frequentHistory = historyRepo.searchFrequentSites(query, 3)
                 frequentHistory.forEach { h ->
                     val norm = normalize(h.url)
                     if (seenUrls.add(norm)) {
@@ -1464,7 +1440,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 // 2. Bookmarks from database
-                val matchingBookmarks = bookmarkRepo.searchBookmarks(query, 6)
+                val matchingBookmarks = bookmarkRepo.searchBookmarks(query, 3)
                 matchingBookmarks.forEach { b ->
                     val norm = normalize(b.url)
                     if (seenUrls.add(norm)) {
@@ -1473,7 +1449,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 // 3. Search history from database
-                val matchingHistory = historyRepo.searchHistory(query, 8)
+                val matchingHistory = historyRepo.searchHistory(query, 4)
                 matchingHistory.forEach { h ->
                     val norm = normalize(h.url)
                     if (seenUrls.add(norm)) {
@@ -1481,12 +1457,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                results.take(12)
+                results.take(6)
             }
 
-            if (suggestions.isNotEmpty()) {
+            if (urlInput.hasFocus() && suggestions.isNotEmpty()) {
                 populateSuggestionChips(suggestions)
-            } else {
+            } else if (isShowingSuggestions) {
                 populateBookmarkBar(realBookmarks)
             }
         }
@@ -1645,10 +1621,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val hideInputHintRunnable = Runnable {
-        if (::virtualCursor.isInitialized && virtualCursor.isEnabled) {
-            tvInputHint.text = getString(R.string.input_hint_virtual_mouse)
-            tvInputHint.isVisible = true
-        } else {
+        if (!isFinishing && !isDestroyed && ::tvInputHint.isInitialized) {
             tvInputHint.isVisible = false
         }
     }
@@ -1661,7 +1634,7 @@ class MainActivity : ComponentActivity() {
             else -> getString(R.string.input_hint_default)
         }
         tvInputHint.isVisible = true
-        tvInputHint.postDelayed(hideInputHintRunnable, 3500)
+        tvInputHint.postDelayed(hideInputHintRunnable, 2200)
     }
 
     private var lastMouseCheckTime = 0L
@@ -1700,8 +1673,8 @@ class MainActivity : ComponentActivity() {
         FocusAnimationHelper.applyAll(
             btnBack, btnForward, btnRefresh, btnHome, btnBookmark, btnReadLater,
             btnShowBookmarks, btnShowHistory, btnSettings,
-            btnFullscreen, btnDesktopMode, btnDarkMode, btnVoiceSearch, btnSummarize,
-            btnGameMode, btnMouseMode, btnDonate,
+            btnFullscreen, btnDesktopMode, btnVoiceSearch, btnSummarize,
+            btnGameMode, btnMouseMode,
             btnClaimGraceCredits, btnToggleEcoLite,
             btnSpeakSummary, btnShareSummaryQr, btnCopySummary, btnCloseSummary, btnCloseSummaryIcon
         )
@@ -2037,11 +2010,12 @@ class MainActivity : ComponentActivity() {
         btnBack.alpha = if (canGoBack) 1.0f else 0.4f
 
         btnForward.isEnabled = canGoForward
-        btnForward.alpha = if (canGoForward) 1.0f else 0.4f
+        btnForward.visibility = if (canGoForward) View.VISIBLE else View.GONE
+        btnForward.alpha = 1.0f
 
-        // Skip disabled Back/Forward buttons cleanly during TV remote D-pad horizontal navigation
+        // Skip hidden Forward and disabled Back buttons cleanly during TV remote D-pad navigation
         btnBack.nextFocusRightId = if (canGoForward) R.id.btnForward else R.id.btnRefresh
-        btnForward.nextFocusLeftId = if (canGoBack) R.id.btnBack else R.id.btnRefresh
+        btnForward.nextFocusLeftId = if (canGoBack) R.id.btnBack else View.NO_ID
         btnRefresh.nextFocusLeftId = when {
             canGoForward -> R.id.btnForward
             canGoBack -> R.id.btnBack
@@ -2081,19 +2055,20 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun populateBookmarkBar(list: List<BookmarkEntity>) {
-        if (!isShowingSuggestions && renderedBookmarkSnapshot == list && bookmarkBarContainer.childCount == list.size) {
-            if (list.isEmpty()) {
+        val visibleList = list.take(8)
+        if (!isShowingSuggestions && renderedBookmarkSnapshot == visibleList && bookmarkBarContainer.childCount == visibleList.size) {
+            if (visibleList.isEmpty()) {
                 bookmarkBar.visibility = View.GONE
-            } else if (isViewInToolbarOrBookmarkBar(currentFocus)) {
+            } else if (isViewInUrlOrBookmarkBar(currentFocus)) {
                 showBookmarkBar()
             }
             return
         }
 
         isShowingSuggestions = false
-        renderedBookmarkSnapshot = list
+        renderedBookmarkSnapshot = visibleList
         bookmarkBarContainer.removeAllViews()
-        if (list.isEmpty()) {
+        if (visibleList.isEmpty()) {
             bookmarkBar.visibility = View.GONE
             return
         }
@@ -2101,7 +2076,7 @@ class MainActivity : ComponentActivity() {
         val inflater = LayoutInflater.from(this)
         val chipBg = ThemeHelper.getFocusableItemBackground(this)
         val chipTextColor = ThemeHelper.getTextPrimaryColor(this)
-        list.forEach { bookmark ->
+        visibleList.forEach { bookmark ->
             val chip = inflater.inflate(R.layout.item_bookmark_chip, bookmarkBarContainer, false)
             val tvChipTitle = chip.findViewById<TextView>(R.id.tvChipTitle)
             chip.setBackgroundResource(chipBg)
@@ -2114,12 +2089,12 @@ class MainActivity : ComponentActivity() {
                 webView.loadUrl(targetUrl)
                 urlInput.setText(if (isDashboardOrAssetUrl(targetUrl)) "" else targetUrl)
                 webView.requestFocus()
-                scheduleHideBookmarkBar(300L)
+                scheduleHideBookmarkBar(150L)
             }
             bookmarkBarContainer.addView(chip)
         }
 
-        if (isViewInToolbarOrBookmarkBar(currentFocus)) {
+        if (isViewInUrlOrBookmarkBar(currentFocus)) {
             showBookmarkBar()
         }
     }
@@ -2172,25 +2147,37 @@ class MainActivity : ComponentActivity() {
     private fun setupBookmarkBarAutoHide() {
         val listener = android.view.ViewTreeObserver.OnGlobalFocusChangeListener { _, newFocus ->
             if (isFinishing || isDestroyed) return@OnGlobalFocusChangeListener
-            if (newFocus != null && isViewInToolbarOrBookmarkBar(newFocus)) {
+            if (newFocus != null && isViewInUrlOrBookmarkBar(newFocus)) {
                 showBookmarkBar()
             } else {
                 if (isShowingSuggestions) {
                     populateBookmarkBar(realBookmarks)
                 }
-                scheduleHideBookmarkBar()
+                scheduleHideBookmarkBar(180L)
             }
         }
         globalFocusChangeListener = listener
         window.decorView.viewTreeObserver.addOnGlobalFocusChangeListener(listener)
     }
 
+    private fun isViewInUrlOrBookmarkBar(view: View?): Boolean {
+        if (view == null) return false
+        if (view.id == R.id.urlInput) return true
+        var current: View? = view
+        while (current != null) {
+            if (current.id == R.id.bookmarkBar) return true
+            val parent = current.parent
+            current = if (parent is View) parent else null
+        }
+        return false
+    }
+
     private fun isViewInToolbarOrBookmarkBar(view: View?): Boolean {
         var current: View? = view
         while (current != null) {
-            if (current.id == R.id.toolbarContainer ||
-                current.id == R.id.bookmarkBar ||
-                current.id == R.id.donationBanner
+            if (current.id == R.id.toolbarScroll ||
+                current.id == R.id.toolbarContainer ||
+                current.id == R.id.bookmarkBar
             ) {
                 return true
             }
@@ -2203,10 +2190,6 @@ class MainActivity : ComponentActivity() {
     private fun applyDarkMode(enabled: Boolean, showToast: Boolean = true) {
         isDarkModeActive = enabled
         AppPreferences.setForceDarkModeEnabled(this, enabled)
-        btnDarkMode.imageTintList = ColorStateList.valueOf(
-            if (enabled) ThemeHelper.getAccentColor(this)
-            else ThemeHelper.getTextPrimaryColor(this)
-        )
 
         // WebSettingsCompat Darkening: prefer ALGORITHMIC_DARKENING on API 33+ WebViews, fallback to FORCE_DARK on older ones
         if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
@@ -2498,7 +2481,7 @@ class MainActivity : ComponentActivity() {
         if (isFullscreenMode == enabled) return
         isFullscreenMode = enabled
 
-        toolbarContainer.visibility = if (enabled) View.GONE else View.VISIBLE
+        toolbarScroll.visibility = if (enabled) View.GONE else View.VISIBLE
 
         val iconRes = if (enabled) R.drawable.ic_nav_fullscreen_exit else R.drawable.ic_nav_fullscreen
         btnFullscreen.setImageResource(iconRes)
@@ -2818,65 +2801,8 @@ class MainActivity : ComponentActivity() {
         btnSpeakSummary.requestFocus()
     }
 
-    private fun setupDonationAndEngagement() {
-        btnDonate = findViewById(R.id.btnDonate)
-        btnDonate.setOnClickListener {
-            com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
-                updateDonationUi()
-            }
-        }
-
-        donationBannerView = findViewById(R.id.donationBanner)
-        val btnBannerSupport = donationBannerView.findViewById<Button>(R.id.btnBannerSupport)
-        val btnBannerDismiss = donationBannerView.findViewById<ImageButton>(R.id.btnBannerDismiss)
-
-        btnBannerSupport?.let { FocusAnimationHelper.apply(it) }
-        btnBannerDismiss?.let { FocusAnimationHelper.apply(it) }
-
-        btnBannerSupport?.setOnClickListener {
-            com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
-                updateDonationUi()
-            }
-        }
-
-        btnBannerDismiss?.setOnClickListener {
-            com.tdpham.navitvbrowser.util.DonationManager.dismissBanner(this)
-            donationBannerView.visibility = View.GONE
-        }
-
-        updateDonationUi()
-    }
-
-    private fun updateDonationUi() {
-        if (com.tdpham.navitvbrowser.util.DonationManager.isSupporter(this)) {
-            donationBannerView.visibility = View.GONE
-            btnDonate.imageTintList = ColorStateList.valueOf(Color.parseColor("#4CAF50"))
-        } else {
-            if (com.tdpham.navitvbrowser.util.DonationManager.shouldShowBanner(this)) {
-                donationBannerView.visibility = View.VISIBLE
-            } else {
-                donationBannerView.visibility = View.GONE
-            }
-            btnDonate.imageTintList = ColorStateList.valueOf(Color.parseColor("#FF4081"))
-        }
-    }
-
     private fun handleCoreOperationCompleted() {
-        val count = com.tdpham.navitvbrowser.util.DonationManager.recordCoreOperation(this)
-        val milestone = com.tdpham.navitvbrowser.util.DonationManager.checkAndGetMilestone(this, count)
-        if (milestone != null && !isFinishing && !isDestroyed) {
-            val title = getString(R.string.donation_milestone_title, milestone)
-            val msg = getString(R.string.donation_milestone_msg)
-            androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
-                .setTitle(title)
-                .setMessage(msg)
-                .setPositiveButton(R.string.donation_banner_action) { _, _ ->
-                    com.tdpham.navitvbrowser.ui.DonationDialogHelper.showDonationDialog(this) {
-                        updateDonationUi()
-                    }
-                }
-                .setNegativeButton(R.string.donation_banner_dismiss, null)
-                .show()
-        }
+        // Silently track completed actions without interrupting browsing with modal milestone dialogs.
+        com.tdpham.navitvbrowser.util.DonationManager.recordCoreOperation(this)
     }
 }

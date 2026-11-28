@@ -51,7 +51,7 @@ object EngagementHelper {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val lastCheck = prefs.getLong(KEY_LAST_UPDATE_CHECK, 0L)
         val now = System.currentTimeMillis()
-        return (now - lastCheck > 24 * 60 * 60 * 1000L)
+        return (now - lastCheck > 7L * 24 * 60 * 60 * 1000L)
     }
 
     fun recordUpdateCheck(context: Context) {

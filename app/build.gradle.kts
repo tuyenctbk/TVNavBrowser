@@ -13,8 +13,8 @@ android {
         applicationId = "com.tdpham.navitvbrowser"
         minSdk = 24
         targetSdk = 36
-        versionCode = 43
-        versionName = "3.2.4"
+        versionCode = 44
+        versionName = "3.2.5"
 
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.work.runtime.ktx)
 
     // Room Database
     implementation(libs.androidx.room.runtime)
@@ -99,7 +100,7 @@ dependencies {
 
     // Gemini AI via Firebase Vertex AI
     implementation(libs.firebase.vertexai)
-    implementation(libs.okhttp)
+    // implementation(libs.okhttp)
 
     // Android TV Leanback
     implementation(libs.androidx.leanback)

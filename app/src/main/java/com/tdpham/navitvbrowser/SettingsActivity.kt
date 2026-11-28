@@ -440,6 +440,47 @@ class SettingsActivity : ComponentActivity() {
                 .show()
         }
 
+        val switchAutoCacheCleanup: Switch? = findViewById(R.id.switchAutoCacheCleanup)
+        val tvCacheMaintenanceStatus: TextView? = findViewById(R.id.tvCacheMaintenanceStatus)
+
+        fun refreshCacheMaintenanceStatus() {
+            lifecycleScope.launch {
+                val (sizeBytes, lastSummary) = withContext(Dispatchers.IO) {
+                    val size = com.tdpham.navitvbrowser.util.WebViewCacheManager.calculateTotalCacheSize(applicationContext)
+                    val summary = com.tdpham.navitvbrowser.util.WebViewCacheManager.getLastCleanupSummary(applicationContext)
+                    size to summary
+                }
+                val formattedSize = com.tdpham.navitvbrowser.util.WebViewCacheManager.formatByteSize(sizeBytes)
+                tvCacheMaintenanceStatus?.text = if (lastSummary != null && (lastSummary.inactiveOriginsCleared > 0 || lastSummary.totalBytesFreed > 0L)) {
+                    getString(
+                        R.string.settings_cache_status_last_run,
+                        formattedSize,
+                        lastSummary.inactiveOriginsCleared,
+                        com.tdpham.navitvbrowser.util.WebViewCacheManager.formatByteSize(lastSummary.totalBytesFreed)
+                    )
+                } else {
+                    getString(R.string.settings_cache_status_idle, formattedSize)
+                }
+            }
+        }
+
+        switchAutoCacheCleanup?.isChecked = AppPreferences.isAutoCacheCleanupEnabled(this)
+        switchAutoCacheCleanup?.setOnCheckedChangeListener { _, isChecked ->
+            AppPreferences.setAutoCacheCleanupEnabled(this, isChecked)
+            if (isChecked) {
+                com.tdpham.navitvbrowser.util.WebViewCacheManager.schedulePeriodicCleanup(applicationContext)
+            } else {
+                com.tdpham.navitvbrowser.util.WebViewCacheManager.cancelPeriodicCleanup(applicationContext)
+            }
+            FirebaseInitializer.logEvent("settings_auto_cache_cleanup_changed", mapOf("enabled" to isChecked))
+            Toast.makeText(
+                this,
+                if (isChecked) R.string.settings_auto_cache_enabled else R.string.settings_auto_cache_disabled,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        refreshCacheMaintenanceStatus()
+
         btnClearCache.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this, ThemeHelper.getDialogTheme(this))
                 .setTitle(R.string.settings_clear_cache)
@@ -451,6 +492,7 @@ class SettingsActivity : ComponentActivity() {
                             if (cleared) {
                                 FirebaseInitializer.logEvent("settings_cache_cleared")
                                 Toast.makeText(this@SettingsActivity, R.string.settings_cache_cleared, Toast.LENGTH_SHORT).show()
+                                refreshCacheMaintenanceStatus()
                             } else {
                                 Toast.makeText(this@SettingsActivity, R.string.settings_cache_failed, Toast.LENGTH_SHORT).show()
                             }

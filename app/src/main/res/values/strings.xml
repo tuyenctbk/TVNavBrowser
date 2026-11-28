@@ -33,6 +33,12 @@
     <string name="settings_cache_cleared">Cache cleared</string>
     <string name="settings_cache_failed">Could not clear cache</string>
     <string name="settings_data_storage">Data &amp; Storage</string>
+    <string name="settings_auto_cache_cleanup">Auto-clean inactive sites (30+ days)</string>
+    <string name="settings_auto_cache_cleanup_summary">Automatically clears browser storage and WebView cache in the background for websites not visited in over 30 days.</string>
+    <string name="settings_auto_cache_enabled">Automatic 30-day cache cleanup enabled</string>
+    <string name="settings_auto_cache_disabled">Automatic 30-day cache cleanup disabled</string>
+    <string name="settings_cache_status_idle">Cache size: %1$s · Background check runs daily</string>
+    <string name="settings_cache_status_last_run">Cache size: %1$s · Last cleanup cleared %2$d inactive site(s) (%3$s freed)</string>
 
     <string name="settings_force_dark_mode">Force Dark Web Pages</string>
     <string name="settings_force_dark_mode_summary">Automatically inject dark styles into all visited websites for night browsing.</string>

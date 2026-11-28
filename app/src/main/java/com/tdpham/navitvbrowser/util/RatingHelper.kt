@@ -25,7 +25,7 @@ object RatingHelper {
         if (prefs.getBoolean(KEY_DONT_SHOW_AGAIN, false)) return false
         val lastRemind = prefs.getLong(KEY_LAST_REMIND_TIME, 0L)
         val now = System.currentTimeMillis()
-        return (now - lastRemind >= 3 * 24 * 60 * 60 * 1000L)
+        return (now - lastRemind >= 30L * 24 * 60 * 60 * 1000L)
     }
 
     fun showRatingDialog(activity: Activity, onDismissedPermanently: (() -> Unit)? = null) {
@@ -54,11 +54,12 @@ object RatingHelper {
                 prefs.edit().putBoolean(KEY_DONT_SHOW_AGAIN, true).apply()
                 onDismissedPermanently?.invoke()
             }
+            .setCancelable(true)
             .create()
             .show()
     }
 
-    private fun launchInAppReview(activity: Activity) {
+    fun launchInAppReview(activity: Activity) {
         if (activity.isFinishing || activity.isDestroyed) return
         try {
             val manager = ReviewManagerFactory.create(activity)

@@ -18,6 +18,7 @@ object AppPreferences {
     private const val KEY_MOUSE_SPEED = "mouse_speed"
     private const val KEY_SITE_DESKTOP_PREFIX = "site_desktop_"
     private const val KEY_SITE_ZOOM_PREFIX = "site_zoom_"
+    private const val KEY_AUTO_CACHE_CLEANUP = "auto_cache_cleanup_30d"
     const val DASHBOARD_ASSET_URL = "file:///android_asset/dashboard.html"
     private const val DEFAULT_HOMEPAGE = "https://www.google.com"
 
@@ -255,5 +256,34 @@ object AppPreferences {
             .edit()
             .putInt(KEY_SITE_ZOOM_PREFIX + cleanHost, zoomPercent.coerceIn(75, 200))
             .apply()
+    }
+
+    fun isAutoCacheCleanupEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getBoolean(KEY_AUTO_CACHE_CLEANUP, true)
+
+    fun setAutoCacheCleanupEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_AUTO_CACHE_CLEANUP, enabled)
+            .apply()
+    }
+
+    /**
+     * Removes per-site UI preferences (desktop mode & text zoom) for hosts that have been
+     * purged due to prolonged inactivity so SharedPreferences do not grow unbounded.
+     */
+    fun clearSitePreferencesForHost(context: Context, host: String) {
+        val cleanHost = host.trim().lowercase()
+        if (cleanHost.isEmpty()) return
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val desktopKey = KEY_SITE_DESKTOP_PREFIX + cleanHost
+        val zoomKey = KEY_SITE_ZOOM_PREFIX + cleanHost
+        if (prefs.contains(desktopKey) || prefs.contains(zoomKey)) {
+            prefs.edit()
+                .remove(desktopKey)
+                .remove(zoomKey)
+                .apply()
+        }
     }
 }

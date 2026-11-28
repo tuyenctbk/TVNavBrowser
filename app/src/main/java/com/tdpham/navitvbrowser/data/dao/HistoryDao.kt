@@ -34,7 +34,15 @@ interface HistoryDao {
     @Query("DELETE FROM history WHERE url = :url")
     suspend fun deleteByUrl(url: String)
 
+    @Query("SELECT url, MAX(timestamp) AS timestamp FROM history GROUP BY url")
+    suspend fun getLatestVisitTimestamps(): List<HistoryVisitProjection>
+
     @Query("DELETE FROM history")
     suspend fun clearAll()
 }
+
+data class HistoryVisitProjection(
+    val url: String,
+    val timestamp: Long
+)
 

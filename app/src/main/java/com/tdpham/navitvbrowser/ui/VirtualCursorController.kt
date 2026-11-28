@@ -198,7 +198,7 @@ class VirtualCursorController(
 
         when (event.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP -> {
-                if (isDown && event.repeatCount == 0 && cursor.y <= -hotspotOffsetY + 4f && !webView.canScrollVertically(-1)) {
+                if (isDown && event.repeatCount == 0 && cursor.y <= -hotspotOffsetY + 4f) {
                     stopMotion()
                     onEscapeToToolbar?.invoke()
                     return true
